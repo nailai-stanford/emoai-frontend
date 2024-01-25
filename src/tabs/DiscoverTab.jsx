@@ -22,7 +22,7 @@ const ThemeHeader = ({index, setIndex}) => {
   useEffect(() => {
     async function _getThemes() {
       axios.get(
-        `${APIs.GET_PRODUCTS}/themes/`,
+        `${APIs.GET_PRODUCTS}themes/`,
         { headers }
       ).then(
         res => {

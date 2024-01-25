@@ -23,7 +23,7 @@ export const Banner = () => {
   useEffect(() => {
     async function _getBanner() {
       axios.get(
-        `${APIs.GET_PRODUCTS}/banner/`,
+        `${APIs.GET_PRODUCTS}banner/`,
       ).then(
         res => {
           let copy = JSON.parse(JSON.stringify(res.data.products))

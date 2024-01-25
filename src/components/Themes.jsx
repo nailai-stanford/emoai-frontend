@@ -22,7 +22,7 @@ export const Themes = (props) => {
   useEffect(() => {
     async function _getThemes() {
         axios.get(
-            `${APIs.GET_PRODUCTS}/categoriesByThemes/`,
+            `${APIs.GET_PRODUCTS}categoriesByThemes/`,
         ).then(
             res => {
             let copy = JSON.parse(JSON.stringify(res.data))
