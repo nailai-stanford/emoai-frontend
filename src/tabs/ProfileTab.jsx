@@ -25,7 +25,7 @@ export const ProfileTab = ({ onSignout }) => {
   useEffect(() => {
     async function _getMy() {
       axios.get(
-        `${APIs.GET_PRODUCTS}/my/`,
+        `${APIs.GET_PRODUCTS}my/`,
         {headers}
       ).then(
         res => {
@@ -40,7 +40,7 @@ export const ProfileTab = ({ onSignout }) => {
   useEffect(() => {
     async function _getCollected() {
       axios.get(
-        `${APIs.LIKE_COLLECT}/collections/`,
+        `${APIs.LIKE_COLLECT}collections/`,
         {headers}
       ).then(
         res => {
@@ -57,7 +57,7 @@ export const ProfileTab = ({ onSignout }) => {
   useEffect(() => {
     async function _getCollected() {
       axios.get(
-        `${APIs.GET_PRODUCTS}/single_nail/"`,
+        `${APIs.GET_PRODUCTS}single_nail/`,
         {headers}
       ).then(
         res => {

@@ -14,7 +14,7 @@ const Tab = ({ content, selected, setSelected, setSubList }) => {
     useEffect(() => {
         async function _getElements() {
             axios.get(
-                `${APIs.GET_PRODUCTS}/categories/`,
+                `${APIs.GET_PRODUCTS}${selected}/categories/`,
                 {headers}
             ).then(
                 res => {
