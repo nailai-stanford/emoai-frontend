@@ -21,6 +21,12 @@ export const COLORS = {
     
 }
 
+export const ICON_SIZES = {
+    // icon sizes here
+    standard: 20,
+    small: 15,
+}
+
 
 
 // paddings
@@ -54,7 +60,8 @@ export const FONTS = {
 export const FONT_FAMILYS = {
     // font family here
     regular: 'Tahoma',
-    bold: 'Tahoma-Bold',
+    bold: 'TAHOMABD',
+    rubik: 'RubikOne-Regular',
 
 }
 

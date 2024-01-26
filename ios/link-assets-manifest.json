@@ -1,0 +1,33 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "assets/fonts/RubikMonoOne-Regular.ttf",
+      "sha1": "494e30805dc070dfa19c14f69db2dc887ed12556"
+    },
+    {
+      "path": "assets/fonts/RubikOne-Regular.ttf",
+      "sha1": "5aba953b9a55010a8fa68e82c8d4e1cddc239c93"
+    },
+    {
+      "path": "assets/fonts/TAHOMAB0.TTF",
+      "sha1": "68d37782a8391dcf62e1301dbd1d1c127615409e"
+    },
+    {
+      "path": "assets/fonts/TAHOMABD.TTF",
+      "sha1": "3f6633a11a01498ce6ef8260f74ed55d4af69981"
+    },
+    {
+      "path": "assets/fonts/TAHOMA_0.TTF",
+      "sha1": "460cb770b9e08a4d21fe94a3bc4172af8b0af569"
+    },
+    {
+      "path": "assets/fonts/Tahoma Regular font.ttf",
+      "sha1": "707399c21bd883e0afe5d4e22aaf2c8452beeec2"
+    },
+    {
+      "path": "assets/fonts/Tahoma.ttf",
+      "sha1": "707399c21bd883e0afe5d4e22aaf2c8452beeec2"
+    }
+  ]
+}
