@@ -2,8 +2,6 @@
 
 ## installation
 
-reference link: https://reactnative.dev/docs/environment-setup?package-manager=npm
-
 may need in first time installation:
 
 `brew install node` -- don't need this if already installed node
