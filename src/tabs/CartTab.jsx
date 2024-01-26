@@ -141,7 +141,22 @@ export const CartTab = ({ navigation }) => {
                         Total: {Number(total).toFixed(2)} {/* Formats total to 2 decimal places */}
                     </P>
                     <ButtonAction
-                        onPress={() => { console.log("prepare checkout") }}>
+                        onPress={() => { 
+                            cartItems.forEach((product) => {
+                                
+                                if (product.id && product.quantity > 0) {
+                                    axios.post(
+                                        APIs.CHECKOUT,
+                                        {
+                                            design_set_id: product.id,
+                                            quantity: product.quantity,
+                                        },{headers}
+                                    ).then().catch((e) => {
+                                        handleError(e);
+                                    })
+                                }
+                            })
+                         }}>
                             <ButtonP>Check Out</ButtonP>
                     </ButtonAction>
                 </View>

@@ -10,49 +10,7 @@ export const NailSelector = ({ index, isActivated, image, showNails, onDelete, s
       }
     : {};
   return (
-    // <View
-    //   style={{
-    //     ...activatedStyle,
-    //     width: size,
-    //     height: size,
-    //     borderRadius: size / 2,
-    //     backgroundColor: "#787878",
-    //   }}
-    // >
-    //   {isActivated && image && (
-    //     <Image
-    //       source={{ uri: image }}
-    //       style={{ width: size, height: size, borderRadius: size / 2 }}
-    //       resizeMode="cover"
-    //     />
-    //   )}
-    // </View>
-    // <View
-    //   style={{
-    //     ...activatedStyle,
-    //     width: size,
-    //     height: size,
-    //     borderRadius: size / 2,
-    //     backgroundColor: isActivated ? 'transparent' : "#787878",
-    //     justifyContent: 'center',
-    //     alignItems: 'center',
-    //   }}
-    // >
-    //   {isActivated && image ? (
-    //     <ImageBackground
-    //       source={{ uri: image }}
-    //       style={{ width: size, height: size, borderRadius: size / 2 }}
-    //       resizeMode="cover"
-    //     >
-    //       <TouchableHighlight
-    //         style={styles.deleteButton}
-    //         onPress={() => onDelete(index)}
-    //       >
-    //         <Text style={styles.deleteButtonText}>-</Text>
-    //       </TouchableHighlight>
-    //     </ImageBackground>
-    //   ) : null}
-    // </View>
+    
     <View
       style={{
         ...activatedStyle,
@@ -64,13 +22,13 @@ export const NailSelector = ({ index, isActivated, image, showNails, onDelete, s
         alignItems: 'center',
       }}
     >
-      {isActivated && image ? (
+      {!!isActivated && !!image ? (
         <ImageBackground
           source={{ uri: image }}
           style={{ width: size, height: size, borderRadius: size / 2 }}
           resizeMode="cover"
         >
-          {showNails && showDeleteButton && (
+          {!!showNails && !!showDeleteButton && (
             <TouchableHighlight
               style={styles.deleteButton}
               onPress={() => onDelete(index)}

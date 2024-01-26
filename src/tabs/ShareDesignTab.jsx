@@ -7,7 +7,7 @@ import { useDesignContext } from '../providers/DesignProvider';
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { getCart, setCart } from "../utils/UserUtils";
 import { ButtonAction, ButtonSelection } from "../styles/buttons";
-import { P, ButtonP, MenuHeader, TitleHeader, SubHeader} from "../styles/texts";
+import { P, ButtonP, ButtonH, MenuHeader, TitleHeader, SubHeader} from "../styles/texts";
 import { COLORS, PADDINGS } from "../styles/theme";
 
 const prompt = "Can you generate an abstract and artistic short title as well as a short description of how is the design inspired of nail art design with these description: [message]. Please only return the result in this format: { 'title':  title generated within 10 words, 'description': description generated within 50 words}. Please do not return any other words."
@@ -67,12 +67,11 @@ export const ShareDesignTab = ({navigation, route}) => {
 
         <View style={styles.backButtonContainer}>
               <TouchableOpacity onPress={onBack}>
-                  <Text style={styles.backButtonText}>{'<'}</Text>
+                  <TitleHeader>{'<'}</TitleHeader>
               </TouchableOpacity>
         </View>
 
       <SubHeader >
-
        Add a title
       </SubHeader>
         <TextInput
@@ -94,7 +93,7 @@ export const ShareDesignTab = ({navigation, route}) => {
           multiline
         />
          <Image source={{ uri: `data:image/png;base64,${product_url}`  }} style={styles.image} />
-        <Button title="Share" onPress={onShare} />
+         <ButtonAction onPress={onShare} $colored={true} style={{alignSelf:"center", width:"60%"}}><ButtonH>Share</ButtonH></ButtonAction>
 
       </View>
     );
@@ -118,8 +117,9 @@ export const ShareDesignTab = ({navigation, route}) => {
       marginBottom: 10,
       borderWidth: 1,
       borderColor: '#ddd',
-      padding: 10,
+      padding: PADDINGS.md,
       borderRadius: 24,
+      color:COLORS.white
     },
     description_input:{
       width: '100%',
@@ -127,16 +127,15 @@ export const ShareDesignTab = ({navigation, route}) => {
       marginBottom: 10,
       borderWidth: 1,
       borderColor: '#ddd',
-      padding: 10,
+      padding: PADDINGS.md,
+      color:COLORS.white,
+      borderRadius: 24,
+
     },
     backButtonContainer: {
       position: 'absolute',
       top: 20,
       left: 10,
-  },
-  backButtonText: {
-      fontSize: 20,
-      color: 'blue', // Change color as needed
-  },
+  }
   });
     

@@ -48,7 +48,7 @@ export const Themes = (props) => {
 
         {
           // TODO: fix the scroll issue
-          themes && themes.map((item, idx) => (
+          !!themes && themes.map((item, idx) => (
           <ThemeCard  key={idx} item={item} {...props} />
           ))
         }

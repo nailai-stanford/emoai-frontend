@@ -5,6 +5,11 @@ import { NailSelector } from "../components/NailSelector";
 import { useDesignContext } from '../providers/DesignProvider';
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { BASE_URL } from "../utils/API";
+
+import { ButtonAction, ButtonSelection } from "../styles/buttons";
+import { P, ButtonP, MenuHeader, TitleHeader, SubHeader, ButtonH} from "../styles/texts";
+import { COLORS, PADDINGS, FONTS } from "../styles/theme";
+
 const prompt = "Can you generate an abstract and artistic short title as well as a short description of how is the design inspired of nail art design with these description: $message"
 
 export const NailDesignTab = ({ navigation, route }) => {
@@ -100,7 +105,7 @@ export const NailDesignTab = ({ navigation, route }) => {
         style={{
           marginTop: "0%",
           width: '100%',
-          height: '80%',
+          height: '75%',
           resizeMode: 'contain',
         }}
       />
@@ -111,7 +116,7 @@ export const NailDesignTab = ({ navigation, route }) => {
           />
         )}
       <View style={{ marginVertical: 20 }}>
-        <Text style={{ fontSize: 18 }}>Select Nails from Collection</Text>
+        <SubHeader style={{alignSelf:"center", marginBottom:10}}>Select Nails from Collection</SubHeader>
         {/* <View style={styles.nailsContainer}>
           {selectedNails.map((nail, index) => (
             <Pressable key={index} onPress={() => handleNailSelect(nail)}>
@@ -126,23 +131,15 @@ export const NailDesignTab = ({ navigation, route }) => {
         >
           {selectedNails.map((nail, index) => (
             nail && nail.trim() !== '' && (
-            <Pressable key={index} onPress={() => handleNailSelect(nail)}>
+            <Pressable key={index} onPress={() => handleNailSelect(nail)} style={{paddingHorizontal:5}}>
               <Image source={{ uri: nail }} style={styles.nailImage} />
             </Pressable>
             )
           ))}
         </ScrollView>
+        <ButtonAction onPress={handleBack} $colored={true}><ButtonH>Back</ButtonH></ButtonAction>
+
       </View>
-      <View
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          flexDirection: "row",
-        }}
-      >
-        
-      </View>
-      <Button title='Back' onPress={handleBack} />
     </View>
   );
 };
@@ -150,7 +147,6 @@ export const NailDesignTab = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     padding: 20,
     display: "flex",
     flexDirection: "column",
@@ -162,7 +158,7 @@ const styles = StyleSheet.create({
     top: 20,
     left: 20,
     width: 400,
-    height: 420,
+    height: 400,
     resizeMode: 'contain',
   },
   nailsContainer: {

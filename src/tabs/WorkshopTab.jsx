@@ -4,6 +4,9 @@ import { useDesignContext } from '../providers/DesignProvider';
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import axios from "axios";
 import { APIs, BASE_URL, getHeader } from "../utils/API";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialIcons";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+
 
 import React, { useRef,useState, useEffect } from 'react';
 import {
@@ -26,6 +29,10 @@ import {
 import {
   ExpandingDot,
 } from 'react-native-animated-pagination-dots';
+
+import { ButtonAction, ButtonSelection } from "../styles/buttons";
+import { P, ButtonP, MenuHeader, TitleHeader, SubHeader, ButtonH} from "../styles/texts";
+import { COLORS, PADDINGS, FONTS } from "../styles/theme";
 
 // const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
@@ -59,7 +66,7 @@ const INTRO_DATA = [
 export const WorkshopTab = ({ navigation }) => {
   const { designIds } = useDesignContext();
   const { userInfo} = useAuthenticationContext();
-  const width = Dimensions.get('window').width;
+  const width = Dimensions.get('window').width - 2*PADDINGS.sm;
   const scrollX = useRef(new Animated.Value(0)).current;
   // const [nailsData, setNailsData] = useState([]); // State to store decomposed nails data
   const [editMode, setEditMode] = useState(false);
@@ -108,7 +115,7 @@ export const WorkshopTab = ({ navigation }) => {
         nailImages: nailImages[designId] || [],
       };
     });
-    setCombinedData(newCombinedData); // Update the statenn
+    setCombinedData(newCombinedData); // Update the state
   }, [designIds, imageUrls, nailImages]);
 
 
@@ -206,7 +213,7 @@ const handleNailSelect = (nailUrl) => {
     setSelectedNails(updatedNails);
   };
   return (
-    <View testID="safe-area-view" style={{flexDirection: 'column',}}>
+    <View testID="safe-area-view" style={{flexDirection: 'column', padding:PADDINGS.sm}}>
       
         <ScrollView
             horizontal
@@ -220,9 +227,9 @@ const handleNailSelect = (nailUrl) => {
             style={{flexDirection:'row'}}
           >
           {combinedData.map((data, index) => (
-          <View key={index} style={[styles.center, { width }]}>
+          <View key={index} style={[styles.center, { width}]}>
             <Image source={{ uri: data.imageUrl }} style={styles.imageStyle} />
-            <View style={{flexDirection: 'row',}}>
+            <View style={{flexDirection: 'row', width:"100%", alignSelf:"center", overflow:"hidden"}}>
               {data.nailImages.map((nailUrl, nIndex) => (
                 <Pressable key={nIndex} onPress={() => handleNailSelect(nailUrl)}>
                   <Image source={{ uri: nailUrl }} style={styles.nailStyle} />
@@ -239,32 +246,43 @@ const handleNailSelect = (nailUrl) => {
           <ExpandingDot
             testID={'expanding-dot'}
             data={INTRO_DATA}
-            expandingDotWidth={30}
             //@ts-ignore
             scrollX={scrollX}
-            inActiveDotOpacity={0.6}
+            expandingDotWidth={20}
+            inactiveDotOpacity={1}
             dotStyle={{
-              width: 10,
-              height: 10,
-              backgroundColor: '#347af0',
-              borderRadius: 5,
+              width: 4 ,
+              height: 4,
+              borderRadius: 2,
               marginHorizontal: 5,
+              backgroundColor: COLORS.gradientSub1,
             }}
             containerStyle={{
               top: -15,
             }}
+            inActiveDotColor={COLORS.white}
           />
-        </View>       
+        </View>
+          
       </View>
-      <Text>My Selection</Text>
-      <Text>Select five nails if you don't like them you can click edit to cancel and replace them!</Text>
-      <TouchableOpacity onPress={toggleEditMode}>
-        <Text>{editMode ? 'Done' : 'Edit'}</Text>
-      </TouchableOpacity>
+      <View style={{flexDirection:"row", paddingTop:PADDINGS.md, paddingBottom:PADDINGS.sm}}>
+          <SubHeader style={{flex:1}}>My Selection</SubHeader>
+          <TouchableOpacity onPress={toggleEditMode} style={{paddingRight:10}}>
+            <MaterialIcons
+                      name={editMode ? 'done' : 'edit'}
+                      color={COLORS.white}
+                      size={FONTS.subHeader}
+                    />
+          </TouchableOpacity>         
+      </View>
+      <P style={{paddingBottom:PADDINGS.md}} $alignLeft={true}>Select five nails if you don't like them you can click edit to cancel and replace them!</P>
+      
+      {/* <TouchableOpacity onPress={toggleEditMode}> */}
+        {/* <ButtonP>{editMode ? 'Done' : 'Edit'}</ButtonP> */}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        style={{flexDirection: 'row'}}
+        style={{flexDirection: 'row', marginBottom: PADDINGS.md}}
       >
         {selectedNails.map((nail, index) => (
           <View key={index} style={styles.selectedNailContainer}>
@@ -277,31 +295,37 @@ const handleNailSelect = (nailUrl) => {
                     onPress={() => handleNailDeletion(index)}
                   >
                     {/* You can use an icon or text for the delete button */}
-                    <Text style={styles.deleteButtonText}>X</Text>
+                    <MaterialIcons
+                      name={"remove-circle"}
+                      color="red"
+                      size={20}
+                    /> 
+
                   </TouchableOpacity>
                 )}
               </View>
             ) : (
-              <View style={styles.nailPlaceholder} />
+              <View style={styles.nailPlaceholder}>
+                <MaterialIcons
+                  name={"add"}
+                  color={COLORS.gradientSub1}
+                  size={40}
+                /> 
+            </View>
             )}
           </View>
         ))}
 
       </ScrollView>
 
-      <View
-        style={{
-          padding: 10,
-          borderRadius: 16,
-          borderWidth: 3,
-          borderColor: "white",
-        }}
-      >
-        <Button
-          title="Start Designing"
-          onPress={() => navigation.navigate(TABs.HAND_DESIGN, { selectedNails })}
-        />
-      </View>
+
+        
+        <ButtonAction style={{width:"50%", alignSelf:"center"}}
+          onPress={() => navigation.navigate(TABs.HAND_DESIGN, { selectedNails })}>
+            <ButtonP>Start Selection</ButtonP>
+        </ButtonAction>
+        
+
     </View>
   );
 }
@@ -322,18 +346,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     // alignContent: 'center',
-    padding: 20,
+    padding: 16,
   },
   nailStyle:{
-    width: 53.2, // Fill the container
-    height: 102.4, // Fill the container
+    width: 35, // Fill the container
+    height: 70, // Fill the container
     resizeMode: 'cover', // This will ensure the image covers the area without stretching
+    marginHorizontal: 3,
   },
   nailPlaceholder: {
     width: 50, // width of the placeholder
     height: 50, // height of the placeholder
-    backgroundColor: '#e0e0e0', // a light grey color for the background
-    borderRadius: 10, // rounded corners
+    backgroundColor: 'transparent', // a light grey color for the background
+    borderColor: COLORS.gradientSub1, 
+    borderWidth: 2, 
+    borderRadius: 25, // rounded corners
     justifyContent: 'center', // center the content inside the placeholder
     alignItems: 'center', // align the content
     marginHorizontal: 5, // horizontal margin for spacing between items
@@ -370,7 +397,7 @@ const styles = StyleSheet.create({
   },
   dotsContainer: {
     // flex: 0.3,
-    justifyContent: 'space-around',
+    // justifyContent: 'space-around',
   },
   dotContainer: {
     justifyContent: 'center',
@@ -394,12 +421,9 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     position: 'absolute',
-    top: 10,
-    right: 10,
-    backgroundColor: 'red',
-    width: 25,
-    height: 25,
-    borderRadius: 12.5,
+    top: -1,
+    right: -1,
+    // backgroundColor: 'red',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -410,6 +434,7 @@ const styles = StyleSheet.create({
   image: {
     width: 53.2, // Fill the container
     height: 102.4, // Fill the container
+    marginHorizontal: 5,
     resizeMode: 'cover', // This will ensure the image covers the area without stretching
   },
 

@@ -5,6 +5,13 @@ import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import axios from "axios";
 import { APIs, BASE_URL, getHeader } from "../utils/API";
 import { TABs } from '../static/Constants';
+
+
+import { ButtonAction, ButtonSelection } from "../styles/buttons";
+import { P, ButtonP, MenuHeader, TitleHeader, SubHeader, ButtonH} from "../styles/texts";
+import { COLORS, PADDINGS, FONTS } from "../styles/theme";
+
+
 const PROMPT = "Can you generate an abstract and artistic short title as well as a short description of how is the design inspired of nail art design with these description: [message]. Please only return the result in the json format: { 'title':  title generated within 10 words, 'description': description generated within 50 words}. Please do not return any other words."
 
 export const DesignPreviewTab = ({ navigation, route }) => {
@@ -235,53 +242,50 @@ export const DesignPreviewTab = ({ navigation, route }) => {
     
         fetchTitle();
       }, [tags]);
-    return (
+      return (
         <View style={{ padding: 20 }}>
           <View style={{
         position: 'absolute',
         top: 20,
         left: 10,
         }}>
-                <TouchableOpacity onPress={onBack}>
-                    <Text style={{fontSize: 20,
-        color: 'blue',}}>{'<'}</Text>
-                </TouchableOpacity>
-            </View>
-            <Button title="Share"
-       onPress={shareDesign}
-        style={{ position: 'absolute', top: 10, right: 10, padding: 10 }}>
-        {/* <Text>ShareHere</Text> */}
-      </Button>
+            <TouchableOpacity onPress={onBack}>
+                <TitleHeader >{'<'}</TitleHeader>
+            </TouchableOpacity>
+        </View>
+        <TitleHeader style={{ color:COLORS.white }}>
+            Share
+        </TitleHeader>
 
         <Image source={{ uri: `data:image/png;base64,${productImage}` }} style={{ width: '100%', height: 400 }} />
-        <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{title}</Text>
-        <Text style={{ marginVertical: 10 }}>
+        <MenuHeader style={{ fontSize: 18, fontWeight: 'bold' }}>{title}</MenuHeader>
+        <P $alignLeft={true} style={{ marginVertical: 10 }}>
           Embrace your exclusive nail design! Add it to your cart now for crafting and share your unique creation with the community by naming it. Let's get your one-of-a-kind nails in production pronto!
-        </Text>
+        </P>
         
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 10 }}>
-          <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{price}</Text>
+          <SubHeader style={{ fontSize: 16, fontWeight: 'bold' }}>{price}</SubHeader>
           
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <TouchableOpacity onPress={() => setQuantity(Math.max(1, quantity - 1))}>
-              <Text style={{ fontSize: 18, marginRight: 10 }}>-</Text>
+            <SubHeader style={{ marginRight: 10 }}>-</SubHeader>
             </TouchableOpacity>
             <TextInput 
-              style={{ borderWidth: 1, width: 50, textAlign: 'center' }} 
+              style={{ borderWidth: 1, width: 50, textAlign: 'center', borderColor:COLORS.white, color:COLORS.white }} 
               keyboardType='numeric'
               onChangeText={(text) => setQuantity(Number(text))}
               value={String(quantity)}
             />
             <TouchableOpacity onPress={() => setQuantity(quantity + 1)}>
-              <Text style={{ fontSize: 18, marginLeft: 10 }}>+</Text>
+              <SubHeader style={{ marginLeft: 10 }}>+</SubHeader>
             </TouchableOpacity>
           </View>
         </View>
-    
-        <TouchableOpacity style={{ backgroundColor: 'blue', padding: 10, alignItems: 'center' }}>
-          <Text style={{ color: 'white', fontSize: 16 }}>Add to Cart</Text>
-        </TouchableOpacity>
+        {/* <ButtonAction onPress={shareDesign}> */}
+        <ButtonAction onPress={shareDesign}>
+          <ButtonH >Share Design</ButtonH>
+        </ButtonAction> 
+
       </View>
     );
   };
-  

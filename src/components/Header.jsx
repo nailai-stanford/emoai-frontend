@@ -29,10 +29,10 @@ export const Header = (props) => {
         background: "transparent",
       }}
     >
-      {goBack && <BackButton {...props} />}
+      {!!goBack && <BackButton {...props} />}
       <Title {...props} />
-      {showButtons && <ButtonGroup {...props} />}
-      {profileIcon && <ProfileIconGroup {...props} />}
+      {!!showButtons && <ButtonGroup {...props} />}
+      {!!profileIcon && <ProfileIconGroup {...props} />}
     </View>
   );
 };

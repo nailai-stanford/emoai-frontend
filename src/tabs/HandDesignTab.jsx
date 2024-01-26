@@ -10,6 +10,10 @@ import { TouchableOpacity } from 'react-native';
 import { TABs } from "../static/Constants";
 import { style } from 'deprecated-react-native-prop-types/DeprecatedViewPropTypes';
 // import Svg, { Path } from 'react-native-svg';
+import { ButtonAction, ButtonSelection } from "../styles/buttons";
+import { P, ButtonP, MenuHeader, TitleHeader, SubHeader, ButtonH} from "../styles/texts";
+import { COLORS, PADDINGS, FONTS } from "../styles/theme";
+
 
 const TOP_BAR = 130;
 const leftHandDropZonePositions = [
@@ -31,6 +35,7 @@ const rightHandDropZonePositions = [
 export default class HandDesignTab extends Component {
   constructor(props) {
     super(props);
+    // const selectedNails = ['../../assets/nail_model.png','../../assets/left_hand_model.png','../../assets/8.jpeg','../../assets/8.jpeg','../../assets/8.jpeg' ];
     const selectedNails = this.props.route.params?.selectedNails || [];
     console.log("selectedNails", selectedNails);
     this.state = {
@@ -103,10 +108,18 @@ export default class HandDesignTab extends Component {
             showsHorizontalScrollIndicator={false} 
             contentContainerStyle={{flexDirection: 'row'}}
         >
-            <Button title="Selected Nails" onPress={() => this.handleNailCategorySelection('selected')} />
-            <Button title="EMO Single Nails" onPress={() => this.handleNailCategorySelection('emoSingle')} />
-            <Button title="EMO Original Nails" onPress={() => this.handleNailCategorySelection('emoOriginal')} />
-            <Button title="Community" onPress={() => this.handleNailCategorySelection('community')} />
+          <ButtonSelection onPress={() => this.handleNailCategorySelection('selected')} $selected={this.state.nailCategory === 'selected'}>
+            <ButtonP>Selected Nails</ButtonP>
+          </ButtonSelection>
+          <ButtonSelection onPress={() => this.handleNailCategorySelection('emoSingle')} $selected={this.state.nailCategory === 'emoSingle'}>
+            <ButtonP>EMO Single Nails</ButtonP>
+          </ButtonSelection>
+          <ButtonSelection onPress={() => this.handleNailCategorySelection('emoOriginal')} $selected={this.state.nailCategory === 'emoOriginal'}>
+            <ButtonP>EMO Original Nails</ButtonP>
+          </ButtonSelection>
+          <ButtonSelection onPress={() => this.handleNailCategorySelection('community')} $selected={this.state.nailCategory === 'community'}>
+            <ButtonP>Community</ButtonP>
+          </ButtonSelection>
         </ScrollView>
     );
 };
@@ -222,34 +235,22 @@ export default class HandDesignTab extends Component {
 
       <View style={styles.container}>
         <View style={styles.switchHandButton}>
-      <Button title={switch_text} onPress={this.switchHand} />
+            <Button title={switch_text} color={COLORS.white} onPress={this.switchHand} />
           </View>
-         <ImageBackground
-         ref={this.backgroundRef}
-        source={handImage}
-        style={styles.background}
-        resizeMode="cover"
-    >
-      {this.renderClickableZones()}
-      
-      {/* <Svg xmlns="http://www.w3.org/2000/svg" width="19" height="36" viewBox="0 0 19 36" fill="none">
-        <Path d="M4.05349 2.01505C2.30322 2.92518 1.00774 4.41449 0.621848 6.49676C-0.632286 13.1848 0.33243 20.2728 0.732099 27.0161C0.801007 28.2709 0.883701 29.5534 1.24203 30.7669C1.97245 33.1663 4.10861 34.7659 6.54797 35.1107C8.29825 35.3589 10.1036 35.0142 11.7575 34.3798C13.2459 33.8007 14.6516 33.0008 15.8093 31.8839C18.9653 28.8225 19.0755 23.8444 18.9791 19.735C18.9101 16.522 18.8137 13.2952 18.7586 10.0821C18.7172 7.57236 18.4829 4.70407 16.5397 2.88381C13.9212 0.415431 9.40078 0.456801 6.10696 1.2704C5.37653 1.44967 4.68745 1.71168 4.05349 2.04264V2.01505Z" fill="black"/>
-      </Svg> */}
-      {/* <Svg height="50" width="50">
-        <Circle cx="25" cy="25" r="20" stroke="purple" strokeWidth="2.5" fill="yellow" />
-      </Svg> */}
+         <View style={styles.background}
+          >
+          <Image source={handImage} ref={this.backgroundRef} style={styles.handImage} resizeMode="cover" />
 
-      {/* SVG 2: Rectangle */}
-      {/* <Svg height="50" width="50">
-        <Rect x="5" y="5" width="40" height="40" stroke="blue" strokeWidth="2" fill="green" />
-      </Svg> */}
-      {/* <View>{this.renderDropZones()}</View> */}
-      </ImageBackground>
-      <Text style={styles.dragNailsText}>Drag Nails from Collections</Text>
-      {this.renderNailCategoryButtons()}
-        {this.renderNails()}
-        
-        <Button title='Preview' onPress={this.navigateToPreview}/>
+          {this.renderClickableZones()}
+      
+          </View>
+        <View style={{flexDirection:"column", position:"absolute", bottom:90}}>
+          <View style={{position:"absolute", width:"100%",backgroundColor:COLORS.dark, opacity:0.9, height:180,bottom:0}}></View>
+          <SubHeader style={{paddingHorizontal: PADDINGS.sm}}>Drag Nails from Collections</SubHeader>
+          {this.renderNailCategoryButtons()}
+          {this.renderNails()}
+        </View>
+        <ButtonAction onPress={this.navigateToPreview} style={{marginVertical:PADDINGS.md, position:"absolute", bottom:20, width:"60%"}}><ButtonH>Preview</ButtonH></ButtonAction>
       </View>
     );
   }
@@ -264,10 +265,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  handImage: {
+    position: 'absolute',
+    top: -10,
+    width: '100%',
+    height: 500,
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   dropZoneContainer: {
     flexDirection: 'row',
@@ -278,6 +285,7 @@ const styles = StyleSheet.create({
   clickableZone: {
     position: 'absolute',
     borderWidth: 1, // Set to 0 for invisibility
+    borderColor: COLORS.white, 
     // backgroundColor: 'transparent', // Uncomment for complete invisibility
     // ... (other styles as needed)
   },
@@ -300,12 +308,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     alignItems: 'center',
     width: '100%',
-    position: 'absolute',
-    bottom: 0,
+    paddingBottom: 30,
   },
   nailImage: {
     width: 60,
     height: 60,
+    borderWidth: 2,
+    border: 'red',
     // Add any additional styles for the image if necessary
   },
   redBox_1: {
@@ -352,14 +361,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     borderWidth: 2,
     borderColor: 'red',
-  },
-  dragNailsText: {
-    marginTop: 600, // Adjust as necessary for spacing
-    fontSize: 16, 
-    textAlign: 'left',
-    width: '100%', // Adjust as necessary for font size
-    // Add any additional styling you need
-},
+  }
 });
 export { HandDesignTab };
 
