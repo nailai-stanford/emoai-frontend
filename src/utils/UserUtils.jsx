@@ -22,7 +22,7 @@ export const onPressLogout = async () => {
 };
 
 export const setUserInfoInStore = async (UserInfo) => {
-  await SecureStore.setItemAsync(
+  await AsyncStorage.setItemAsync(
     SecureStoreKeys.UserInfo,
     JSON.stringify(UserInfo)
   );
