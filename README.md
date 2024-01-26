@@ -36,5 +36,5 @@ note that this process might take a while when first time running
 
 1. Run `npm start` under repo root directory
 
-2. Open a new terminal at repo root directory, run `npx react-native run-ios --simulator="iPhone 12`
+2. Open a new terminal at repo root directory, run `npx react-native run-ios --simulator="iPhone 12"`
 
