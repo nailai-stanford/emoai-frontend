@@ -12,7 +12,7 @@ export const APIs = {
   PRODUCT_IMAGE_GENERATION: `${BASE_URL}/api/product_image_generation/`,
   MESSAGE: `${BASE_URL}/api/message/`,
   DESIGN_SETS: `${BASE_URL}/api/design_sets/`,
-  CHECKOUT: `$(BASE_URL, "api", "carts", "/")`,
+  PAYMENT: `${BASE_URL}/api/payment/`,
 };
 
 export const getHeader = (idToken = "") => {
