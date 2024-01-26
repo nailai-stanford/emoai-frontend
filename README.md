@@ -2,6 +2,8 @@
 
 ## installation
 
+reference link: https://reactnative.dev/docs/environment-setup?package-manager=npm
+
 may need in first time installation:
 
 `brew install node` -- don't need this if already installed node
@@ -31,4 +33,9 @@ installation recources from react-native: [link](https://reactnative.dev/docs/en
 `npm run ios`
 
 note that this process might take a while when first time running
+
+## run on specified simulator
+
+`npm start` under repo root directory
+open a new terminal at repo root directory, run `npx react-native run-ios --simulator="iPhone 12`
 
