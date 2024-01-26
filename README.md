@@ -1,1 +1,27 @@
 # emoai-frontend
+
+## installation
+
+may need in first time installation:
+
+`brew install node` -- don't need this if already installed node
+
+`brew install watchman`
+
+in root folder:
+
+`npm install`
+
+in ios folder:
+
+`pod install`
+
+check development environment:
+
+`npx react-native doctor`
+
+installation recources from react-native: [link](https://reactnative.dev/docs/environment-setup?guide=native), note that first time installation might take up to an hour
+
+## run app
+`npm run ios`
+
