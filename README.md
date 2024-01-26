@@ -12,6 +12,11 @@ in root folder:
 
 `npm install`
 
+in Xcode:
+
+make sure logged in
+
+
 in ios folder:
 
 `pod install`
@@ -24,4 +29,6 @@ installation recources from react-native: [link](https://reactnative.dev/docs/en
 
 ## run app
 `npm run ios`
+
+note that this process might take a while when first time running
 
