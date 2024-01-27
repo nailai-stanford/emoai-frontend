@@ -62,10 +62,18 @@ export const PaymentTab = ({route, navigation}) => {
   };
 
   const getPaymentSheet = async total => {
+    const sanitizedAddr = {...addrDetails};
+    delete sanitizedAddr['target'];
+    delete sanitizedAddr['isCheckboxSelected'];
+    let addressClean = {...sanitizedAddr['address']};
+    delete sanitizedAddr['address'];
+    let zip_code = addressClean['postalCode'];
+    delete addressClean['postalCode'];
+    addressClean['postal_code'] = zip_code;
+    sanitizedAddr['address'] = addressClean;
     const res = await axios.post(
       `${APIs.PAYMENT}payment-sheet`,
-      // note that shipping should be a dictionary tho
-      {amount: total, name: name, shipping: addrDetails, phone: phone},
+      {amount: total, name: name, shipping: sanitizedAddr, phone: phone},
       {headers},
     );
     const {paymentIntent, ephemeralKey, customer} = res.data;
@@ -88,7 +96,6 @@ export const PaymentTab = ({route, navigation}) => {
     const {error1} = await presentPaymentSheet();
     if (error1) {
       Alert.alert(`Error code: ${error1.code}`, error1.message);
-      axios.post(APIs);
     } else {
       Alert.alert('Success', 'Your order is confirmed!');
       route.params.products.forEach(e => {
