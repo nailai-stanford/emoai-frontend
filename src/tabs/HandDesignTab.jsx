@@ -16,17 +16,18 @@ import { COLORS, PADDINGS, FONTS } from "../styles/theme";
 import { LEFTHAND_NAILS } from '../styles/nails';
 
 import MaskedView from "@react-native-masked-view/masked-view";
+import { width } from 'deprecated-react-native-prop-types/DeprecatedImagePropType';
 
 
 
 
 const TOP_BAR = 130;
 const leftHandDropZonePositions = [
-  { top: 115, left: 3, width: 60, height: 60 },
-  { top: 25, left: 75, width: 60, height: 60 },
-  { top: 5, left: 155, width: 60, height: 60 },
-  { top: 20, left: 270, width: 60, height: 60 },
-  { top: 210, left: 370, width: 60, height: 60 },
+  { top: 111, left: 20, width: 60, height: 60 },
+  { top: 38, left: 80, width: 60, height: 60 },
+  { top: 3, left: 148, width: 60, height: 60 },
+  { top: 16, left: 230, width: 60, height: 60 },
+  { top: 165, left: 308, width: 60, height: 60 },
 ];
 
 const rightHandDropZonePositions = [
@@ -50,7 +51,7 @@ export default class HandDesignTab extends Component {
       nails: selectedNails.map(() => new Animated.ValueXY()),
       selectedNails: selectedNails,
       droppedZone: null,
-      leftHandModel: require('../../assets/left_hand_model.png'),
+      leftHandModel: require('../../assets/workshop/hand_left.png'),
       rightHandModel: require('../../assets/right_hand_model.png'),
       leftHandNails: Array(5).fill(''),
       rightHandNails: Array(5).fill(''),
@@ -258,7 +259,7 @@ export default class HandDesignTab extends Component {
           </View>
          <View style={styles.background}
           >
-          <Image source={handImage} ref={this.backgroundRef} style={styles.handImage} resizeMode="cover" />
+          <Image source={handImage} ref={this.backgroundRef} style={styles.handImage} />
 
           {this.renderClickableZones()}
       
@@ -286,9 +287,10 @@ const styles = StyleSheet.create({
   },
   handImage: {
     position: 'absolute',
-    top: -10,
-    width: '100%',
-    height: 500,
+    top: -60,
+    width: "100%",
+    height: 700,
+
   },
   container: {
     flex: 1,
