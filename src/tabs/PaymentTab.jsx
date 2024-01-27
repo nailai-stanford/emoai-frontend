@@ -11,6 +11,7 @@ import {ButtonAction, ButtonSelection} from '../styles/buttons';
 import {handleError} from '../utils/Common';
 import {TABs} from '../static/Constants';
 import {clearCart} from '../utils/UserUtils';
+import {isAwaitKeyword} from 'typescript';
 
 export const PaymentTab = ({route, navigation}) => {
   const [addrVisible, setAddrVisible] = useState(false);
@@ -61,41 +62,11 @@ export const PaymentTab = ({route, navigation}) => {
     );
   };
 
-  const getPaymentSheet = async total => {
-    const sanitizedAddr = {...addrDetails};
-    delete sanitizedAddr['target'];
-    delete sanitizedAddr['isCheckboxSelected'];
-    let addressClean = {...sanitizedAddr['address']};
-    delete sanitizedAddr['address'];
-    let zip_code = addressClean['postalCode'];
-    delete addressClean['postalCode'];
-    addressClean['postal_code'] = zip_code;
-    sanitizedAddr['address'] = addressClean;
-    const res = await axios.post(
-      `${APIs.PAYMENT}payment-sheet`,
-      {amount: total, name: name, shipping: sanitizedAddr, phone: phone},
-      {headers},
-    );
-    const {paymentIntent, ephemeralKey, customer} = res.data;
-    const {error} = await initPaymentSheet({
-      merchantDisplayName: 'EMOAI, Inc.',
-      customerId: customer,
-      customerEphemeralKeySecret: ephemeralKey,
-      paymentIntentClientSecret: paymentIntent,
-      allowsDelayedPaymentMethods: false,
-      defaultBillingDetails: {
-        name: name,
-        country: country,
-        postalCode: zip,
-      },
-      defaultShippingDetails: addrDetails,
-    });
-    if (!error) {
-      setLoading(true);
-    }
-    const {error1} = await presentPaymentSheet();
-    if (error1) {
-      Alert.alert(`Error code: ${error1.code}`, error1.message);
+  const showPaymentSheet = async () => {
+    const {error} = await presentPaymentSheet();
+
+    if (error) {
+      Alert.alert(`Error code: ${error.code}`, error.message);
     } else {
       Alert.alert('Success', 'Your order is confirmed!');
       route.params.products.forEach(e => {
@@ -119,6 +90,42 @@ export const PaymentTab = ({route, navigation}) => {
       });
     }
   };
+
+  const getPaymentSheet = async total => {
+    const sanitizedAddr = {...addrDetails};
+    delete sanitizedAddr['target'];
+    delete sanitizedAddr['isCheckboxSelected'];
+    let addressClean = {...sanitizedAddr['address']};
+    delete sanitizedAddr['address'];
+    let zip_code = addressClean['postalCode'];
+    delete addressClean['postalCode'];
+    addressClean['postal_code'] = zip_code;
+    sanitizedAddr['address'] = addressClean;
+    const res = await axios.post(
+      `${APIs.PAYMENT}payment-sheet`,
+      {amount: total, name: name, shipping: sanitizedAddr, phone: phone},
+      {headers},
+    );
+    const {paymentIntent, ephemeralKey, customer} = res.data;
+    let {error} = await initPaymentSheet({
+      merchantDisplayName: 'EMOAI, Inc.',
+      customerId: customer,
+      customerEphemeralKeySecret: ephemeralKey,
+      paymentIntentClientSecret: paymentIntent,
+      allowsDelayedPaymentMethods: false,
+      defaultBillingDetails: {
+        name: name,
+        country: country,
+        postalCode: zip,
+      },
+      defaultShippingDetails: addrDetails,
+    });
+    if (!error) {
+      setLoading(true);
+    }
+    showPaymentSheet();
+  };
+
   //  Stripe UI guide:
   // https://stripe.com/docs/elements/appearance-api?platform=react-native
   return (
@@ -168,14 +175,18 @@ export const PaymentTab = ({route, navigation}) => {
             setAddrDetails(addressDetails);
           }}
           onError={error => {
-            Alert.alert('There was an error.', 'Check the logs for details.');
             setAddressSheetVisible(false);
           }}
         />
         <ButtonAction
-          //   disabled={!loading}
           onPress={() => {
-            getPaymentSheet(route.params.total);
+            if (name && country && state && city && zip && phone && line1) {
+              getPaymentSheet(route.params.total);
+            } else {
+              Alert.alert(
+                'Make sure you have complete shipping address filled out!',
+              );
+            }
           }}>
           <ButtonP>Pay Now</ButtonP>
         </ButtonAction>
