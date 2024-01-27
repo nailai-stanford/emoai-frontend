@@ -21,6 +21,7 @@
     "@react-navigation/native-stack": "^6.9.17",
     "@rneui/base": "^4.0.0-rc.7",
     "@rneui/themed": "^4.0.0-rc.8",
+    "@stripe/stripe-react-native": "^0.35.1",
     "axios": "^1.6.2",
     "deprecated-react-native-prop-types": "^5.0.0",
     "react": "18.2.0",
