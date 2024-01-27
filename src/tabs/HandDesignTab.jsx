@@ -14,6 +14,8 @@ import { ButtonAction, ButtonSelection } from "../styles/buttons";
 import { P, ButtonP, MenuHeader, TitleHeader, SubHeader, ButtonH} from "../styles/texts";
 import { COLORS, PADDINGS, FONTS } from "../styles/theme";
 import { LEFTHAND_NAILS } from '../styles/nails';
+import { BlurView } from "@react-native-community/blur";
+
 
 import MaskedView from "@react-native-masked-view/masked-view";
 import { width } from 'deprecated-react-native-prop-types/DeprecatedImagePropType';
@@ -265,8 +267,14 @@ export default class HandDesignTab extends Component {
           {this.renderClickableZones()}
       
           </View>
-        <View style={{flexDirection:"column", position:"absolute", bottom:90}}>
-          <View style={{position:"absolute", width:"100%",backgroundColor:COLORS.dark, opacity:0.9, height:180,bottom:0}}></View>
+        <View style={{flexDirection:"column", position:"absolute", bottom:110}}>
+          {/* <View style={{position:"absolute", width:"100%",backgroundColor:COLORS.dark, opacity:0.9, height:180,bottom:0}}></View> */}
+          <BlurView
+            blurType="dark"
+            blurAmount={30}
+            style={{height:180, width:"100%", position:"absolute", bottom:0}}
+          />
+            
           <SubHeader style={{paddingHorizontal: PADDINGS.sm}}>Drag Nails from Collections</SubHeader>
           {this.renderNailCategoryButtons()}
           {this.renderNails()}

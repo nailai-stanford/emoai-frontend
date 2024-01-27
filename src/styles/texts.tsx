@@ -65,9 +65,9 @@ export const GradientMenuHeader = (props) => {
     return (
       <MaskedView style={props.style} maskElement={<MenuHeader {...props} />}>
         <LinearGradient style={props.style}
-          colors={COLORS.gradient1}
-          useAngle={true} angle={45} angleCenter={{x:0.5,y:0.5}}
-          locations={[0.14,0.49,0.83]}
+          colors={COLORS.gradient2}
+          start={{x: 0, y: 0}} end={{x: 1, y: 0}}
+          locations={[0.76,0.2]}
         >
           <MenuHeader {...props} style={[props.style, { opacity: 0 }]} />
         </LinearGradient>

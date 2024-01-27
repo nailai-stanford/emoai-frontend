@@ -13,6 +13,7 @@ export const COLORS = {
     white: '#FFFFFF',
     grey: '#9FA09B',
     gradient1:['#B419EA', '#432FE4', '#06A4C7'],
+    gradient2: ['#D55CFF','#2ED9FF'],
     gradientSub1: '#B419EA',
     gradientSub2: '#432FE4',
     gradientSub3: '#06A4C7',
