@@ -11,7 +11,6 @@ export const getUserInfoFromStore = async () => {
   if (userInfo) {
     userInfo = JSON.parse(userInfo);
     // We should make sure that this console.log doesn't get called very frequently
-    console.log('getUserInfoFromStore', userInfo);
     return userInfo;
   }
   return null;

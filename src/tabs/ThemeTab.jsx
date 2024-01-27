@@ -27,7 +27,6 @@ const Tab = ({ content, selected, setSelected, setSubList }) => {
     }, [selected])
     
     let currSelected = selected == content ? true : false
-        // console.log(currSelected)
         return <ButtonSelection $selected={currSelected} onPress={()=>{setSelected(content);}}>
                     <ButtonP>{content}</ButtonP>
                 </ButtonSelection>
@@ -35,7 +34,6 @@ const Tab = ({ content, selected, setSelected, setSubList }) => {
 
 const SubElement = ({content, selected, setSelected}) => {
     let currSelected = selected == content ? true : false
-    // console.log(currSelected)
     return <ButtonSelection $selected={currSelected} onPress={()=>setSelected(content)}>
                 <ButtonP>{content.split('-')[1]}</ButtonP>
             </ButtonSelection>

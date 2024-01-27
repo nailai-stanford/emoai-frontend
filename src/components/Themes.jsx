@@ -104,7 +104,6 @@ const ThemeCard = ({item}) => {
       <View style={{flexDirection: "row"}}>
       {item['category'] &&
         item['category'].map((e, idx) => {
-          console.log('item is', e);
           return <ThemePreview key={idx} item={e} />;
         })}
       </View>
