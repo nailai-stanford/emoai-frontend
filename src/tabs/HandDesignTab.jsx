@@ -13,6 +13,11 @@ import { style } from 'deprecated-react-native-prop-types/DeprecatedViewPropType
 import { ButtonAction, ButtonSelection } from "../styles/buttons";
 import { P, ButtonP, MenuHeader, TitleHeader, SubHeader, ButtonH} from "../styles/texts";
 import { COLORS, PADDINGS, FONTS } from "../styles/theme";
+import { LEFTHAND_NAILS } from '../styles/nails';
+
+import MaskedView from "@react-native-masked-view/masked-view";
+
+
 
 
 const TOP_BAR = 130;
@@ -31,6 +36,8 @@ const rightHandDropZonePositions = [
   { top: 50, left: 300, width: 60, height: 60 },
   { top: 150, left: 370, width: 60, height: 60 },
 ];
+
+const leftHandMasks = [<LEFTHAND_NAILS.left5/>, <LEFTHAND_NAILS.left4/>, <LEFTHAND_NAILS.left3/>, <LEFTHAND_NAILS.left2/>, <LEFTHAND_NAILS.left1/>];
 
 export default class HandDesignTab extends Component {
   constructor(props) {
@@ -131,9 +138,23 @@ export default class HandDesignTab extends Component {
     console.log("nail render" + nailListRender);
     
     return dropZonePositions.map((position, index) => (
+     <MaskedView
+     style={[styles.clickableZone, position]}
+      maskElement={
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'transparent',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          {/* Define the mask shape */}
+          {leftHandMasks[index]}
+          </View>}>
       <TouchableOpacity
         key={index}
-        style={[styles.clickableZone, position]}
+        // style={[styles.clickableZone, position]}
         // onPress={() => this.props.navigation.navigate(TABs.NAIL_DESIGN)}
         onPress={() => {
           const selectedNailData = nailListRender[index];
@@ -147,9 +168,11 @@ export default class HandDesignTab extends Component {
         }}
         activeOpacity={1}
       >
+        {nailListRender[index] ? <Image source={{uri:nailListRender[index]}} style={styles.nailImage} ></Image> : <View style={[styles.nailImage, {backgroundColor:COLORS.dark}]}/> }
         <Image source={{uri:nailListRender[index]}} style={styles.nailImage} ></Image>
 
       </TouchableOpacity>
+      </MaskedView>
     ));
   }
 
@@ -179,11 +202,7 @@ export default class HandDesignTab extends Component {
   renderNails() {
 
     return (
-    //   <ScrollView 
-    //   horizontal 
-    //   showsHorizontalScrollIndicator={true} 
-    //   contentContainerStyle={{width: '100%'}}
-    // >
+
       <View style={styles.nailContainer}>
         {this.state.selectedNails.map((image, index) => {
           if (!image || image.trim() === '') {
@@ -207,7 +226,7 @@ export default class HandDesignTab extends Component {
           );
         })}
       </View>
-      // </ScrollView>
+
     );
   }
 
@@ -293,7 +312,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     // backgroundColor: 'lightgrey',
     // borderRadius: 10,
-    borderWidth: 2,
+    borderWidth: 4,
     borderColor: 'red',
     // add any additional styling for the drop zones
   },
@@ -314,7 +333,6 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderWidth: 2,
-    border: 'red',
     // Add any additional styles for the image if necessary
   },
   redBox_1: {

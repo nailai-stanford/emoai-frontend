@@ -7,6 +7,7 @@ import Profile from "../../assets/icons/profile.svg";
 import Workshop from "../../assets/icons/workshop.svg";
 import AIchat from "../../assets/icons/AIchat.svg";
 
+import Send from "../../assets/icons/send.svg";
 
 export const TAB_BAR_ICONS = {
     home: Home,
@@ -18,3 +19,7 @@ export const TAB_BAR_ICONS = {
     workshop: Workshop,
 }
 
+
+export const ACTION_ICONS = {
+    send: Send,
+}
