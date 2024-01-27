@@ -31,14 +31,15 @@ const leftHandDropZonePositions = [
 ];
 
 const rightHandDropZonePositions = [
-  { top: 210, left: 3, width: 60, height: 60 },
-  { top: 35, left: 90, width: 60, height: 60 },
-  { top: 5, left: 200, width: 60, height: 60 },
-  { top: 50, left: 300, width: 60, height: 60 },
-  { top: 150, left: 370, width: 60, height: 60 },
+  { top: 165, left: 25, width: 60, height: 60 },
+  { top: 15, left: 103, width: 60, height: 60 },
+  { top: 2, left: 185, width: 60, height: 60 },
+  { top: 38, left: 253, width: 60, height: 60 },
+  { top: 110, left: 313, width: 60, height: 60 },
 ];
 
 const leftHandMasks = [<LEFTHAND_NAILS.left5/>, <LEFTHAND_NAILS.left4/>, <LEFTHAND_NAILS.left3/>, <LEFTHAND_NAILS.left2/>, <LEFTHAND_NAILS.left1/>];
+const rightHandMasks = [<LEFTHAND_NAILS.left1 style={{  transform:[{ scaleX: -1 }]}}/>, <LEFTHAND_NAILS.left2 style={{ transform:[{ scaleX: -1 }]}}/>, <LEFTHAND_NAILS.left3 style={{ transform:[{ scaleX: -1 }] }}/>, <LEFTHAND_NAILS.left4 style={{ transform:[{ scaleX: -1 }] }}/>, <LEFTHAND_NAILS.left5 style={{ transform:[{ scaleX: -1 }] }}/>]
 
 export default class HandDesignTab extends Component {
   constructor(props) {
@@ -47,12 +48,12 @@ export default class HandDesignTab extends Component {
     const selectedNails = this.props.route.params?.selectedNails || [];
     console.log("selectedNails", selectedNails);
     this.state = {
-      currentHand: 'left', 
+      currentHand: 'right', 
       nails: selectedNails.map(() => new Animated.ValueXY()),
       selectedNails: selectedNails,
       droppedZone: null,
       leftHandModel: require('../../assets/workshop/hand_left.png'),
-      rightHandModel: require('../../assets/right_hand_model.png'),
+      rightHandModel: require('../../assets/workshop/hand_right.png'),
       leftHandNails: Array(5).fill(''),
       rightHandNails: Array(5).fill(''),
       // nailRenderList: Array
@@ -151,7 +152,7 @@ export default class HandDesignTab extends Component {
           }}
         >
           {/* Define the mask shape */}
-          {leftHandMasks[index]}
+          {this.state.currentHand === 'left' ? leftHandMasks[index] : rightHandMasks[index]}
           </View>}>
       <TouchableOpacity
         key={index}
