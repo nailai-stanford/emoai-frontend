@@ -40,6 +40,7 @@ export default class HandDesignTab extends Component {
     console.log("selectedNails", selectedNails);
     this.state = {
       currentHand: 'left', 
+      nailCategory: 'selected',
       nails: selectedNails.map(() => new Animated.ValueXY()),
       selectedNails: selectedNails,
       droppedZone: null,
@@ -47,16 +48,22 @@ export default class HandDesignTab extends Component {
       rightHandModel: require('../../assets/right_hand_model.png'),
       leftHandNails: Array(5).fill(''),
       rightHandNails: Array(5).fill(''),
+      originalCollect: [], // Add a new state property to store the fetched data
       // nailRenderList: Array
     };
 
   }
-  
+
+  handleNailCategorySelection = (category) => {
+    this.setState({ nailCategory: category });
+  };
+
   switchHand = () => {
     this.setState(prevState => ({
       currentHand: prevState.currentHand === 'left' ? 'right' : 'left'
     }));
   }
+
   UNSAFE_componentWillMount() {
     this.panResponders = this.state.nails.map((_, index) => {
       return PanResponder.create({
@@ -89,6 +96,28 @@ export default class HandDesignTab extends Component {
       });
     });
   }
+
+
+  componentDidMount() {
+    this.getOriginalCollect();
+  }
+
+  getOriginalCollect = async () => {
+    try {
+      // Assuming APIS and headers are defined somewhere in your code
+      const response = await axios.get(
+        path.join(APIS.GET_PRODUCTS, "collections/original single nails", "/"),
+        { headers }
+      );
+
+      console.log("query single nails", response.data.products);
+      let copy = JSON.parse(JSON.stringify(response.data.products));
+      this.setState({ originalCollect: copy });
+    } catch (e) {
+      console.error(e);
+      this.setState({ originalCollect: [] }); // Set to empty array in case of error
+    }
+  };
 
   updateNailImage = (hand, index, newImage) => {
     if (hand === 'left') {
@@ -177,7 +206,13 @@ export default class HandDesignTab extends Component {
   }
 
   renderNails() {
+    let nailsToRender = [];
 
+    if (this.state.nailCategory === 'emoSingle') {
+      nailsToRender = this.state.originalCollect;
+    } else {
+      nailsToRender = this.state.selectedNails;
+    }
     return (
     //   <ScrollView 
     //   horizontal 
@@ -185,7 +220,7 @@ export default class HandDesignTab extends Component {
     //   contentContainerStyle={{width: '100%'}}
     // >
       <View style={styles.nailContainer}>
-        {this.state.selectedNails.map((image, index) => {
+        {nailsToRender.map((image, index) => {
           if (!image || image.trim() === '') {
             // If the image URI is empty or undefined, do not render this item
             return null;
