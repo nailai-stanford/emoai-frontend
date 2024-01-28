@@ -79,6 +79,7 @@ export const WorkshopTab = ({ navigation, route }) => {
   const [nailImages, setNailImages] = useState([]);// nail urls
   const [combinedData, setCombinedData] = useState([]); // State for combined image data
   const [selectedNails, setSelectedNails] = useState(new Array(10).fill(''));
+  const [originalCollect, setOriginalCollect] = useState([]);
   const { userTags, key } = route.params;
   // console.log(userTags);
   // console.log("workshop: route.params", route.params.userTags);
@@ -162,7 +163,28 @@ export const WorkshopTab = ({ navigation, route }) => {
     });
   };
 
+  const getOriginalCollect = async () => {
 
+    const { idToken } = userInfo;
+    const headers = getHeader(idToken);
+    try {
+      const response = await axios.get(
+        `${APIs.GET_PRODUCTS}collections/original_single_nails/`,
+        { headers }
+      );
+      // console.log("query collections single nails", response.data.products);
+      // let copy = JSON.parse(JSON.stringify(response.data.products));
+      const productImages = response.data.products.map(product => product.image.src);
+      console.log("product Images:", productImages);
+      setOriginalCollect(productImages);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
+    getOriginalCollect();
+  }, []); // Empty dependency array means this runs once on mount
 
   const fetchNailData = async (nailId) => {
     try {
@@ -224,6 +246,9 @@ const handleNailSelect = (nailUrl) => {
   });
   setSelectedNails(updatedNails);
 };
+useEffect(() => {
+  console.log('originalCollect has changed:', originalCollect);
+}, [originalCollect]);
 
   const handleNailDeletion = (index) => {
     const updatedNails = [...selectedNails];
@@ -354,7 +379,7 @@ const handleNailSelect = (nailUrl) => {
 
         
         <ButtonAction style={{width:"50%", alignSelf:"center"}}
-          onPress={() => navigation.navigate(TABs.HAND_DESIGN, { selectedNails })}>
+          onPress={() => navigation.navigate(TABs.HAND_DESIGN, {selectedNails, originalCollect })}>
             <ButtonP>Start Selection</ButtonP>
         </ButtonAction>
         
