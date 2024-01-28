@@ -6,7 +6,6 @@ import { getHeader, APIs } from "../utils/API";
 
  
 export const CollectionTab = ({ route }) => {
-    console.log("collection tab", route.params)
     const [categoryItems, setCategoryItems] = useState([])
 
     useEffect(() => {

@@ -61,9 +61,7 @@ export const ProfileTab = ({ onSignout }) => {
         {headers}
       ).then(
         res => {
-          // console.log("query single nails",res.data.products)
           let copy = JSON.parse(JSON.stringify(res.data.products))
-          console.log("get product, ", copy)
           setSingleNail(copy)
           }
       ).catch(e => console.log(e))
