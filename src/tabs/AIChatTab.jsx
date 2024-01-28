@@ -354,7 +354,7 @@ export const AIChatTab = ({ navigation }) => {
           <ChatButton key={index} title={option}
             onPress={() =>  handlePotentialMultipleSelection(option) } 
             selection={multipleInputs.find(e => e == option)?true:false}
-             />
+           />
         )
       })}
       
@@ -368,13 +368,14 @@ export const AIChatTab = ({ navigation }) => {
         style={{flex:1, color:COLORS.white}}/>
         <TouchableOpacity style={{ alignSelf: "flex-start", flex: 0.1 }}
              onPress={() => handlePotentialMultipleChoiceSend(userInput)}>
-          <MaterialCommunityIcons
+       <Text>send</Text>
+          {/* <MaterialCommunityIcons
             name="send"
             size={iconSize+3}
             color={COLORS.grey}
             transformOrigin= 'center'
             transform={[{ rotate: '-90deg' }]}
-            />
+            /> */}
         </TouchableOpacity>
     </InputView>
 

@@ -6,13 +6,14 @@ import { useDesignContext } from '../providers/DesignProvider';
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import axios from "axios";
 import { APIs, BASE_URL, getHeader } from "../utils/API";
+import { convertCompilerOptionsFromJson } from 'typescript';
 
 export const LoadTab = ({ navigation, route }) => {
   console.log('LoadTab received params:', route.params.userTags);
   const [progress, setProgress] = useState(0);
   const { userInfo} = useAuthenticationContext();
   const { addDesignIds } = useDesignContext();
-  const { userTags } = route.params.userTags;
+  // const { userTags } = route.params;
 
 const generateImage = async (userPreferences) => {
     const prompt = `nails art with hand, round nail shape, short nails, ${userPreferences.THEME} theme, ${userPreferences.COLOR} tone, ${userPreferences.BRAND}, ${userPreferences.ELEMENT}, low contrast, high saturation, original design, ${userPreferences.TEXTURE} texture, minimalism, matte finish, oil painting brush texture, 8K`;
@@ -82,7 +83,6 @@ async function handleSaveImages(imageUrls, userPreferences, g_prompt) {
 }
   const decomposeNails = async (img_url) => {
     try {
-      console.log("decomposeNails:", `${BASE_URL}/api/decompose-single-nails/`);
       const response = await fetch(`${BASE_URL}/api/decompose-single-nails/`, {
         method: 'POST',
         headers: {
@@ -102,8 +102,8 @@ async function handleSaveImages(imageUrls, userPreferences, g_prompt) {
   };
 
   async function handleSingleNailSave(nailData, designIds) {
-    console.log(nailData);
-    console.log(designIds);
+    // console.log(nailData);
+    // console.log(designIds);
     try {
         const allNailDesigns = nailData.flatMap((images, index) =>
             images.map(image => ({
@@ -138,10 +138,11 @@ useEffect(() => {
     // Immediately-invoked async function
     (async () => {
       await generateImage(route.params.userTags); // Wait for generateImage to complete
-      navigation.navigate(TABs.WORKSHOP); // Then navigate to the Workshop tab
+      navigation.navigate(TABs.WORKSHOP, {userTags: route.params.userTags, key: new Date().getTime().toString()}); // Then navigate to the Workshop tab
+      // console.log("passed from load:", route.params.userTags);
     })();
     
-  }, []);
+  }, [route]);
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
