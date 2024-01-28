@@ -223,7 +223,6 @@ const Creator = ({ user }) => {
 
 export const ProductTab = ({ route, navigation }) => {
   const item = route.params.product
-  console.log("product tab", item)
   return (
         <View style={styles.container}>
          <TouchableOpacity>
