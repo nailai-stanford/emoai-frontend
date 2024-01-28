@@ -281,22 +281,25 @@ updateNails = (nailImages) => {
 
   renderNails = () => {
     const nailsToRender = this.state.nailCategory === 'emoSingle' ? this.state.originalCollect : this.state.selectedNails;
-    return this.state.nails.map((nail, index) => {
-        const panStyle = { transform: nail.getTranslateTransform() };
-        const imageUri = nailsToRender[index];
-        if (!this.panResponders[index]) {
-          console.log(this.panResponders);
-          return null;
-      }
-      console.log("this.panResponders", this.panResponders);
-        return (
-          <View style={{flexDirection:'row'}}>
-            <Animated.View key={index} {...this.panResponders[index].panHandlers} >
-                <Image source={{ uri: imageUri }} style={styles.nailImage} />
-            </Animated.View>
-          </View>
-        );
-    });
+    return (
+      <View style={styles.nailContainer}>
+          {this.state.nails.map((nail, index) => {
+              const panStyle = { transform: nail.getTranslateTransform() };
+              const imageUri = nailsToRender[index];
+
+              if (!this.panResponders[index]) {
+                  return null;
+              }
+
+              return (
+                  <Animated.View key={index} {...this.panResponders[index].panHandlers} style={[panStyle]}>
+                      <Image source={{ uri: imageUri }} style={styles.nailImage} />
+                  </Animated.View>
+              );
+          })}
+      </View>
+  );
+
 };
   renderDropZones() {
     const dropZonePositions = this.state.currentHand === 'left' ? leftHandDropZonePositions : rightHandDropZonePositions;
