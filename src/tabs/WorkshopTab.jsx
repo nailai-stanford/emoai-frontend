@@ -36,6 +36,9 @@ import { COLORS, PADDINGS, FONTS } from "../styles/theme";
 
 // const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
+const TEST_IMAGE_URL = {0:'https://cdn.shopify.com/s/files/1/0699/2750/1847/products/img-m1GOvvVr6mStTyrE7X2z6HW9.png?v=1706295416'};
+const TEST_NAIL_URL = ['https://cdn.shopify.com/s/files/1/0699/2750/1847/products/img-m1GOvvVr6mStTyrE7X2z6HW9.png?v=1706295416','https://cdn.shopify.com/s/files/1/0699/2750/1847/products/img-m1GOvvVr6mStTyrE7X2z6HW9.png?v=1706295416','https://cdn.shopify.com/s/files/1/0699/2750/1847/products/img-m1GOvvVr6mStTyrE7X2z6HW9.png?v=1706295416','https://cdn.shopify.com/s/files/1/0699/2750/1847/products/img-m1GOvvVr6mStTyrE7X2z6HW9.png?v=1706295416','https://cdn.shopify.com/s/files/1/0699/2750/1847/products/img-m1GOvvVr6mStTyrE7X2z6HW9.png?v=1706295416','https://cdn.shopify.com/s/files/1/0699/2750/1847/products/img-m1GOvvVr6mStTyrE7X2z6HW9.png?v=1706295416','https://cdn.shopify.com/s/files/1/0699/2750/1847/products/img-m1GOvvVr6mStTyrE7X2z6HW9.png?v=1706295416','https://cdn.shopify.com/s/files/1/0699/2750/1847/products/img-m1GOvvVr6mStTyrE7X2z6HW9.png?v=1706295416']
+
 const INTRO_DATA = [
   {
     key: '1',
@@ -70,10 +73,13 @@ export const WorkshopTab = ({ navigation }) => {
   const scrollX = useRef(new Animated.Value(0)).current;
   // const [nailsData, setNailsData] = useState([]); // State to store decomposed nails data
   const [editMode, setEditMode] = useState(false);
+  // const [imageUrls, setImageUrls] = useState({}); // hand design urls
+  // const [nailImages, setNailImages] = useState([]);// nail urls
   const [imageUrls, setImageUrls] = useState({}); // hand design urls
   const [nailImages, setNailImages] = useState([]);// nail urls
   const [combinedData, setCombinedData] = useState([]); // State for combined image data
   const [selectedNails, setSelectedNails] = useState(new Array(10).fill(''));
+  const [hasChatData, setHasChatData] = useState(false);
 
   useEffect(() => {
     designIds.forEach(async id => {
@@ -103,20 +109,42 @@ export const WorkshopTab = ({ navigation }) => {
   }, [designIds]);
 
   useEffect(() => {
+    if(designIds.length > 0){
+      setHasChatData(true);
+      console.log("hasChatData", hasChatData )
+    }
+  }, [designIds]);
+
+  useEffect(() => {
     // Assuming designIds, imageUrls, and nailImages are populated
     console.log("imageUrls", imageUrls);
   }, [designIds, imageUrls, nailImages]);
 
   useEffect(() => {
-    // Assuming designIds, imageUrls, and nailImages are populated
-    const newCombinedData = designIds.map((designId, index) => {
-      return {
-        imageUrl: imageUrls[designId], // Assuming imageUrls and designIds are aligned
-        nailImages: nailImages[designId] || [],
-      };
-    });
+    let newCombinedData = []
+    // use local data
+    if (!hasChatData) {
+      setImageUrls(TEST_IMAGE_URL);
+      setNailImages(TEST_NAIL_URL);
+      newCombinedData = Object.keys(TEST_IMAGE_URL).map((key, index) => {
+        return {
+          imageUrl: TEST_IMAGE_URL[key], // Assuming imageUrls and designIds are aligned
+          nailImages: TEST_NAIL_URL || [],
+        };
+      });
+    }
+    // If designIds, imageUrls, and nailImages are populated
+    else{
+      newCombinedData = designIds.map((designId, index) => {
+        return {
+          imageUrl: imageUrls[designId], // Assuming imageUrls and designIds are aligned
+          nailImages: nailImages[designId] || [],
+        };
+      });
+    }
+    console.log("newCombinedData", newCombinedData)
     setCombinedData(newCombinedData); // Update the state
-  }, [designIds, imageUrls, nailImages]);
+  }, [designIds, imageUrls, nailImages, hasChatData]);
 
 
 
@@ -129,6 +157,7 @@ export const WorkshopTab = ({ navigation }) => {
   }, [nailImages]);
   
   useEffect(() => {
+    console.log("designIds", designIds);
     console.log("Current combinedData:", combinedData);
   }, [combinedData]);
 
@@ -229,7 +258,8 @@ const handleNailSelect = (nailUrl) => {
           {combinedData.map((data, index) => (
           <View key={index} style={[styles.center, { width}]}>
             <Image source={{ uri: data.imageUrl }} style={styles.imageStyle} />
-            <View style={{flexDirection: 'row', width:"100%", alignSelf:"center", overflow:"hidden"}}>
+            <View style={{flexDirection: 'row', width:"100%", alignSelf:"center"}}>
+
               {data.nailImages.map((nailUrl, nIndex) => (
                 <Pressable key={nIndex} onPress={() => handleNailSelect(nailUrl)}>
                   <Image source={{ uri: nailUrl }} style={styles.nailStyle} />

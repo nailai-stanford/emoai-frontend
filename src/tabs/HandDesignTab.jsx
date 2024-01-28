@@ -13,24 +13,35 @@ import { style } from 'deprecated-react-native-prop-types/DeprecatedViewPropType
 import { ButtonAction, ButtonSelection } from "../styles/buttons";
 import { P, ButtonP, MenuHeader, TitleHeader, SubHeader, ButtonH} from "../styles/texts";
 import { COLORS, PADDINGS, FONTS } from "../styles/theme";
+import { LEFTHAND_NAILS } from '../styles/nails';
+import { BlurView } from "@react-native-community/blur";
+
+
+import MaskedView from "@react-native-masked-view/masked-view";
+import { width } from 'deprecated-react-native-prop-types/DeprecatedImagePropType';
+
+
 
 
 const TOP_BAR = 130;
 const leftHandDropZonePositions = [
-  { top: 115, left: 3, width: 60, height: 60 },
-  { top: 25, left: 75, width: 60, height: 60 },
-  { top: 5, left: 155, width: 60, height: 60 },
-  { top: 20, left: 270, width: 60, height: 60 },
-  { top: 210, left: 370, width: 60, height: 60 },
+  { top: 111, left: 20, width: 60, height: 60 },
+  { top: 38, left: 80, width: 60, height: 60 },
+  { top: 3, left: 148, width: 60, height: 60 },
+  { top: 16, left: 230, width: 60, height: 60 },
+  { top: 165, left: 308, width: 60, height: 60 },
 ];
 
 const rightHandDropZonePositions = [
-  { top: 210, left: 3, width: 60, height: 60 },
-  { top: 35, left: 90, width: 60, height: 60 },
-  { top: 5, left: 200, width: 60, height: 60 },
-  { top: 50, left: 300, width: 60, height: 60 },
-  { top: 150, left: 370, width: 60, height: 60 },
+  { top: 165, left: 25, width: 60, height: 60 },
+  { top: 15, left: 103, width: 60, height: 60 },
+  { top: 2, left: 185, width: 60, height: 60 },
+  { top: 38, left: 253, width: 60, height: 60 },
+  { top: 110, left: 313, width: 60, height: 60 },
 ];
+
+const leftHandMasks = [<LEFTHAND_NAILS.left5/>, <LEFTHAND_NAILS.left4/>, <LEFTHAND_NAILS.left3/>, <LEFTHAND_NAILS.left2/>, <LEFTHAND_NAILS.left1/>];
+const rightHandMasks = [<LEFTHAND_NAILS.left1 style={{  transform:[{ scaleX: -1 }]}}/>, <LEFTHAND_NAILS.left2 style={{ transform:[{ scaleX: -1 }]}}/>, <LEFTHAND_NAILS.left3 style={{ transform:[{ scaleX: -1 }] }}/>, <LEFTHAND_NAILS.left4 style={{ transform:[{ scaleX: -1 }] }}/>, <LEFTHAND_NAILS.left5 style={{ transform:[{ scaleX: -1 }] }}/>]
 
 export default class HandDesignTab extends Component {
   constructor(props) {
@@ -39,12 +50,12 @@ export default class HandDesignTab extends Component {
     const selectedNails = this.props.route.params?.selectedNails || [];
     console.log("selectedNails", selectedNails);
     this.state = {
-      currentHand: 'left', 
+      currentHand: 'right', 
       nails: selectedNails.map(() => new Animated.ValueXY()),
       selectedNails: selectedNails,
       droppedZone: null,
-      leftHandModel: require('../../assets/left_hand_model.png'),
-      rightHandModel: require('../../assets/right_hand_model.png'),
+      leftHandModel: require('../../assets/workshop/hand_left.png'),
+      rightHandModel: require('../../assets/workshop/hand_right.png'),
       leftHandNails: Array(5).fill(''),
       rightHandNails: Array(5).fill(''),
       // nailRenderList: Array
@@ -131,9 +142,23 @@ export default class HandDesignTab extends Component {
     console.log("nail render" + nailListRender);
     
     return dropZonePositions.map((position, index) => (
+     <MaskedView
+     style={[styles.clickableZone, position]}
+      maskElement={
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'transparent',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          {/* Define the mask shape */}
+          {this.state.currentHand === 'left' ? leftHandMasks[index] : rightHandMasks[index]}
+          </View>}>
       <TouchableOpacity
         key={index}
-        style={[styles.clickableZone, position]}
+        // style={[styles.clickableZone, position]}
         // onPress={() => this.props.navigation.navigate(TABs.NAIL_DESIGN)}
         onPress={() => {
           const selectedNailData = nailListRender[index];
@@ -147,9 +172,11 @@ export default class HandDesignTab extends Component {
         }}
         activeOpacity={1}
       >
+        {nailListRender[index] ? <Image source={{uri:nailListRender[index]}} style={styles.nailImage} ></Image> : <View style={[styles.nailImage, {backgroundColor:COLORS.dark}]}/> }
         <Image source={{uri:nailListRender[index]}} style={styles.nailImage} ></Image>
 
       </TouchableOpacity>
+      </MaskedView>
     ));
   }
 
@@ -179,11 +206,7 @@ export default class HandDesignTab extends Component {
   renderNails() {
 
     return (
-    //   <ScrollView 
-    //   horizontal 
-    //   showsHorizontalScrollIndicator={true} 
-    //   contentContainerStyle={{width: '100%'}}
-    // >
+
       <View style={styles.nailContainer}>
         {this.state.selectedNails.map((image, index) => {
           if (!image || image.trim() === '') {
@@ -207,7 +230,7 @@ export default class HandDesignTab extends Component {
           );
         })}
       </View>
-      // </ScrollView>
+
     );
   }
 
@@ -239,13 +262,19 @@ export default class HandDesignTab extends Component {
           </View>
          <View style={styles.background}
           >
-          <Image source={handImage} ref={this.backgroundRef} style={styles.handImage} resizeMode="cover" />
+          <Image source={handImage} ref={this.backgroundRef} style={styles.handImage} />
 
           {this.renderClickableZones()}
       
           </View>
-        <View style={{flexDirection:"column", position:"absolute", bottom:90}}>
-          <View style={{position:"absolute", width:"100%",backgroundColor:COLORS.dark, opacity:0.9, height:180,bottom:0}}></View>
+        <View style={{flexDirection:"column", position:"absolute", bottom:110}}>
+          {/* <View style={{position:"absolute", width:"100%",backgroundColor:COLORS.dark, opacity:0.9, height:180,bottom:0}}></View> */}
+          <BlurView
+            blurType="dark"
+            blurAmount={30}
+            style={{height:180, width:"100%", position:"absolute", bottom:0}}
+          />
+            
           <SubHeader style={{paddingHorizontal: PADDINGS.sm}}>Drag Nails from Collections</SubHeader>
           {this.renderNailCategoryButtons()}
           {this.renderNails()}
@@ -267,9 +296,10 @@ const styles = StyleSheet.create({
   },
   handImage: {
     position: 'absolute',
-    top: -10,
-    width: '100%',
-    height: 500,
+    top: -60,
+    width: "100%",
+    height: 700,
+
   },
   container: {
     flex: 1,
@@ -293,7 +323,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     // backgroundColor: 'lightgrey',
     // borderRadius: 10,
-    borderWidth: 2,
+    borderWidth: 4,
     borderColor: 'red',
     // add any additional styling for the drop zones
   },
@@ -314,7 +344,6 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderWidth: 2,
-    border: 'red',
     // Add any additional styles for the image if necessary
   },
   redBox_1: {

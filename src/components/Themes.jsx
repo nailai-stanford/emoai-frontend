@@ -16,9 +16,11 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import {useState, useEffect} from 'react';
 import {handleError} from '../utils/Common';
 
-import {ButtonSelection} from '../styles/buttons';
-import {P, ButtonP, MenuHeader, TitleHeader, SubHeader} from '../styles/texts';
-import {COLORS} from '../styles/theme';
+
+import { ButtonSelection } from "../styles/buttons";
+import { P, ButtonP, MenuHeader, TitleHeader, SubHeader, GradientMenuHeader} from "../styles/texts";
+import { COLORS } from "../styles/theme";
+
 
 const iconSize = 20;
 
@@ -65,16 +67,15 @@ export const Themes = props => {
 const Title = () => {
   const navigation = useNavigation();
   return (
-    <View style={{flexDirection: 'row'}}>
-      <MenuHeader style={{flex: 5}} $colored={true}>
-        Themes
-      </MenuHeader>
-      <TouchableOpacity
-        style={{flexDirection: 'row', alignItems: 'center', padding: 8}}
-        onPress={() => {
-          navigation.navigate(TABs.THEME);
-        }}>
-        <P $colored={true}>All</P>
+
+    <View style={{flexDirection: "row", alignItems: "center",paddingVertical: 10}}>
+      <GradientMenuHeader style={{ flex:2 }} >Themes</GradientMenuHeader>
+      <TouchableOpacity style={{flex:4, justifyContent:"flex-end", flexDirection: "row", alignItems: "center", }}
+        onPress={() => {navigation.navigate(TABs.THEME)}}>
+          <P $colored={false}>
+            All
+          </P>
+
         <MaterialCommunityIcons
           name="chevron-right"
           size={iconSize}

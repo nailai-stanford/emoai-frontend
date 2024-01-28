@@ -64,22 +64,28 @@ const ThemeHeader = () => {
         <View style={{ flexDirection: "row" }}>
         <FlatList
             data={themeList}
-                renderItem={({ item }) =>
+                renderItem={({ item }) => (
                     <Tab content={item}
                     selected={themeSelected} setSelected={setThemeSelected}
                     setSubList={setSubList}
-                    />}
-        horizontal
+                    />
+                )}
+                keyExtractor={(item, index) => `theme-${index}`} // Ensure unique key for each theme item
+                horizontal
       />
         </View>
         <View style={{flexDirection: "row"}}>
             <FlatList
                 data={subList}
-                renderItem={({ item }) => <SubElement content={item}
+                renderItem={({ item }) => (
+                <SubElement 
+                    content={item}
                     selected={elementSelected}
                     setSelected={setElementSelected}
-                />}
-                horizontal
+                />
+            )}
+            keyExtractor={(item, index) => `subElement-${index}`} // Ensure unique key for each subElement item
+            horizontal
             />
         </View>
         <ThemeItems elementSelected={[elementSelected]}/>

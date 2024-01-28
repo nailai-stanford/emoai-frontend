@@ -20,6 +20,7 @@ export const onPressLogout = async () => {
   await AsyncStorage.removeItem(SecureStoreKeys.UserInfo);
 };
 
+
 export const setUserInfoInStore = async UserInfo => {
   await AsyncStorage.setItem(
     SecureStoreKeys.UserInfo,
