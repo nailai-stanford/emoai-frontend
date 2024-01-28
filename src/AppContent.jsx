@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, View, ImageBackground, Image } from "react-native";
 import { StatusBar } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { BlurView } from 'expo-blur';
+// import Svg, { Path, SvgXml,SvgUri } from 'react-native-svg';
+import { BlurView } from "@react-native-community/blur";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { DefaultTheme,NavigationContainer } from "@react-navigation/native";
@@ -38,9 +39,15 @@ import { SettingsTab } from "./tabs/SettingsTab";
 import { AddressTab } from "./tabs/AddressTab";
 import { NameTab } from "./tabs/NameTab";
 
-import { COLORS } from "./styles/theme";
+import { COLORS, ICON_SIZES } from "./styles/theme";
+import {BottomBar} from "../assets/others/bottomBar.svg";
+
+// import svg icons
+
+import { TAB_BAR_ICONS } from "./styles/icons";
 
 const Tab = createBottomTabNavigator();
+
 
 export const AppContent = () => {
   const { isLoggedIn, setUserInfo } = useAuthenticationContext();
@@ -57,6 +64,7 @@ export const AppContent = () => {
     }
     _fetchUserInfo();
   });
+
 
   if (!isLoggedInState) {
     return (
@@ -89,45 +97,53 @@ export const AppContent = () => {
             return <Header {...props} route={route} />;
           },
           tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
-
+            let stroke = focused ? "transparent" : COLORS.grey;
+            let fill = focused ? COLORS.white : "transparent";
             switch (route.name) {
               case TABs.HOME:
-                iconName = focused ? "home" : "home-outline";
-                break;
+                return (
+                  focused ?  <TAB_BAR_ICONS.homeSelected width={ICON_SIZES.standard} height={ICON_SIZES.standard} fill={fill}  stroke={stroke}  /> 
+                  : <TAB_BAR_ICONS.home width={ICON_SIZES.standard} height={ICON_SIZES.standard} fill={fill}  stroke={stroke}  /> 
+                )
+
               case TABs.DISCOVER:
-                iconName = focused
-                  ? "text-box-search"
-                  : "text-box-search-outline";
-                break;
+
+              return focused ?  <TAB_BAR_ICONS.discoverSelected width={ICON_SIZES.standard} height={ICON_SIZES.standard} fill={fill}  stroke={stroke}  /> 
+              : <TAB_BAR_ICONS.discover width={ICON_SIZES.standard} height={ICON_SIZES.standard} fill={COLORS.grey}  /> 
+              
               case TABs.AI:
-                iconName = focused ? "star-circle" : "star-circle-outline";
-                break;
+                let currFill = focused ? COLORS.white : COLORS.grey;
+
+                return <TAB_BAR_ICONS.aiChat width={ICON_SIZES.standard} height={ICON_SIZES.standard} fill={currFill}  stroke={stroke}  />
+
               case TABs.WORKSHOP:
-                // TODO
-                iconName = focused ? "account" : "account-outline";
-                break;
+                currFill = focused ? COLORS.white : COLORS.grey;
+                
+                return <TAB_BAR_ICONS.workshop width={ICON_SIZES.standard} height={ICON_SIZES.standard} fill={fill}  stroke={currFill}  />
+
               case TABs.PROFILE:
-                iconName = focused ? "account" : "account-outline";
-                break;
+                return <TAB_BAR_ICONS.profile width={ICON_SIZES.standard} height={ICON_SIZES.standard} fill={fill}  stroke={stroke}  />
+
             }
 
-            return (
-              <MaterialCommunityIcons
-                name={iconName}
-                color={color}
-                size={size}
-              />
-            );
+            // return <TAB_BAR_ICONS.home width={ICON_SIZES.standard} height={ICON_SIZES.standard} fill={fill}  stroke={stroke}  />
           },
           tabBarStyle:{
-            backgroundColor: 'rgba(52, 52, 52, 0.6)',
+            backgroundColor: 'rgba(52, 52, 52, 0.7)',
             height:80,
+            position: 'absolute'
           },
-          // tabBarBackground: () => (
-          //   <View style={{backgroundColor:rgba(52, 52, 52, 0.8)}}></View>
-          // ),
-          tabBarActiveTintColor: COLORS.gradientSub1,
+          tabBarBackground: () => (
+            // <BottomBar width="100%" height="100%" />
+            <BlurView
+        style={{position: 'absolute', bottom: 0, left: 0, right: 0, height: 80, zIndex: 1000}}
+        blurType="dark"
+        blurAmount={10}
+        reducedTransparencyFallbackColor="black"
+      />
+
+          ),
+          tabBarActiveTintColor: COLORS.white,
           tabBarInactiveTintColor: COLORS.grey,
         })}
       >
@@ -135,7 +151,7 @@ export const AppContent = () => {
           name={TABs.HOME}
           component={HomeTab}
           options={{
-            tabBarLabel: "Home",
+            tabBarLabel: "HOME",
           }}
         />
         <Tab.Screen name={TABs.PRODUCT}

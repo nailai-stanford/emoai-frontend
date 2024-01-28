@@ -8,8 +8,8 @@ import { Themes } from "../components/Themes";
 import { getHeader, APIs } from "../utils/API";
 
 
-import { ButtonSelection } from "../styles/buttons";
-import { P, ButtonP, MenuHeader, TitleHeader} from "../styles/texts";
+import { ButtonSelection, GradientButtonSelection } from "../styles/buttons";
+import { P, ButtonP, MenuHeader,GradientMenuHeader, TitleHeader } from "../styles/texts";
 
 
 export const HomeTab = (navigation) => {
@@ -57,11 +57,11 @@ export const HomeTab = (navigation) => {
     <ScrollView contentContainerStyle={styles.container}>
       <Banner style={{ flex: 1 }} />
       <Themes style={{ flex: 1 }} />
-      <MenuHeader style={{ flex:5, alignSelf:"flex-start", marginLeft:12}} $colored={true}>Category</MenuHeader>
+      <GradientMenuHeader style={{ flex:1, alignSelf:"flex-start", marginLeft:12}} >Category</GradientMenuHeader>
         <View style={styles.buttonRow}>
-          <ButtonSelection onPress={() => {setIndex(0)}} $selected={index===0 && true}><ButtonP>All</ButtonP></ButtonSelection>
-          <ButtonSelection onPress={() => setIndex(1)} $selected={index===1 && true} ><ButtonP>Original</ButtonP></ButtonSelection>
-          <ButtonSelection onPress={() => setIndex(2)}  $selected={index===2 && true}><ButtonP>Community</ButtonP></ButtonSelection>
+          <GradientButtonSelection onPress={() => {setIndex(0)}} $selected={index===0 && true}><ButtonP>All</ButtonP></GradientButtonSelection>
+          <GradientButtonSelection onPress={() => setIndex(1)} $selected={index===1 && true} ><ButtonP>Original</ButtonP></GradientButtonSelection>
+          <GradientButtonSelection onPress={() => setIndex(2)}  $selected={index===2 && true}><ButtonP>Community</ButtonP></GradientButtonSelection>
         </View>
 
         <View

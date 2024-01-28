@@ -14,11 +14,12 @@ import { Modal } from "react-native-modals"
 import { ButtonAction, ButtonSelection } from "../styles/buttons";
 import { P, ButtonP, ButtonH,TitleHeader, MenuHeader } from "../styles/texts";
 import { InputView } from "../styles/inputs";
-import { COLORS,PADDINGS } from "../styles/theme";
+import { COLORS,PADDINGS, ICON_SIZES } from "../styles/theme";
 import { Input } from 'react-native-elements';
 import { APIs, getHeader } from "../utils/API";
 import { BASE_URL } from '../utils/API';
 
+import {ACTION_ICONS} from '../styles/icons'
 
 const PRE_PROMPT = [
   {state:"THEME", prompt:"Generate a short greeting for users as a nail art designer asking the user what nail art theme do they want, you can suggest users to choose from the themes such as: Concrete items, Institutions, Seasons, Domestic and international holidays, Art styles, Decorative materials, Clothing patterns, etc. Please reply less than 35 words. Reply with a JSON file with key named 'query'."}, 
@@ -359,6 +360,14 @@ export const AIChatTab = ({ navigation }) => {
       })}
       
     </View>
+
+    <View style={{ flex: 1 }}>
+    <TouchableOpacity style={{ alignSelf: "flex-start", flex: 0.1 }}
+             onPress={() => handlePotentialMultipleChoiceSend(userInput)}>
+    <ACTION_ICONS.send width={ICON_SIZES.standard} height={ICON_SIZES.standard}   />
+    </TouchableOpacity>
+
+    </View>
    
     <InputView $isFullLength={true}> 
         <TextInput 
@@ -368,15 +377,17 @@ export const AIChatTab = ({ navigation }) => {
         style={{flex:1, color:COLORS.white}}/>
         <TouchableOpacity style={{ alignSelf: "flex-start", flex: 0.1 }}
              onPress={() => handlePotentialMultipleChoiceSend(userInput)}>
-          <MaterialCommunityIcons
+          <ACTION_ICONS.send width={ICON_SIZES.standard} height={ICON_SIZES.standard}   />
+
+          {/* <MaterialCommunityIcons
             name="send"
             size={iconSize+3}
             color={COLORS.grey}
             transformOrigin= 'center'
             transform={[{ rotate: '-90deg' }]}
-            />
+            /> */}
         </TouchableOpacity>
-    </InputView>
+    </InputView> 
 
   </KeyboardAvoidingView>
   );
