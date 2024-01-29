@@ -30,9 +30,10 @@ import {
   ExpandingDot,
 } from 'react-native-animated-pagination-dots';
 
-import { ButtonAction, ButtonSelection } from "../styles/buttons";
+import { GradientButtonAction } from "../styles/buttons";
 import { P, ButtonP, MenuHeader, TitleHeader, SubHeader, ButtonH} from "../styles/texts";
-import { COLORS, PADDINGS, FONTS } from "../styles/theme";
+import { COLORS, PADDINGS, FONTS, ICON_SIZES } from "../styles/theme";
+import { ACTION_ICONS } from "../styles/icons";
 
 // const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
@@ -298,12 +299,8 @@ const handleNailSelect = (nailUrl) => {
       <View style={{flexDirection:"row", paddingTop:PADDINGS.md, paddingBottom:PADDINGS.sm}}>
           <SubHeader style={{flex:1}}>My Selection</SubHeader>
           <TouchableOpacity onPress={toggleEditMode} style={{paddingRight:10}}>
-            <MaterialIcons
-                      name={editMode ? 'done' : 'edit'}
-                      color={COLORS.white}
-                      size={FONTS.subHeader}
-                    />
-          </TouchableOpacity>         
+            {editMode ? <SubHeader>Done</SubHeader> : <ACTION_ICONS.edit size={ICON_SIZES.standard}/> }
+          </TouchableOpacity>
       </View>
       <P style={{paddingBottom:PADDINGS.md}} $alignLeft={true}>Select five nails if you don't like them you can click edit to cancel and replace them!</P>
       
@@ -325,20 +322,14 @@ const handleNailSelect = (nailUrl) => {
                     onPress={() => handleNailDeletion(index)}
                   >
                     {/* You can use an icon or text for the delete button */}
-                    <MaterialIcons
-                      name={"remove-circle"}
-                      color="red"
-                      size={20}
-                    /> 
+                    <ACTION_ICONS.remove/> 
 
                   </TouchableOpacity>
                 )}
               </View>
             ) : (
               <View style={styles.nailPlaceholder}>
-                <MaterialIcons
-                  name={"add"}
-                  color={COLORS.gradientSub1}
+                <ACTION_ICONS.addLarge
                   size={40}
                 /> 
             </View>
@@ -350,10 +341,10 @@ const handleNailSelect = (nailUrl) => {
 
 
         
-        <ButtonAction style={{width:"50%", alignSelf:"center"}}
+        <GradientButtonAction style={{alignSelf:"center"}}
           onPress={() => navigation.navigate(TABs.HAND_DESIGN, { selectedNails })}>
             <ButtonP>Start Selection</ButtonP>
-        </ButtonAction>
+        </GradientButtonAction>
         
 
     </View>
@@ -385,12 +376,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 3,
   },
   nailPlaceholder: {
-    width: 50, // width of the placeholder
-    height: 50, // height of the placeholder
+    width: 60, // width of the placeholder
+    height: 60, // height of the placeholder
     backgroundColor: 'transparent', // a light grey color for the background
-    borderColor: COLORS.gradientSub1, 
-    borderWidth: 2, 
-    borderRadius: 25, // rounded corners
     justifyContent: 'center', // center the content inside the placeholder
     alignItems: 'center', // align the content
     marginHorizontal: 5, // horizontal margin for spacing between items
@@ -451,7 +439,7 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     position: 'absolute',
-    top: -1,
+    top: 0,
     right: -1,
     // backgroundColor: 'red',
     justifyContent: 'center',

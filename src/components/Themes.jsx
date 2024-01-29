@@ -19,7 +19,8 @@ import {handleError} from '../utils/Common';
 
 import { ButtonSelection } from "../styles/buttons";
 import { P, ButtonP, MenuHeader, TitleHeader, SubHeader, GradientMenuHeader} from "../styles/texts";
-import { COLORS } from "../styles/theme";
+import { COLORS, PADDINGS } from "../styles/theme";
+import { ACTION_ICONS } from '../styles/icons';
 
 
 const iconSize = 20;
@@ -76,14 +77,13 @@ const Title = () => {
             All
           </P>
 
-        <MaterialCommunityIcons
-          name="chevron-right"
+        <ACTION_ICONS.right
           size={iconSize}
-          style={{color: COLORS.gradientSub1}}
+          style={{ marginLeft: PADDINGS.sm}}
         />
       </TouchableOpacity>
     </View>
-  );
+  );  
 };
 
 const ThemeCard = ({item}) => {
@@ -107,6 +107,11 @@ const ThemeCard = ({item}) => {
         item['category'].map((e, idx) => {
           return <ThemePreview key={idx} item={e} />;
         })}
+        {/* TODO: need to add a navigation to this arrow right */}
+        <ACTION_ICONS.right
+          size={iconSize}
+          style={{ marginLeft: PADDINGS.sm, alignSelf: "center"}}
+        />
       </View>
     </View>
   );

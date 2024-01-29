@@ -5,9 +5,10 @@ import {useAuthenticationContext} from '../providers/AuthenticationProvider';
 import {Image} from '@rneui/themed';
 import axios from 'axios';
 
-import {View, ScrollView, Alert} from 'react-native';
+
+import {View, ScrollView, Alert,  StyleSheet} from 'react-native';
 import {ButtonH, ButtonP, TitleHeader, P, SubHeader} from '../styles/texts';
-import {ButtonAction, ButtonSelection} from '../styles/buttons';
+import {ButtonAction, ButtonSelection, GradientButtonAction} from '../styles/buttons';
 import {handleError} from '../utils/Common';
 import {TABs} from '../static/Constants';
 import {clearCart} from '../utils/UserUtils';
@@ -129,7 +130,7 @@ export const PaymentTab = ({route, navigation}) => {
   //  Stripe UI guide:
   // https://stripe.com/docs/elements/appearance-api?platform=react-native
   return (
-    <View>
+    <View style={styles.container}>
       <ScrollView>
         <OrderSummary
           products={route.params.products}
@@ -140,12 +141,12 @@ export const PaymentTab = ({route, navigation}) => {
           <P>{display}</P>
         </View>
 
-        <ButtonAction
+        <GradientButtonAction
           onPress={() => {
             setAddrVisible(true);
           }}>
           <ButtonP>Set Shipping Address</ButtonP>
-        </ButtonAction>
+        </GradientButtonAction>
         <AddressSheet
           appearance={{
             colors: {
@@ -178,7 +179,7 @@ export const PaymentTab = ({route, navigation}) => {
             setAddressSheetVisible(false);
           }}
         />
-        <ButtonAction
+        <GradientButtonAction
           onPress={() => {
             if (name && country && state && city && zip && phone && line1) {
               getPaymentSheet(route.params.total);
@@ -189,8 +190,18 @@ export const PaymentTab = ({route, navigation}) => {
             }
           }}>
           <ButtonP>Pay Now</ButtonP>
-        </ButtonAction>
+        </GradientButtonAction>
       </ScrollView>
     </View>
   );
 };
+
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    paddingBottom: 60,
+    flexDirection: 'column',
+  },
+});

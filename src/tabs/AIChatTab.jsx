@@ -11,7 +11,7 @@ import { TABs } from '../static/Constants';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { Modal } from "react-native-modals"
 
-import { ButtonAction, ButtonSelection } from "../styles/buttons";
+import { ButtonAction, ButtonSelection, GradientButtonSelection } from "../styles/buttons";
 import { P, ButtonP, ButtonH,TitleHeader, MenuHeader } from "../styles/texts";
 import { InputView } from "../styles/inputs";
 import { COLORS,PADDINGS, ICON_SIZES } from "../styles/theme";
@@ -81,9 +81,9 @@ const ChatMessage = ({ item }) => {
 };
 const ChatButton = ({ title, onPress, selection }) => {
   return (
-    <ButtonSelection onPress={onPress} $selected={selection} > 
-      <ButtonP>{title}</ButtonP>
-    </ButtonSelection>
+    <GradientButtonSelection onPress={onPress} $selected={selection} style={{ paddingTop:5, paddingRight:10, paddingLeft: 10, paddingBottom:5}} > 
+      <ButtonP style={{fontSize:12}}>{title}</ButtonP>
+    </GradientButtonSelection>
   );
 };
 
@@ -312,12 +312,11 @@ export const AIChatTab = ({ navigation }) => {
   return (
     <KeyboardAvoidingView 
     behavior={"padding"}
-    style={{ flex: 1, padding: PADDINGS.sm, marginTop: 60 }}
+    style={{ flex: 1, paddingHorizontal: PADDINGS.sm, marginTop: 60,  marginBottom: 80}}
     >
       <View style={{flexDirection: "row", flex: 0.1, alignItems: "center"}}>
         <TouchableOpacity style={{ alignItems: "center", flex: 1 }} onPress={()=>{setModalVisible(true)}}>
-        <MaterialCommunityIcons
-          name="history"
+        <ACTION_ICONS.menu
           size={iconSize}
           color={COLORS.white}
             />
@@ -330,10 +329,9 @@ export const AIChatTab = ({ navigation }) => {
         </View>
         <TouchableOpacity style={{ alignItems: "center", flex: 1 }}
           onPress={() => { () => { navigation.navigate(TABs.HOME) } }}>
-        <MaterialCommunityIcons
-                name="home-account"
+        <ACTION_ICONS.home
                 size={iconSize}
-                color={COLORS.white}
+                stroke={COLORS.white}
             />
         </TouchableOpacity>
      </View>
@@ -361,31 +359,16 @@ export const AIChatTab = ({ navigation }) => {
       
     </View>
 
-    <View style={{ flex: 1 }}>
-    <TouchableOpacity style={{ alignSelf: "flex-start", flex: 0.1 }}
-             onPress={() => handlePotentialMultipleChoiceSend(userInput)}>
-    <ACTION_ICONS.send width={ICON_SIZES.standard} height={ICON_SIZES.standard}   />
-    </TouchableOpacity>
-
-    </View>
    
-    <InputView $isFullLength={true}> 
+    <InputView $isFullLength={true} style={{height:40}}> 
         <TextInput 
         placeholder="Type your message..."
         value={userInput}
         onChangeText={setUserInput}
         style={{flex:1, color:COLORS.white}}/>
-        <TouchableOpacity style={{ alignSelf: "flex-start", flex: 0.1 }}
+        <TouchableOpacity style={{ alignSelf: "center", flex: 0.1 }}
              onPress={() => handlePotentialMultipleChoiceSend(userInput)}>
           <ACTION_ICONS.send width={ICON_SIZES.standard} height={ICON_SIZES.standard}   />
-
-          {/* <MaterialCommunityIcons
-            name="send"
-            size={iconSize+3}
-            color={COLORS.grey}
-            transformOrigin= 'center'
-            transform={[{ rotate: '-90deg' }]}
-            /> */}
         </TouchableOpacity>
     </InputView> 
 

@@ -70,4 +70,5 @@ export const BORDERS = {
     // border here
     buttonSelectionRadius: 16,
     inputRadius: 24,
+    standartRadius:16,
 }

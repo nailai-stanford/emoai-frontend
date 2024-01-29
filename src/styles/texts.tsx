@@ -74,3 +74,17 @@ export const GradientMenuHeader = (props) => {
         </MaskedView>
     );
   };
+
+export const GradientP = (props) => {
+    return (
+      <MaskedView style={props.style} maskElement={<P {...props} />}>
+        <LinearGradient style={props.style}
+          colors={COLORS.gradient2}
+          start={{x: 0, y: 0}} end={{x: 1, y: 0}}
+          locations={[0.76,0.2]}
+        >
+          <P {...props} style={[props.style, { opacity: 0 }]} />
+        </LinearGradient>
+        </MaskedView>
+    );
+  }

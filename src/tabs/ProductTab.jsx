@@ -10,7 +10,7 @@ import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { Image, Button, Text } from '@rneui/themed';
 import { MenuHeader,ButtonH, ButtonP, TitleHeader,P, SubHeader } from "../styles/texts";
 import { ButtonAction } from "../styles/buttons";
-import { COLORS, PADDINGS } from "../styles/theme";
+import { BORDERS, COLORS, PADDINGS } from "../styles/theme";
 import { getCart, setCart } from "../utils/UserUtils";
 
 const size = 50;
@@ -225,38 +225,37 @@ export const ProductTab = ({ route, navigation }) => {
   const item = route.params.product
   return (
         <View style={styles.container}>
-         <TouchableOpacity>
-            <MaterialCommunityIcons
-            name="chevron-left"
-            size={iconSize}
-            style={{ color:COLORS.white, right: 0 }}
-            onPress={() => {
-              navigation.goBack();
-            }}/>
-        </TouchableOpacity>
-        <Pictures url={item.image.src}/> 
-        <View style={{ flex: 6, marginBottom:PADDINGS.sm }}>
-            <View style={{flex: 4, flexDirection: "row", }}>
-              <SubHeader style={{flex: 4 }}>{item.title}</SubHeader>
+          <TouchableOpacity>
+              <MaterialCommunityIcons
+              name="chevron-left"
+              size={iconSize}
+              style={{ color:COLORS.white, right: 0 }}
+              onPress={() => {
+                navigation.goBack();
+              }}/>
+          </TouchableOpacity>
+        <Image style={{height:200, borderRadius: BORDERS.standartRadius}} source={{uri:item.image.src }}/> 
+        <View style={{height:100, marginBottom:PADDINGS.sm }}>
+            <View style={{flex: 0.5, flexDirection: "row", }}>
+              <SubHeader style={{flex: 2 }}>{item.title}</SubHeader>
               {/* some optional like when params go in */}
-          {item.user && item.user.fullName !== "emoai-original" && <Like productID={item.id} />}
+              {item.user && item.user.fullName !== "emoai-original" && <Like productID={item.id} />}
             </View>
-            <Text style={{flex: 1}}>${item.price}</Text>
-        <Text style={{ flex: 3 }}>{ item.body_html }</Text>
+            <P style={{flex: 0.5}} $alignLeft={true}>${item.price}</P>
+            <P style={{ flex: 1 }} $alignLeft={true}>{ item.body_html }</P>
         </View>
-        <SubHeader style={{alignSelf:"flex-start"}}>Creator</SubHeader>
-           
+        {/* <SubHeader style={{alignSelf:"flex-start"}}>Creator</SubHeader> */}
             {/* some optional creator info */}
           {item.user && item.user.fullName !== "emoai-original" && <Creator user={item.user} />}
-            <Explore/>
-            <ButtonGroup productID={item.id}/>
+          <Explore/>
+          <ButtonGroup productID={item.id}/>
         </View>
     ) 
 }
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      padding: 20,
+      flex: 4,
+      paddingHorizontal: 20,
     flexDirection: "column",
     },
   });
