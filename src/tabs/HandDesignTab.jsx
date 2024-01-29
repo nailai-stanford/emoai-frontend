@@ -10,7 +10,7 @@ import { TouchableOpacity } from 'react-native';
 import { TABs } from "../static/Constants";
 import { style } from 'deprecated-react-native-prop-types/DeprecatedViewPropTypes';
 // import Svg, { Path } from 'react-native-svg';
-import { ButtonAction, ButtonSelection } from "../styles/buttons";
+import { ButtonAction, ButtonSelection, GradientButtonAction, GradientButtonSelection } from "../styles/buttons";
 import { P, ButtonP, MenuHeader, TitleHeader, SubHeader, ButtonH} from "../styles/texts";
 import { COLORS, PADDINGS, FONTS } from "../styles/theme";
 import { LEFTHAND_NAILS } from '../styles/nails';
@@ -267,7 +267,7 @@ export default class HandDesignTab extends Component {
           {this.renderClickableZones()}
       
           </View>
-        <View style={{flexDirection:"column", position:"absolute", bottom:110}}>
+        <View style={{flexDirection:"column", position:"absolute", bottom:120}}>
           {/* <View style={{position:"absolute", width:"100%",backgroundColor:COLORS.dark, opacity:0.9, height:180,bottom:0}}></View> */}
           <BlurView
             blurType="dark"
@@ -279,7 +279,10 @@ export default class HandDesignTab extends Component {
           {this.renderNailCategoryButtons()}
           {this.renderNails()}
         </View>
-        <ButtonAction onPress={this.navigateToPreview} style={{marginVertical:PADDINGS.md, position:"absolute", bottom:20, width:"60%"}}><ButtonH>Preview</ButtonH></ButtonAction>
+        <ButtonAction onPress={this.navigateToPreview} 
+        style={{marginVertical:PADDINGS.md, position:"absolute", bottom:75, width:"60%"}}>
+          <ButtonH>Preview</ButtonH>
+        </ButtonAction>
       </View>
     );
   }

@@ -17,6 +17,8 @@ import Right from "../../assets/icons/arrow_right.svg";
 import AddSmall from "../../assets/icons/add_small.svg";
 import AddLarge from "../../assets/icons/add_large.svg";
 import Edit from "../../assets/icons/edit.svg";
+import Menu from "../../assets/icons/menu.svg";
+import Remove from "../../assets/icons/remove.svg";
 
 export const TAB_BAR_ICONS = {
     home: Home,
@@ -38,4 +40,7 @@ export const ACTION_ICONS = {
     right: Right,
     addSmall: AddSmall,
     addLarge: AddLarge,
+    home: Home,
+    menu: Menu,
+    remove: Remove,
 }

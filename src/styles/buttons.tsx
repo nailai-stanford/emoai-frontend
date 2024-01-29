@@ -27,6 +27,14 @@ export const ButtonAction = styled.TouchableOpacity<{ $isWhite?:boolean}>`
     padding: ${PADDINGS.buttonSelectionY}px ${PADDINGS.buttonSelectionX}px;
 `;
 
+export const ButtonActionNew = styled.TouchableOpacity<{ $isWhite?:boolean}>`
+    background-color: transparent;
+    border: ${props => props.$isWhite ? "0px":"0.5px"};
+    border-color: ${props => props.$isWhite ?  COLORS.white : COLORS.gradientSub1};
+    border-radius: ${BORDERS.buttonSelectionRadius}px;
+    padding: ${PADDINGS.buttonSelectionY}px ${PADDINGS.buttonSelectionX}px;
+`;
+
 
 
 export const GradientButtonSelection = (props) => {
@@ -43,11 +51,24 @@ export const GradientButtonSelection = (props) => {
     );
   };
 
+  export const GradientButtonAction = (props) => {
+    return (
+        <LinearGradient style={[props.style, styles.gradientButtonSelection]}
+          colors={COLORS.gradient1}
+          useAngle={true} angle={45} angleCenter={{x:0.5,y:0.5}}
+          locations={[0.14,0.49,0.83]}
+        >
+            <ButtonActionNew {...props}  $isWhite={true}/>
+        </LinearGradient>
+    );
+  };
+
 
   const styles = StyleSheet.create({
     gradientButtonSelection:{
         borderRadius: BORDERS.buttonSelectionRadius,
         borderWidth:1,
+        padding: 0,
         margin: 10,
         // paddingHorizontal: PADDINGS.buttonSelectionY, 
         // paddingVertical:PADDINGS.buttonSelectionX,

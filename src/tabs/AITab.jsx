@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View, Text, Button, Image } from "react-native";
 
-import { ButtonAction, ButtonSelection } from "../styles/buttons";
+import { ButtonAction, ButtonSelection, GradientButtonAction } from "../styles/buttons";
 import { P, ButtonP, ButtonH, TitleHeader } from "../styles/texts";
 import { TABs } from "../static/Constants";
 import { BlurView } from "@react-native-community/blur";
@@ -36,9 +36,9 @@ export const AITab = ({ navigation }) => {
           Embrace the power of AI magic to nail your style
         </P>
         <View>
-          <ButtonAction onPress={() => navigation.navigate(TABs.AICHAT)}>
+          <GradientButtonAction onPress={() => navigation.navigate(TABs.AICHAT)}>
             <ButtonH>Start Now</ButtonH>
-          </ButtonAction>
+          </GradientButtonAction>
           {/* <Button
             title="Start Now"
             onPress={() => navigation.navigate(TABs.AICHAT)}
