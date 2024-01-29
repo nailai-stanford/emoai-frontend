@@ -16,7 +16,7 @@ import axios from 'axios';
 import {Image, Button} from '@rneui/themed';
 import {useIsFocused} from '@react-navigation/native';
 
-import {ButtonAction, ButtonSelection} from '../styles/buttons';
+import {ButtonAction, ButtonSelection, GradientButtonAction} from '../styles/buttons';
 import {P, ButtonP, MenuHeader, TitleHeader, SubHeader} from '../styles/texts';
 import {COLORS, PADDINGS} from '../styles/theme';
 import {TABs} from '../static/Constants';
@@ -169,7 +169,7 @@ export const CartTab = ({navigation}) => {
           </SafeAreaView>
           <P style={{flex: 1}}>Total: {Number(total).toFixed(2)} </P>
 
-          <ButtonAction
+          <GradientButtonAction
             onPress={() => {
               const confirmedItems = products.map(e => {
                 maybeItem = cartItems.filter(item => e.id == item.id);
@@ -190,7 +190,7 @@ export const CartTab = ({navigation}) => {
               });
             }}>
             <ButtonP>Check Out</ButtonP>
-          </ButtonAction>
+          </GradientButtonAction>
         </View>
       )}
       {products.length === 0 && (
@@ -207,6 +207,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    paddingBottom: 60,
     flexDirection: 'column',
   },
 });

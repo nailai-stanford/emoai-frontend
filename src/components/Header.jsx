@@ -55,12 +55,12 @@ const ProfileIconGroup = ({ navigation }) => {
     height: iconSize,
     flexDirection: "row",
   }}>
-    <Icon name='straighten'
+    <ACTION_ICONS.measure name='straighten'
       onPress={() => navigation.navigate(TABs.SETTINGS)}
-      containerStyle={{ position: "absolute", right: 40 }}
+      style={{ position: "absolute", right: 40 }}
       color={COLORS.white}
     />
-    <Icon name='settings'
+    <ACTION_ICONS.setting name='settings'
       onPress={() => navigation.navigate(TABs.SETTINGS)}
       color={COLORS.white}
 
