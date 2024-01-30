@@ -13,13 +13,14 @@ import { style } from 'deprecated-react-native-prop-types/DeprecatedViewPropType
 import { ButtonAction, ButtonSelection, GradientButtonAction, GradientButtonSelection } from "../styles/buttons";
 import { P, ButtonP, MenuHeader, TitleHeader, SubHeader, ButtonH} from "../styles/texts";
 import { COLORS, PADDINGS, FONTS } from "../styles/theme";
-import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { LEFTHAND_NAILS } from '../styles/nails';
 import { BlurView } from "@react-native-community/blur";
 
 
 import MaskedView from "@react-native-masked-view/masked-view";
 import { width } from 'deprecated-react-native-prop-types/DeprecatedImagePropType';
+
+
 
 
 const TOP_BAR = 130;
@@ -46,11 +47,8 @@ export default class HandDesignTab extends Component {
   constructor(props) {
     super(props);
     // const selectedNails = ['../../assets/nail_model.png','../../assets/left_hand_model.png','../../assets/8.jpeg','../../assets/8.jpeg','../../assets/8.jpeg' ];
-    const selectedNails = this.props.route.params.selectedNails;
-    const originalCollect = this.props.route.params.originalCollect;
-    console.log("originalCollect", originalCollect);
-    console.log("selected Nails", selectedNails);
-    // console.log("selectedNails", selectedNails);
+    const selectedNails = this.props.route.params?.selectedNails || [];
+    console.log("selectedNails", selectedNails);
     this.state = {
       currentHand: 'left', 
       nailCategory: 'selected',
@@ -61,111 +59,75 @@ export default class HandDesignTab extends Component {
       rightHandModel: require('../../assets/workshop/hand_right.png'),
       leftHandNails: Array(5).fill(''),
       rightHandNails: Array(5).fill(''),
-      originalCollect: originalCollect, // Add a new state property to store the fetched data
+      originalCollect: [],
       // nailRenderList: Array
     };
 
   }
 
+
   handleNailCategorySelection = (category) => {
     this.setState({ nailCategory: category });
   };
-
+  
   switchHand = () => {
     this.setState(prevState => ({
       currentHand: prevState.currentHand === 'left' ? 'right' : 'left'
     }));
   }
-
-  // UNSAFE_componentWillMount() {
-  //   this.panResponders = this.state.nails.map((_, index) => {
-  //     return PanResponder.create({
-  //       onStartShouldSetPanResponder: () => true,
-  //       onPanResponderMove: Animated.event([
-  //         null, { dx: this.state.nails[index].x, dy: this.state.nails[index].y }
-  //       ], { useNativeDriver: false }),
-  //       onPanResponderRelease: (e, gesture) => { 
-  //           Animated.spring(this.state.nails[index], {
-  //             toValue: { x: 0, y: 0 },
-  //             friction: 5,
-  //             useNativeDriver: false
-  //           }).start();
-          // let dropedFinger = this.isDropZone(gesture, index);
-          // if (dropedFinger >= 0) {
-              
-          //   console.log("dropedFinger:" + dropedFinger);
-          //   // update leftHandNail or rightHandNails with newly dragged image
-          //   if (this.state.currentHand === "left"){
-          //     let tempArray = [].concat(this.state.leftHandNails);
-          //     tempArray[dropedFinger] = this.state.selectedNails[index];
-          //     this.setState({leftHandNails:tempArray});
-          //   }else{
-          //     let tempArray = [].concat(this.state.rightHandNails);
-          //     tempArray[dropedFinger] = this.state.selectedNails[index];
-          //     this.setState({rightHandNails:tempArray});
-          //   }
-  //         }
-  //       }
-  //     });
-  //   });
-  // }
   UNSAFE_componentWillMount() {
-    this.createPanResponders();
-}
-
-createPanResponders = () => {
-  this.panResponders = this.state.nails.map((nail, index) => {
+    this.panResponders = this.state.nails.map((_, index) => {
       return PanResponder.create({
-          onStartShouldSetPanResponder: () => true,
-          onPanResponderMove: Animated.event([
-              null, { dx: nail.x, dy: nail.y }
-          ], { useNativeDriver: false }),
-          onPanResponderRelease: (e, gesture) => { 
-
-              Animated.spring(nail, {
-                toValue: { x: 0, y: 0 },
-                friction: 5,
-                useNativeDriver: false
+        onStartShouldSetPanResponder: () => true,
+        onPanResponderMove: Animated.event([
+          null, { dx: this.state.nails[index].x, dy: this.state.nails[index].y }
+        ], { useNativeDriver: false }),
+        onPanResponderRelease: (e, gesture) => { 
+            Animated.spring(this.state.nails[index], {
+              toValue: { x: 0, y: 0 },
+              friction: 5,
+              useNativeDriver: false
             }).start();
-              let dropedFinger = this.isDropZone(gesture, index);
-              if (dropedFinger >= 0) {
-                  
-                console.log("dropedFinger:" + dropedFinger);
-                let currentNailsArray = this.state.nailCategory === 'emoSingle' 
-                ? this.state.originalCollect 
-                : this.state.selectedNails;
-                // update leftHandNail or rightHandNails with newly dragged image
-                if (this.state.currentHand === "left"){
-                  let tempArray = [].concat(this.state.leftHandNails);
-                  tempArray[dropedFinger] = currentNailsArray[index];
-                  this.setState({leftHandNails:tempArray});
-                }else{
-                  let tempArray = [].concat(this.state.rightHandNails);
-                  tempArray[dropedFinger] = currentNailsArray[index];
-                  this.setState({rightHandNails:tempArray});
-                }
-              }
-              // Optionally, reset the position of the nail
-
+          let dropedFinger = this.isDropZone(gesture, index);
+          if (dropedFinger >= 0) {
+              
+            console.log("dropedFinger:" + dropedFinger);
+            // update leftHandNail or rightHandNails with newly dragged image
+            if (this.state.currentHand === "left"){
+              let tempArray = [].concat(this.state.leftHandNails);
+              tempArray[dropedFinger] = this.state.selectedNails[index];
+              this.setState({leftHandNails:tempArray});
+            }else{
+              let tempArray = [].concat(this.state.rightHandNails);
+              tempArray[dropedFinger] = this.state.selectedNails[index];
+              this.setState({rightHandNails:tempArray});
+            }
           }
+        }
       });
-  });
-};
-
-  handleNailCategorySelection = (category) => {
-    this.setState({ nailCategory: category }, () => {
-        let nailImages = category === 'emoSingle' ? this.state.originalCollect : this.state.selectedNails;
-        this.updateNails(nailImages);
     });
-};
+  }
 
-updateNails = (nailImages) => {
-  console.log("nailImages", nailImages);
-    const nails = nailImages.map(() => new Animated.ValueXY());
-    this.setState({nails: nails }, this.createPanResponders);
-    console.log("this.state.nails", this.state.nails);
-};
+  componentDidMount() {
+    this.getOriginalCollect();
+  }
 
+  getOriginalCollect = async () => {
+    try {
+      // Assuming APIS and headers are defined somewhere in your code
+      const response = await axios.get(
+        path.join(APIS.GET_PRODUCTS, "collections/original single nails", "/"),
+        { headers }
+      );
+
+      console.log("query single nails", response.data.products);
+      let copy = JSON.parse(JSON.stringify(response.data.products));
+      this.setState({ originalCollect: copy });
+    } catch (e) {
+      console.error(e);
+      this.setState({ originalCollect: [] }); // Set to empty array in case of error
+    }
+  };
 
   updateNailImage = (hand, index, newImage) => {
     if (hand === 'left') {
@@ -269,47 +231,19 @@ updateNails = (nailImages) => {
     return dropIndex;
   }
 
+  renderNails() {
+    let nailsToRender = [];
 
-  // renderNails() {
-  //   let nailsToRender = [];
+    if (this.state.nailCategory === 'emoSingle') {
+      nailsToRender = this.state.originalCollect;
+    } else {
+      nailsToRender = this.state.selectedNails;
+    }
 
-  //   if (this.state.nailCategory === 'emoSingle') {
-  //     nailsToRender = this.state.originalCollect;
-  //   } else {
-  //     nailsToRender = this.state.selectedNails;
-  //   }
-  //   return (
-  //     <View style={styles.nailContainer}>
-  //       { this.state.nails.map((image, index) => {
-  //         if (!image || image.trim() === '') {
-  //           // If the image URI is empty or undefined, do not render this item
-  //           return null;
-  //         }
-  //         console.log("image in renderNails", image);
-  //         const panStyle = {
-  //           transform: this.state.nails[index].getTranslateTransform(),
-  //         };
-  //         return (
-  //           <Animated.View
-  //             key={index}
-  //             {...this.panResponders[index].panHandlers}
-  //             style={[panStyle]}
-  //           >
-  //             <Image source={{ uri: image }} style={styles.nailImage} />
-              
-  //           </Animated.View>
-  //         );
-  //       })}
-  //     </View>
-  //   );
-  // }
-
-  renderNails = () => {
-    const nailsToRender = this.state.nailCategory === 'emoSingle' ? this.state.originalCollect : this.state.selectedNails;
     return (
 
       <View style={styles.nailContainer}>
-        {this.state.selectedNails.map((image, index) => {
+        {nailsToRender.map((image, index) => {
           if (!image || image.trim() === '') {
             // If the image URI is empty or undefined, do not render this item
             return null;
@@ -334,20 +268,8 @@ updateNails = (nailImages) => {
 
     );
   }
-              if (!this.panResponders[index]) {
-                  return null;
-              }
 
-              return (
-                  <Animated.View key={index} {...this.panResponders[index].panHandlers} style={[panStyle]}>
-                      <Image source={{ uri: imageUri }} style={styles.nailImage} />
-                  </Animated.View>
-              );
-          })}
-      </View>
-  );
 
-};
   renderDropZones() {
     const dropZonePositions = this.state.currentHand === 'left' ? leftHandDropZonePositions : rightHandDropZonePositions;
 

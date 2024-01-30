@@ -86,7 +86,15 @@ export const WorkshopTab = ({ navigation, route }) => {
   const [combinedData, setCombinedData] = useState([]); // State for combined image data
   const [selectedNails, setSelectedNails] = useState(new Array(10).fill(''));
   const [originalCollect, setOriginalCollect] = useState([]);
-  const { userTags, key } = route.params;
+  // Initialize default values for userTags and key
+  let userTags = null;
+  let key = null;
+
+  // Check if route.params exists and has properties before destructuring
+  if (route.params && route.params.userTags && route.params.key) {
+    userTags = route.params.userTags;
+    key = route.params.key;
+  }
   // console.log(userTags);
   // console.log("workshop: route.params", route.params.userTags);
   const [hasChatData, setHasChatData] = useState(false);
@@ -121,7 +129,7 @@ export const WorkshopTab = ({ navigation, route }) => {
     navigation.goBack();
   };
   useEffect(() => {
-    if(designIds.length > 0){
+    if(designIds.length > 0 || !userTags){
       setHasChatData(true);
       console.log("hasChatData", hasChatData )
     }
@@ -295,8 +303,6 @@ useEffect(() => {
                 </TouchableOpacity>
               );
             }
-
-
 
         return(
           <View key={index} style={[styles.center, { width}]}>
