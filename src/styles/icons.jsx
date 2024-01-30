@@ -21,6 +21,9 @@ import Menu from "../../assets/icons/menu.svg";
 import Remove from "../../assets/icons/remove.svg";
 import Measure from "../../assets/icons/measure.svg";
 import Setting from "../../assets/icons/setting.svg";
+import Like from "../../assets/icons/like.svg";
+import Plus from "../../assets/icons/plus.svg";
+import Minus from "../../assets/icons/minus.svg";
 
 export const TAB_BAR_ICONS = {
     home: Home,
@@ -47,4 +50,7 @@ export const ACTION_ICONS = {
     remove: Remove,
     setting: Setting,
     measure: Measure,
+    like: Like,
+    plus: Plus,
+    minus: Minus,
 }

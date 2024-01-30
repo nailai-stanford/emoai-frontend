@@ -20,6 +20,7 @@ import {ButtonAction, ButtonSelection, GradientButtonAction} from '../styles/but
 import {P, ButtonP, MenuHeader, TitleHeader, SubHeader} from '../styles/texts';
 import {COLORS, PADDINGS} from '../styles/theme';
 import {TABs} from '../static/Constants';
+import { ACTION_ICONS } from '../styles/icons';
 
 const iconSize = 20;
 const pictureHeight = 60;
@@ -57,7 +58,8 @@ const CheckoutItem = ({item, total, setTotal, cartItems, setCartItems}) => {
             <P $alignLeft={true}>{item.title}</P>
             <P $alignLeft={true}>{item.price}</P>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <MaterialCommunityIcons
+              <ACTION_ICONS.minus
+                  style={{paddingHorizontal: 10}}
                 name="minus"
                 size={iconSize}
                 color={COLORS.white}
@@ -81,10 +83,8 @@ const CheckoutItem = ({item, total, setTotal, cartItems, setCartItems}) => {
               />
               <P>{quantity}</P>
               <TouchableOpacity>
-                <MaterialCommunityIcons
-                  name="plus"
-                  size={iconSize}
-                  color={COLORS.white}
+                <ACTION_ICONS.plus
+                  style={{paddingHorizontal: 10}}
                   onPress={() => {
                     let copy = JSON.parse(JSON.stringify(cartItems));
                     setTotal(prevTotal => prevTotal + item.price);
