@@ -9,8 +9,8 @@ import { APIs, getHeader } from "../utils/API";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { useIsFocused } from '@react-navigation/native';
 
-import { ButtonAction, ButtonSelection } from "../styles/buttons";
-import { P, ButtonP, MenuHeader, TitleHeader, SubHeader} from "../styles/texts";
+import { ButtonAction, ButtonSelection, GradientButtonSelection } from "../styles/buttons";
+import { P, ButtonP, GradientMenuHeader,GradientP} from "../styles/texts";
 import { COLORS, PADDINGS } from "../styles/theme";
 
 export const ProfileTab = ({ onSignout }) => {
@@ -61,9 +61,7 @@ export const ProfileTab = ({ onSignout }) => {
         {headers}
       ).then(
         res => {
-          // console.log("query single nails",res.data.products)
           let copy = JSON.parse(JSON.stringify(res.data.products))
-          console.log("get product, ", copy)
           setSingleNail(copy)
           }
       ).catch(e => console.log(e))
@@ -74,11 +72,11 @@ export const ProfileTab = ({ onSignout }) => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <UserInfo onSignout={onSignout} />
-      <MenuHeader $colored={true} style={{alignSelf:"flex-start", paddingHorizontal: PADDINGS.md}}>My Gallery</MenuHeader>
+      <GradientMenuHeader $colored={true} style={{alignSelf:"flex-start", paddingHorizontal: PADDINGS.md}}>My Gallery</GradientMenuHeader>
       <View style={styles.buttonRow}>
-          <ButtonSelection onPress={() => {setIndex(0)}} style={styles.buttonSelectionStyle} $selected={index===0 && true}><ButtonP>My Design</ButtonP></ButtonSelection>
-          <ButtonSelection onPress={() => setIndex(1)} style={styles.buttonSelectionStyle} $selected={index===1 && true} ><ButtonP>Collection</ButtonP></ButtonSelection>
-          <ButtonSelection onPress={() => setIndex(2)}  style={styles.buttonSelectionStyle} $selected={index===2 && true}><ButtonP>Single Nail</ButtonP></ButtonSelection>
+          <GradientButtonSelection onPress={() => {setIndex(0)}} style={styles.buttonSelectionStyle} $selected={index===0 && true}><ButtonP>My Design</ButtonP></GradientButtonSelection>
+          <GradientButtonSelection onPress={() => setIndex(1)} style={styles.buttonSelectionStyle} $selected={index===1 && true} ><ButtonP>Collection</ButtonP></GradientButtonSelection>
+          <GradientButtonSelection onPress={() => setIndex(2)}  style={styles.buttonSelectionStyle} $selected={index===2 && true}><ButtonP>Single Nail</ButtonP></GradientButtonSelection>
       </View>
       <View
           style={{

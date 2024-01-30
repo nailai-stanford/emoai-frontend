@@ -29,11 +29,15 @@ import {
   ExpandingDot,
 } from 'react-native-animated-pagination-dots';
 
-import { ButtonAction, ButtonSelection } from "../styles/buttons";
+import { GradientButtonAction } from "../styles/buttons";
 import { P, ButtonP, MenuHeader, TitleHeader, SubHeader, ButtonH} from "../styles/texts";
-import { COLORS, PADDINGS, FONTS } from "../styles/theme";
+import { COLORS, PADDINGS, FONTS, ICON_SIZES } from "../styles/theme";
+import { ACTION_ICONS } from "../styles/icons";
 
 // const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
+
+const TEST_IMAGE_URL = {0:'https://cdn.shopify.com/s/files/1/0699/2750/1847/products/img-m1GOvvVr6mStTyrE7X2z6HW9.png?v=1706295416'};
+const TEST_NAIL_URL = ['https://cdn.shopify.com/s/files/1/0699/2750/1847/products/img-m1GOvvVr6mStTyrE7X2z6HW9.png?v=1706295416','https://cdn.shopify.com/s/files/1/0699/2750/1847/products/img-m1GOvvVr6mStTyrE7X2z6HW9.png?v=1706295416','https://cdn.shopify.com/s/files/1/0699/2750/1847/products/img-m1GOvvVr6mStTyrE7X2z6HW9.png?v=1706295416','https://cdn.shopify.com/s/files/1/0699/2750/1847/products/img-m1GOvvVr6mStTyrE7X2z6HW9.png?v=1706295416','https://cdn.shopify.com/s/files/1/0699/2750/1847/products/img-m1GOvvVr6mStTyrE7X2z6HW9.png?v=1706295416','https://cdn.shopify.com/s/files/1/0699/2750/1847/products/img-m1GOvvVr6mStTyrE7X2z6HW9.png?v=1706295416','https://cdn.shopify.com/s/files/1/0699/2750/1847/products/img-m1GOvvVr6mStTyrE7X2z6HW9.png?v=1706295416','https://cdn.shopify.com/s/files/1/0699/2750/1847/products/img-m1GOvvVr6mStTyrE7X2z6HW9.png?v=1706295416']
 
 const INTRO_DATA = [
   {
@@ -75,6 +79,8 @@ export const WorkshopTab = ({ navigation, route }) => {
   const scrollX = useRef(new Animated.Value(0)).current;
   // const [nailsData, setNailsData] = useState([]); // State to store decomposed nails data
   const [editMode, setEditMode] = useState(false);
+  // const [imageUrls, setImageUrls] = useState({}); // hand design urls
+  // const [nailImages, setNailImages] = useState([]);// nail urls
   const [imageUrls, setImageUrls] = useState({}); // hand design urls
   const [nailImages, setNailImages] = useState([]);// nail urls
   const [combinedData, setCombinedData] = useState([]); // State for combined image data
@@ -83,6 +89,7 @@ export const WorkshopTab = ({ navigation, route }) => {
   const { userTags, key } = route.params;
   // console.log(userTags);
   // console.log("workshop: route.params", route.params.userTags);
+  const [hasChatData, setHasChatData] = useState(false);
 
   useEffect(() => {
     designIds.forEach(async id => {
@@ -114,6 +121,13 @@ export const WorkshopTab = ({ navigation, route }) => {
     navigation.goBack();
   };
   useEffect(() => {
+    if(designIds.length > 0){
+      setHasChatData(true);
+      console.log("hasChatData", hasChatData )
+    }
+  }, [designIds]);
+
+  useEffect(() => {
     // Assuming designIds, imageUrls, and nailImages are populated
     console.log("imageUrls", imageUrls);
   }, [designIds, imageUrls, nailImages]);
@@ -142,6 +156,7 @@ export const WorkshopTab = ({ navigation, route }) => {
   }, [nailImages]);
   
   useEffect(() => {
+    console.log("designIds", designIds);
     console.log("Current combinedData:", combinedData);
   }, [combinedData]);
 
@@ -286,7 +301,8 @@ useEffect(() => {
         return(
           <View key={index} style={[styles.center, { width}]}>
             <Image source={{ uri: data.imageUrl }} style={styles.imageStyle} />
-            <View style={{flexDirection: 'row', width:"100%", alignSelf:"center", overflow:"hidden"}}>
+            <View style={{flexDirection: 'row', width:"100%", alignSelf:"center"}}>
+
               {data.nailImages.map((nailUrl, nIndex) => (
                 <Pressable key={nIndex} onPress={() => handleNailSelect(nailUrl)}>
                   <Image source={{ uri: nailUrl }} style={styles.nailStyle} />
@@ -326,12 +342,8 @@ useEffect(() => {
       <View style={{flexDirection:"row", paddingTop:PADDINGS.md, paddingBottom:PADDINGS.sm}}>
           <SubHeader style={{flex:1}}>My Selection</SubHeader>
           <TouchableOpacity onPress={toggleEditMode} style={{paddingRight:10}}>
-            <MaterialIcons
-                      name={editMode ? 'done' : 'edit'}
-                      color={COLORS.white}
-                      size={FONTS.subHeader}
-                    />
-          </TouchableOpacity>         
+            {editMode ? <SubHeader>Done</SubHeader> : <ACTION_ICONS.edit size={ICON_SIZES.standard}/> }
+          </TouchableOpacity>
       </View>
       <P style={{paddingBottom:PADDINGS.md}} $alignLeft={true}>Select five nails if you don't like them you can click edit to cancel and replace them!</P>
       
@@ -353,20 +365,14 @@ useEffect(() => {
                     onPress={() => handleNailDeletion(index)}
                   >
                     {/* You can use an icon or text for the delete button */}
-                    <MaterialIcons
-                      name={"remove-circle"}
-                      color="red"
-                      size={20}
-                    /> 
+                    <ACTION_ICONS.remove/> 
 
                   </TouchableOpacity>
                 )}
               </View>
             ) : (
               <View style={styles.nailPlaceholder}>
-                <MaterialIcons
-                  name={"add"}
-                  color={COLORS.gradientSub1}
+                <ACTION_ICONS.addLarge
                   size={40}
                 /> 
             </View>
@@ -376,12 +382,10 @@ useEffect(() => {
 
       </ScrollView>
 
-
-        
-        <ButtonAction style={{width:"50%", alignSelf:"center"}}
-          onPress={() => navigation.navigate(TABs.HAND_DESIGN, {selectedNails, originalCollect })}>
+        <GradientButtonAction style={{alignSelf:"center"}}
+          onPress={() => navigation.navigate(TABs.HAND_DESIGN, { selectedNails, originalCollect })}>
             <ButtonP>Start Selection</ButtonP>
-        </ButtonAction>
+        </GradientButtonAction>
         
 
     </View>
@@ -413,12 +417,9 @@ const styles = StyleSheet.create({
     marginHorizontal: 3,
   },
   nailPlaceholder: {
-    width: 50, // width of the placeholder
-    height: 50, // height of the placeholder
+    width: 60, // width of the placeholder
+    height: 60, // height of the placeholder
     backgroundColor: 'transparent', // a light grey color for the background
-    borderColor: COLORS.gradientSub1, 
-    borderWidth: 2, 
-    borderRadius: 25, // rounded corners
     justifyContent: 'center', // center the content inside the placeholder
     alignItems: 'center', // align the content
     marginHorizontal: 5, // horizontal margin for spacing between items
@@ -479,7 +480,7 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     position: 'absolute',
-    top: -1,
+    top: 0,
     right: -1,
     // backgroundColor: 'red',
     justifyContent: 'center',

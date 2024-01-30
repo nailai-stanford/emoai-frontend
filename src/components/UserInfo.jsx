@@ -6,7 +6,7 @@ import { APIs, getHeader } from "../utils/API";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 
 import { ButtonAction, ButtonSelection } from "../styles/buttons";
-import { P, ButtonP, MenuHeader, TitleHeader, SubHeader} from "../styles/texts";
+import { P, ButtonP, MenuHeader, GradientP} from "../styles/texts";
 import { COLORS, PADDINGS } from "../styles/theme";
 
 export const UserInfo = (props) => {
@@ -40,7 +40,7 @@ export const UserInfo = (props) => {
         </View>
         <View style={{ flex: 2, alignSelf: "center", marginLeft: 20 }}>
           <MenuHeader>{userInfo && userInfo.user.name}</MenuHeader>
-          <P $colored={true} $alignLeft={true}>Modern Artist</P>
+          <GradientP $colored={true} $alignLeft={true}>Modern Artist</GradientP>
           <ButtonAction $isWhite={true} style={{alignSelf: "flex-start", marginLeft:0}}
             onPress={() => {
               signout();

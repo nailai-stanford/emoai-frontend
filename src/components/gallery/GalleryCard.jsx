@@ -4,6 +4,7 @@ import { TABs } from "../../static/Constants";
 import { useNavigation } from '@react-navigation/native';
 import { getCart, setCart } from "../../utils/UserUtils";
 import { useEffect } from "react";
+import { ACTION_ICONS } from "../../styles/icons";
 
 export const GalleryCard = ({ item, style }) => {
   const { user, image } = item;
@@ -73,11 +74,8 @@ export const GalleryCard = ({ item, style }) => {
       </View>
       <View style={{ flex: 1 }}>
         <Text style={{ color: "white" }}>${item.price}</Text>
-
-        <MaterialCommunityIcons
-          name="plus-circle" color="white"
-          size={20} style={{ position: "absolute", right: 0 }}
-          onPress={() => {
+        <TouchableOpacity style={{ position: "absolute", right: 0, bottom: 1 }} 
+        onPress={() => {
             let found = false;
             for (var i = 0; i < cart.length; i++) {
               if (cart[i].id == item.id) {
@@ -88,8 +86,14 @@ export const GalleryCard = ({ item, style }) => {
             if (!found) {
               setCart(item.id, 1)
             }
-          }}
+          }}>
+        <ACTION_ICONS.addSmall
+          name="plus-circle" color="white"
+          height={25}
+          width={25}
+          
         />
+        </TouchableOpacity>
       </View>
     </View>
     

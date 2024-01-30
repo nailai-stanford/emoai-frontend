@@ -27,7 +27,6 @@ const Tab = ({ content, selected, setSelected, setSubList }) => {
     }, [selected])
     
     let currSelected = selected == content ? true : false
-        // console.log(currSelected)
         return <ButtonSelection $selected={currSelected} onPress={()=>{setSelected(content);}}>
                     <ButtonP>{content}</ButtonP>
                 </ButtonSelection>
@@ -35,7 +34,6 @@ const Tab = ({ content, selected, setSelected, setSubList }) => {
 
 const SubElement = ({content, selected, setSelected}) => {
     let currSelected = selected == content ? true : false
-    // console.log(currSelected)
     return <ButtonSelection $selected={currSelected} onPress={()=>setSelected(content)}>
                 <ButtonP>{content.split('-')[1]}</ButtonP>
             </ButtonSelection>
@@ -66,22 +64,28 @@ const ThemeHeader = () => {
         <View style={{ flexDirection: "row" }}>
         <FlatList
             data={themeList}
-                renderItem={({ item }) =>
+                renderItem={({ item }) => (
                     <Tab content={item}
                     selected={themeSelected} setSelected={setThemeSelected}
                     setSubList={setSubList}
-                    />}
-        horizontal
+                    />
+                )}
+                keyExtractor={(item, index) => `theme-${index}`} // Ensure unique key for each theme item
+                horizontal
       />
         </View>
         <View style={{flexDirection: "row"}}>
             <FlatList
                 data={subList}
-                renderItem={({ item }) => <SubElement content={item}
+                renderItem={({ item }) => (
+                <SubElement 
+                    content={item}
                     selected={elementSelected}
                     setSelected={setElementSelected}
-                />}
-                horizontal
+                />
+            )}
+            keyExtractor={(item, index) => `subElement-${index}`} // Ensure unique key for each subElement item
+            horizontal
             />
         </View>
         <ThemeItems elementSelected={[elementSelected]}/>
