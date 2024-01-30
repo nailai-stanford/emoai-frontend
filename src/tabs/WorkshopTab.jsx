@@ -6,8 +6,7 @@ import axios from "axios";
 import { APIs, BASE_URL, getHeader } from "../utils/API";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialIcons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
-
-
+// import generateMoreImage from '../../assets/generate_more.png';
 import React, { useRef,useState, useEffect } from 'react';
 import {
   StyleSheet,
@@ -63,11 +62,17 @@ const INTRO_DATA = [
     description:
       'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. ',
   },
+  {
+    key: '5',
+    title: 'And can be anything 🎈',
+    description:
+      'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. ',
+  },
 ];
 
+const generateMoreImage = "../../assets/generate_more.png";
 
-
-export const WorkshopTab = ({ navigation }) => {
+export const WorkshopTab = ({ navigation, route }) => {
   const { designIds } = useDesignContext();
   const { userInfo} = useAuthenticationContext();
   const width = Dimensions.get('window').width - 2*PADDINGS.sm;
@@ -80,6 +85,10 @@ export const WorkshopTab = ({ navigation }) => {
   const [nailImages, setNailImages] = useState([]);// nail urls
   const [combinedData, setCombinedData] = useState([]); // State for combined image data
   const [selectedNails, setSelectedNails] = useState(new Array(10).fill(''));
+  const [originalCollect, setOriginalCollect] = useState([]);
+  const { userTags, key } = route.params;
+  // console.log(userTags);
+  // console.log("workshop: route.params", route.params.userTags);
   const [hasChatData, setHasChatData] = useState(false);
 
   useEffect(() => {
@@ -107,8 +116,10 @@ export const WorkshopTab = ({ navigation }) => {
     };
 
     fetchNailsData();
-  }, [designIds]);
-
+  }, [designIds, route]);
+  const goBackToLoadTab = () => {
+    navigation.goBack();
+  };
   useEffect(() => {
     if(designIds.length > 0){
       setHasChatData(true);
@@ -122,32 +133,19 @@ export const WorkshopTab = ({ navigation }) => {
   }, [designIds, imageUrls, nailImages]);
 
   useEffect(() => {
-    let newCombinedData = []
-    // use local data
-    if (!hasChatData) {
-      setImageUrls(TEST_IMAGE_URL);
-      setNailImages(TEST_NAIL_URL);
-      newCombinedData = Object.keys(TEST_IMAGE_URL).map((key, index) => {
-        return {
-          imageUrl: TEST_IMAGE_URL[key], // Assuming imageUrls and designIds are aligned
-          nailImages: TEST_NAIL_URL || [],
-        };
-      });
-    }
-    // If designIds, imageUrls, and nailImages are populated
-    else{
-      newCombinedData = designIds.map((designId, index) => {
-        return {
-          imageUrl: imageUrls[designId], // Assuming imageUrls and designIds are aligned
-          nailImages: nailImages[designId] || [],
-        };
-      });
-    }
-    console.log("newCombinedData", newCombinedData)
+    // Assuming designIds, imageUrls, and nailImages are populated
+    const newCombinedData = designIds.map((designId, index) => {
+      return {
+        imageUrl: imageUrls[designId], // Assuming imageUrls and designIds are aligned
+        nailImages: nailImages[designId] || [],
+      };
+    });
+    newCombinedData.push({
+      imageUrl: generateMoreImage,
+      nailImages: []
+    });
     setCombinedData(newCombinedData); // Update the state
-  }, [designIds, imageUrls, nailImages, hasChatData]);
-
-
+  }, [imageUrls, nailImages, route]);
 
   const toggleEditMode = () => {
     setEditMode(!editMode);
@@ -180,24 +178,51 @@ export const WorkshopTab = ({ navigation }) => {
     });
   };
 
+  const getOriginalCollect = async () => {
+
+    const { idToken } = userInfo;
+    const headers = getHeader(idToken);
+    try {
+      const response = await axios.get(
+        `${APIs.GET_PRODUCTS}collections/original_single_nails/`,
+        { headers }
+      );
+      // console.log("query collections single nails", response.data.products);
+      // let copy = JSON.parse(JSON.stringify(response.data.products));
+      const productImages = response.data.products.map(product => product.image.src);
+      console.log("product Images:", productImages);
+      setOriginalCollect(productImages);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
+    getOriginalCollect();
+  }, []); // Empty dependency array means this runs once on mount
+
   const fetchNailData = async (nailId) => {
     try {
       const { idToken } = userInfo; // Make sure userInfo is defined and accessible
       const headers = getHeader(idToken);
-      const response = await axios.get(`${APIs.GET_PRODUCTS}by_ids?ids=${encodeURIComponent(nailId)}`, { headers });
-  
-      // It's a good practice to check if the data exists
-      if (!response.data.products || response.data.products.length === 0 || !response.data.products[0].image) {
-        throw new Error('No product data found');
+      const response = await axios.get(`${APIs.GET_PRODUCTS}by_ids?ids=${encodeURIComponent([nailId])}`, { headers });
+      console.log("response.data.products", response.data);
+      if (!response || !response.data || !response.data.products || response.data.products.length === 0) {
+        console.error(`No data returned for nail ID ${nailId}`);
+        return null; // Or handle this scenario appropriately
       }
-  
-      return response.data.products[0].image.src;
+      const product = response.data.products[0];
+      if (!product || !product.image || !product.image.src) {
+        console.error(`Image data is missing for product ID ${nailId}`);
+        return null; // Or handle this scenario appropriately
+      }
+      // return response.data.products[0].image.src;
+      return product.image.src;
     } catch (error) {
       console.error(`Error fetching nail data for nail ID ${nailId}:`, error);
       throw error; // Re-throw the error so it can be handled further up the call chain
     }
   };
-  
   
 
   const fetchImageUrl = async (productId, idToken) => {
@@ -236,6 +261,9 @@ const handleNailSelect = (nailUrl) => {
   });
   setSelectedNails(updatedNails);
 };
+useEffect(() => {
+  console.log('originalCollect has changed:', originalCollect);
+}, [originalCollect]);
 
   const handleNailDeletion = (index) => {
     const updatedNails = [...selectedNails];
@@ -256,7 +284,21 @@ const handleNailSelect = (nailUrl) => {
             scrollEventThrottle={1}
             style={{flexDirection:'row'}}
           >
-          {combinedData.map((data, index) => (
+          {combinedData.map((data, index) => {
+            if (data.imageUrl === generateMoreImage) {
+              let src = require(generateMoreImage);
+              console.log("passed from workshop:", userTags);
+              return (
+                <TouchableOpacity key={index} onPress={() => navigation.navigate(TABs.LOAD, { userTags: userTags, key: new Date().getTime().toString()})}>
+                  <Image source={src} style={styles.imageStyle} />
+                  {/* Optionally, add other styles or elements to indicate it's a button */}
+                </TouchableOpacity>
+              );
+            }
+
+
+
+        return(
           <View key={index} style={[styles.center, { width}]}>
             <Image source={{ uri: data.imageUrl }} style={styles.imageStyle} />
             <View style={{flexDirection: 'row', width:"100%", alignSelf:"center"}}>
@@ -268,7 +310,9 @@ const handleNailSelect = (nailUrl) => {
               ))}
             </View>
           </View>
-        ))}
+        )
+        // ))}
+              })}
 
           </ScrollView>
        
@@ -276,8 +320,7 @@ const handleNailSelect = (nailUrl) => {
         <View style={styles.dotContainer}>
           <ExpandingDot
             testID={'expanding-dot'}
-            data={INTRO_DATA}
-            //@ts-ignore
+            data={combinedData}
             scrollX={scrollX}
             expandingDotWidth={20}
             inactiveDotOpacity={1}
@@ -339,10 +382,8 @@ const handleNailSelect = (nailUrl) => {
 
       </ScrollView>
 
-
-        
         <GradientButtonAction style={{alignSelf:"center"}}
-          onPress={() => navigation.navigate(TABs.HAND_DESIGN, { selectedNails })}>
+          onPress={() => navigation.navigate(TABs.HAND_DESIGN, { selectedNails, originalCollect })}>
             <ButtonP>Start Selection</ButtonP>
         </GradientButtonAction>
         

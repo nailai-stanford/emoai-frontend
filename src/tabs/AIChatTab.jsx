@@ -353,7 +353,7 @@ export const AIChatTab = ({ navigation }) => {
           <ChatButton key={index} title={option}
             onPress={() =>  handlePotentialMultipleSelection(option) } 
             selection={multipleInputs.find(e => e == option)?true:false}
-             />
+           />
         )
       })}
       
