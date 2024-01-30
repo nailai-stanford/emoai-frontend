@@ -9,9 +9,10 @@ import { handleError } from "../utils/Common";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { Image, Button, Text } from '@rneui/themed';
 import { MenuHeader,ButtonH, ButtonP, TitleHeader,P, SubHeader } from "../styles/texts";
-import { ButtonAction } from "../styles/buttons";
+import { ButtonAction,ButtonSelection, GradientButtonSelection } from "../styles/buttons";
 import { BORDERS, COLORS, PADDINGS } from "../styles/theme";
 import { getCart, setCart } from "../utils/UserUtils";
+import { ACTION_ICONS } from "../styles/icons";
 
 const size = 50;
 const iconSize = 20;
@@ -110,7 +111,7 @@ const ButtonGroup = ({ productID }) => {
       _getCart()
   })
   return <View style={{ 
-      flexDirection: "row", alignSelf: "center"
+      flexDirection: "row", alignSelf: "center", postion: "absolute", bottom: 0, width: screenWidth, height: 50,
     }}>
         <ButtonAction style={{
             display: "inline-flex",
@@ -149,8 +150,7 @@ const ButtonGroup = ({ productID }) => {
         }}>
        
             <ButtonH>Add to Cart</ButtonH>
-            <MaterialCommunityIcons
-                name="cart-outline"
+            <ACTION_ICONS.shop
                 size={iconSize}
                 style={{color:COLORS.white, paddingLeft:PADDINGS.sm}}/>
             
@@ -175,7 +175,7 @@ const Like = ({ productID }) => {
     _getLike()
   },[productID]);
 
-  return <ButtonAction $isWhite={true} style={{height:30, flex:0.5}}
+  return <ButtonSelection $isWhite={true} style={{height:30, flex:0.5, paddingTop: 0}}
     onPress={() => {
       let URL = liked? APIs.DELETE_LIKE_COLLECT: APIs.LIKE_COLLECT
       axios.post(
@@ -195,17 +195,16 @@ const Like = ({ productID }) => {
         flexDirection: "row",
         alignSelf: "center",}}
       >
-          <ButtonP style={{ alignSelf: "center"}}>Like</ButtonP>
-          <MaterialCommunityIcons
-          name={liked ? "heart": "heart-outline"}
-          size={iconSize}
-          color={COLORS.white}/>
+        <ACTION_ICONS.like
+          fill={liked? "red": "white"}/>
+          <ButtonP style={{ alignSelf: "center"}}>{liked? "unlike": "like"}</ButtonP>
+
     </View>
-  </ButtonAction>
+  </ButtonSelection>
 }
 
 const Creator = ({ user }) => {
-    return <View style={{flexDirection: "row",margin: 10, flex: 5}}>
+    return <View style={{flexDirection: "row", flex: 0.8}}>
       <Image source={{uri: user.avatar}}  containerStyle={{
             width: size,
             height: size,
@@ -224,10 +223,11 @@ const Creator = ({ user }) => {
 export const ProductTab = ({ route, navigation }) => {
   const item = route.params.product
   return (
+    <View style={{height:"88%"}}>
+        <ScrollView>
         <View style={styles.container}>
           <TouchableOpacity>
-              <MaterialCommunityIcons
-              name="chevron-left"
+              <ACTION_ICONS.back
               size={iconSize}
               style={{ color:COLORS.white, right: 0 }}
               onPress={() => {
@@ -235,21 +235,24 @@ export const ProductTab = ({ route, navigation }) => {
               }}/>
           </TouchableOpacity>
         <Image style={{height:200, borderRadius: BORDERS.standartRadius}} source={{uri:item.image.src }}/> 
-        <View style={{height:100, marginBottom:PADDINGS.sm }}>
-            <View style={{flex: 0.5, flexDirection: "row", }}>
+        <View style={{height:item.body_html ? 100: 60, marginBottom:PADDINGS.sm}}>
+            <View style={{flex: 0.8, flexDirection: "row", }}>
               <SubHeader style={{flex: 2 }}>{item.title}</SubHeader>
               {/* some optional like when params go in */}
               {item.user && item.user.fullName !== "emoai-original" && <Like productID={item.id} />}
             </View>
-            <P style={{flex: 0.5}} $alignLeft={true}>${item.price}</P>
-            <P style={{ flex: 1 }} $alignLeft={true}>{ item.body_html }</P>
+            <P style={{flex: 0.3}} $alignLeft={true}>${item.price}</P>
+            {!!item.body_html && <P style={{ flex: 1 }} $alignLeft={true}>{ item.body_html }</P>}
         </View>
-        {/* <SubHeader style={{alignSelf:"flex-start"}}>Creator</SubHeader> */}
+        {item.user && item.user.fullName !== "emoai-original" &&  <SubHeader style={{alignSelf:"flex-start", paddingTop:0}}>Creator</SubHeader>}
             {/* some optional creator info */}
           {item.user && item.user.fullName !== "emoai-original" && <Creator user={item.user} />}
           <Explore/>
-          <ButtonGroup productID={item.id}/>
         </View>
+        </ScrollView>
+      <ButtonGroup productID={item.id} />
+      </View>
+
     ) 
 }
 const styles = StyleSheet.create({
