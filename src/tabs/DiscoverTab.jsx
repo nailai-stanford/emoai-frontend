@@ -49,17 +49,19 @@ const ThemeHeader = ({index, setIndex}) => {
   }, [index, themeList]);
 
   return (
-    <View>
-      <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-        {themeList.map((e, idx) => (
-          <ButtonSelection
-            $selected={index == idx}
-            key={idx}
-            onPress={() => setIndex(idx)}>
-            <ButtonP>{e.split('-')[1]}</ButtonP>
-          </ButtonSelection>
-        ))}
-      </ScrollView>
+    <View >
+      <View>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+          {themeList.map((e, idx) => (
+            <ButtonSelection
+              $selected={index == idx}
+              key={idx}
+              onPress={() => setIndex(idx)}>
+              <ButtonP>{e.split('-')[1]}</ButtonP>
+            </ButtonSelection>
+          ))}
+        </ScrollView>
+      </View>
 
       <View style={styles.gridList}>
         <FlatList
@@ -135,10 +137,8 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     marginTop: 20,
   },
-  // alignItems: "center",
   container: {
     flex: 1,
-    // backgroundColor: "#fff",
     padding: PADDINGS.sm,
   },
 });
