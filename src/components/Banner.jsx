@@ -6,13 +6,17 @@ import {
   StyleSheet,
   SafeAreaView,
   Image,
+  TouchableOpacity
 } from "react-native";
 import axios from "axios";
 import Carousel, {Pagination} from 'react-native-snap-carousel';
+import { useNavigation } from '@react-navigation/native';
 import { APIs, getHeader } from "../utils/API";
 import { ButtonAction, ButtonSelection } from "../styles/buttons";
 import { P, ButtonP, MenuHeader, TitleHeader, SubHeader} from "../styles/texts";
 import { COLORS, PADDINGS, BORDERS } from "../styles/theme";
+import { TABs } from "../static/Constants";
+
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -20,6 +24,8 @@ export const Banner = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [banner, setBanner] = useState([])
   const isCarousel = useRef(null);
+
+  
   useEffect(() => {
     async function _getBanner() {
       axios.get(
@@ -34,6 +40,26 @@ export const Banner = () => {
     if (banner.length == 0) { _getBanner() }
   });
 
+  const navigation = useNavigation();
+
+  const redirect = (schema) => {
+    if(schema.action === 'app') {
+      switch(schema.uri) {
+        case 'chatbot/start':
+          navigation.navigate(TABs.AI)
+          break
+        case 'discover/original':
+          tag_index = schema.tagIdx
+          navigation.navigate(TABs.DISCOVER, { index: 0, tagIdx: tag_index})
+          break
+        case 'hand_design':
+          navigation.navigate(TABs.HAND_DESIGN)
+          break
+      }
+    } else if(schema.action === 'url') {
+    }
+  }
+
   const _renderItem = ({ item, index },parallaxProps) => {
     return (
       <View
@@ -42,11 +68,13 @@ export const Banner = () => {
           borderRadius: BORDERS.boxRadius,
           width: screenWidth - 60,
           height: screenWidth/2 - 25,
-        }}
+      }}
       >
         {
           item && item.image && item.image.src
-          ? <Image source={{ uri: item.image.src }} style={styles.image} />
+          ?  <TouchableOpacity style={styles.imageContainer} onPress={() => redirect(item.schema)}>
+              <Image source={{ uri: item.image.src }} style={styles.image}/>
+             </TouchableOpacity>
           : <Text>What's new?</Text>  // or render a placeholder image
         }
         <Text>{item.title}</Text>
@@ -106,6 +134,8 @@ const styles = StyleSheet.create({
     flex: 1,
     marginBottom: Platform.select({ ios: 0, android: 1 }), // Prevent a random Android rendering issue
     backgroundColor: "transparent",
+    width: screenWidth - 60,
+    height: screenWidth/2 - 25,
     borderRadius: 8,
   },
   image: {
