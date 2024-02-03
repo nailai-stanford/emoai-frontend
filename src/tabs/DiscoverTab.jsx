@@ -44,7 +44,7 @@ const ThemeHeader = ({index, setIndex}) => {
           setThemeItems(JSON.parse(JSON.stringify(res.data)));
         })
         .catch(e => handleError(e));
-    }
+      }
     _loadProducts();
   }, [index, themeList]);
 
@@ -75,12 +75,18 @@ const ThemeHeader = ({index, setIndex}) => {
   );
 };
 
-export const DiscoverTab = () => {
+export const DiscoverTab = ({ route }) => {
   const [productList, setProductList] = useState([]);
   const {userInfo} = useAuthenticationContext();
   const headers = getHeader(userInfo.idToken);
   const [index, setIndex] = useState(0);
-  const [tagIdx, setTagIdx] = useState(0);
+  const [tagIdx, setTagIdx] = useState(route.params?.tagIdx? route.params.tagIdx: 0);
+
+  useEffect(() => {
+    if (route.params?.tagIdx !== undefined) {
+      setTagIdx(route.params.tagIdx);
+    }
+  }, [route.params?.tagIdx]);
 
   useEffect(() => {
     async function _loadProducts() {
