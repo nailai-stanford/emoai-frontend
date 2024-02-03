@@ -21,10 +21,14 @@ export const onPressLogout = async () => {
 };
 
 export const setUserInfoInStore = async (UserInfo) => {
-  await AsyncStorage.setItemAsync(
-    SecureStoreKeys.UserInfo,
-    JSON.stringify(UserInfo),
-  );
+  try {
+      await AsyncStorage.setItem(
+        SecureStoreKeys.UserInfo,
+        JSON.stringify(UserInfo),
+      );
+    } catch(error) {
+      console.log(error)
+    }
 };
 
 export const onPressSignIn = () => {
