@@ -49,8 +49,8 @@ export const onPressSignIn = () => {
                     email: user.email,
                     source: 'google',
                     sourceId: user.id,
-                    firstName: user.givenName,
-                    lastName: user.familyName,
+                    firstName: user.givenName ? user.givenName: "",
+                    lastName: user.familyName ? user.familyName: "",
                   },
                   {headers},
                 )
