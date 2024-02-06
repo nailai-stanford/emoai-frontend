@@ -5,10 +5,13 @@ import {useAuthenticationContext} from '../providers/AuthenticationProvider';
 import {Image} from '@rneui/themed';
 import axios from 'axios';
 
-
-import {View, ScrollView, Alert,  StyleSheet} from 'react-native';
+import {View, ScrollView, Alert, StyleSheet} from 'react-native';
 import {ButtonH, ButtonP, TitleHeader, P, SubHeader} from '../styles/texts';
-import {ButtonAction, ButtonSelection, GradientButtonAction} from '../styles/buttons';
+import {
+  ButtonAction,
+  ButtonSelection,
+  GradientButtonAction,
+} from '../styles/buttons';
 import {handleError} from '../utils/Common';
 import {TABs} from '../static/Constants';
 import {clearCart} from '../utils/UserUtils';
@@ -65,7 +68,9 @@ export const PaymentTab = ({route, navigation}) => {
 
   const showPaymentSheet = async () => {
     const {error} = await presentPaymentSheet();
-
+    const sanitizedAddr = {...addrDetails};
+    delete sanitizedAddr['target'];
+    delete sanitizedAddr['isCheckboxSelected'];
     if (error) {
       Alert.alert(`Error code: ${error.code}`, error.message);
     } else {
@@ -80,6 +85,7 @@ export const PaymentTab = ({route, navigation}) => {
               {
                 design_set_id: e.id,
                 quantity: e.quantity,
+                shipping: sanitizedAddr,
               },
               {headers},
             )
@@ -195,7 +201,6 @@ export const PaymentTab = ({route, navigation}) => {
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {
