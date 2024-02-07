@@ -44,19 +44,19 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = emoai_frontend/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = emoai_frontend/main.m; sourceTree = "<group>"; };
 		19F6CBCC0A4E27FBF8BF4A61 /* libPods-emoai_frontend-emoai_frontendTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-emoai_frontend-emoai_frontendTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		2B154B113E244483998B92CE /* Tahoma.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = Tahoma.ttf; path = ../assets/fonts/Tahoma.ttf; sourceTree = "<group>"; };
-		3B2AF141912643A48A264D64 /* TAHOMA_0.TTF */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = TAHOMA_0.TTF; path = ../assets/fonts/TAHOMA_0.TTF; sourceTree = "<group>"; };
+		2B154B113E244483998B92CE /* Tahoma.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Tahoma.ttf; path = ../assets/fonts/Tahoma.ttf; sourceTree = "<group>"; };
+		3B2AF141912643A48A264D64 /* TAHOMA_0.TTF */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = TAHOMA_0.TTF; path = ../assets/fonts/TAHOMA_0.TTF; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-emoai_frontend.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-emoai_frontend.debug.xcconfig"; path = "Target Support Files/Pods-emoai_frontend/Pods-emoai_frontend.debug.xcconfig"; sourceTree = "<group>"; };
-		4DFD6AED61EA45E7AFAD4453 /* RubikMonoOne-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "RubikMonoOne-Regular.ttf"; path = "../assets/fonts/RubikMonoOne-Regular.ttf"; sourceTree = "<group>"; };
-		4FEFF82D033D42768DAAD730 /* RubikOne-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "RubikOne-Regular.ttf"; path = "../assets/fonts/RubikOne-Regular.ttf"; sourceTree = "<group>"; };
+		4DFD6AED61EA45E7AFAD4453 /* RubikMonoOne-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "RubikMonoOne-Regular.ttf"; path = "../assets/fonts/RubikMonoOne-Regular.ttf"; sourceTree = "<group>"; };
+		4FEFF82D033D42768DAAD730 /* RubikOne-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "RubikOne-Regular.ttf"; path = "../assets/fonts/RubikOne-Regular.ttf"; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-emoai_frontend.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-emoai_frontend.release.xcconfig"; path = "Target Support Files/Pods-emoai_frontend/Pods-emoai_frontend.release.xcconfig"; sourceTree = "<group>"; };
 		5B7EB9410499542E8C5724F5 /* Pods-emoai_frontend-emoai_frontendTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-emoai_frontend-emoai_frontendTests.debug.xcconfig"; path = "Target Support Files/Pods-emoai_frontend-emoai_frontendTests/Pods-emoai_frontend-emoai_frontendTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-emoai_frontend.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-emoai_frontend.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = emoai_frontend/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-emoai_frontend-emoai_frontendTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-emoai_frontend-emoai_frontendTests.release.xcconfig"; path = "Target Support Files/Pods-emoai_frontend-emoai_frontendTests/Pods-emoai_frontend-emoai_frontendTests.release.xcconfig"; sourceTree = "<group>"; };
-		9B3089553A6A48E59AA754D8 /* Tahoma Regular font.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Tahoma Regular font.ttf"; path = "../assets/fonts/Tahoma Regular font.ttf"; sourceTree = "<group>"; };
-		D49E6AA68653435F9E042CB1 /* TAHOMAB0.TTF */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = TAHOMAB0.TTF; path = ../assets/fonts/TAHOMAB0.TTF; sourceTree = "<group>"; };
-		E586E0C5DAD94CBAAA46FC0B /* TAHOMABD.TTF */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = TAHOMABD.TTF; path = ../assets/fonts/TAHOMABD.TTF; sourceTree = "<group>"; };
+		9B3089553A6A48E59AA754D8 /* Tahoma Regular font.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Tahoma Regular font.ttf"; path = "../assets/fonts/Tahoma Regular font.ttf"; sourceTree = "<group>"; };
+		D49E6AA68653435F9E042CB1 /* TAHOMAB0.TTF */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = TAHOMAB0.TTF; path = ../assets/fonts/TAHOMAB0.TTF; sourceTree = "<group>"; };
+		E586E0C5DAD94CBAAA46FC0B /* TAHOMABD.TTF */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = TAHOMABD.TTF; path = ../assets/fonts/TAHOMABD.TTF; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -122,7 +122,6 @@
 				4FEFF82D033D42768DAAD730 /* RubikOne-Regular.ttf */,
 			);
 			name = Resources;
-			path = "";
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
@@ -503,25 +502,31 @@
 			baseConfigurationReference = 3B4392A12AC88292D35C810B /* Pods-emoai_frontend.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = 6U222TP4JW;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = emoai_frontend/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = ai.nailnail;
 				PRODUCT_NAME = emoai_frontend;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -531,23 +536,29 @@
 			baseConfigurationReference = 5709B34CF0A7D63546082F79 /* Pods-emoai_frontend.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 5;
 				DEVELOPMENT_TEAM = 6U222TP4JW;
 				INFOPLIST_FILE = emoai_frontend/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.shopping";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 0.1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = ai.nailnail;
 				PRODUCT_NAME = emoai_frontend;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
