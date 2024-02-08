@@ -15,7 +15,7 @@ export const LoadTab = ({ navigation, route }) => {
   const { addDesignIds } = useDesignContext();
   // const { userTags } = route.params;
 
-const generateImage = async (userPreferences) => {
+const generateImage = async (userPreferences, userInfo) => {
     const prompt = `nails art with hand, round nail shape, short nails, ${userPreferences.THEME} theme, ${userPreferences.COLOR} tone, ${userPreferences.BRAND}, ${userPreferences.ELEMENT}, low contrast, high saturation, original design, ${userPreferences.TEXTURE} texture, minimalism, matte finish, oil painting brush texture, 8K`;
 
     console.log("prompTTT:", prompt);
@@ -29,16 +29,19 @@ const generateImage = async (userPreferences) => {
       });
       
       const data = await response.json();
+      console.log(data)
       
       if (data.imageUrls) {
         const designIds = await handleSaveImages(data.imageUrls, userPreferences, prompt);
         console.log("designIds from save images", designIds);
 
-        const singleNailsList = await Promise.all(data.imageUrls.map(imageUrl => {
-          return decomposeNails(imageUrl).catch(error => {
-              console.error(`Error decomposing nail for image URL ${imageUrl}:`, error);
-              return null; // or any other fallback value
-          });
+        const singleNailsList = await Promise.all(data.imageUrls.map(async imageUrl => {
+          try {
+            return await decomposeNails(imageUrl, userInfo);
+          } catch (error) {
+            console.error(`Error decomposing nail for image URL ${imageUrl}:`, error);
+            return null;
+          }
       }));
         
         await handleSingleNailSave(singleNailsList, designIds);
@@ -81,13 +84,14 @@ async function handleSaveImages(imageUrls, userPreferences, g_prompt) {
           });
     });
 }
-  const decomposeNails = async (img_url) => {
+  const decomposeNails = async (img_url, userInfo) => {
     try {
+      const { idToken } = userInfo;
+      const headers = getHeader(idToken);
+
       const response = await fetch(`${BASE_URL}/api/decompose-single-nails/`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: headers,
         body: JSON.stringify({ image_url: img_url }),
       });
 
@@ -137,12 +141,12 @@ useEffect(() => {
   
     // Immediately-invoked async function
     (async () => {
-      await generateImage(route.params.userTags); // Wait for generateImage to complete
+      await generateImage(route.params.userTags, userInfo); // Wait for generateImage to complete
       navigation.navigate(TABs.WORKSHOP, {userTags: route.params.userTags, key: new Date().getTime().toString()}); // Then navigate to the Workshop tab
       // console.log("passed from load:", route.params.userTags);
     })();
     
-  }, [route]);
+  }, [route, userInfo]);
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

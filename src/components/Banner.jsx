@@ -12,8 +12,6 @@ import axios from "axios";
 import Carousel, {Pagination} from 'react-native-snap-carousel';
 import { useNavigation } from '@react-navigation/native';
 import { APIs, getHeader } from "../utils/API";
-import { ButtonAction, ButtonSelection } from "../styles/buttons";
-import { P, ButtonP, MenuHeader, TitleHeader, SubHeader} from "../styles/texts";
 import { COLORS, PADDINGS, BORDERS } from "../styles/theme";
 import { TABs } from "../static/Constants";
 
