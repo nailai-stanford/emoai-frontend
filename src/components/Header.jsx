@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View, Text, Touchable, TouchableOpacity } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 import { TAB_TITLES, TABs } from "../static/Constants";
@@ -39,12 +39,11 @@ export const Header = (props) => {
 };
 // TODO: make touch opacity so that the area is bigger to press
 const BackButton = ({navigation}) => {
-  return <ACTION_ICONS.back
-  size={iconSize}
+  return (<TouchableOpacity size={iconSize} onPress={() => {navigation.goBack();}}>
+    <ACTION_ICONS.back
   style={{ right: 0, color: COLORS.white, marginRight: PADDINGS.sm }}
-  onPress={() => {
-    navigation.goBack();
-  }}/>
+  />
+  </TouchableOpacity>)
 }
 
 const ProfileIconGroup = ({ navigation }) => {
@@ -55,16 +54,17 @@ const ProfileIconGroup = ({ navigation }) => {
     height: iconSize,
     flexDirection: "row",
   }}>
+     
+    <TouchableOpacity   style={{ position: "absolute", right: 40 }} onPress={() => navigation.navigate(TABs.SETTINGS)}>
     <ACTION_ICONS.measure name='straighten'
-      onPress={() => navigation.navigate(TABs.SETTINGS)}
-      style={{ position: "absolute", right: 40 }}
       color={COLORS.white}
     />
-    <ACTION_ICONS.setting name='settings'
-      onPress={() => navigation.navigate(TABs.SETTINGS)}
-      color={COLORS.white}
-
-    />
+     </TouchableOpacity>
+     <TouchableOpacity  onPress={() => navigation.navigate(TABs.SETTINGS)}>
+      <ACTION_ICONS.setting name='settings'
+        color={COLORS.white}
+      />
+    </TouchableOpacity>
     
   </View>
 }
@@ -101,26 +101,19 @@ const ButtonGroup = ({ navigation }) => {
         height: iconSize,
       }}
     >
-      <ACTION_ICONS.search
-        color={iconColor}
-        size={iconSize}
-        onPress={() => navigation.navigate(TABs.SEARCH)}
-        style={{ position: "absolute", right: 50 }}
-      />
+      <TouchableOpacity size={iconSize} style={{ position: "absolute", right: 50 }} onPress={() => navigation.navigate(TABs.SEARCH)}>
+        <ACTION_ICONS.search
+          color={iconColor}
+          size={iconSize}
+        />
+      </TouchableOpacity>
       {/* Uncomment the following code once the icons should be displayed */}
-      <ACTION_ICONS.shop
-        color={iconColor}
-        size={iconSize}
-        onPress={() => navigation.navigate(TABs.CART)}
-        style={{ position: "absolute", right: 10 }}
-      />
-      {/* <MaterialCommunityIcons
-        name="share-outline"
-        color={iconColor}
-        size={iconSize}
-        onPress={() => navigation.navigate(TABs.SHARE_DESIGN)}
-        style={{ position: "absolute", right: 0 }}
-      /> */}
+      <TouchableOpacity style={{ position: "absolute", right: 10 }} onPress={() => navigation.navigate(TABs.CART)}>
+        <ACTION_ICONS.shop
+          color={iconColor}
+          size={iconSize}
+        />
+      </TouchableOpacity>
     </View>
   );
 };

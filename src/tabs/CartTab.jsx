@@ -58,11 +58,8 @@ const CheckoutItem = ({item, total, setTotal, cartItems, setCartItems}) => {
             <P $alignLeft={true}>{item.title}</P>
             <P $alignLeft={true}>{item.price}</P>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <ACTION_ICONS.minus
-                  style={{paddingHorizontal: 10}}
-                name="minus"
-                size={iconSize}
-                color={COLORS.white}
+              <TouchableOpacity 
+                style={{paddingHorizontal: 3, height:iconSize, width:iconSize, justifyContent:'center'}}
                 onPress={() => {
                   let copy = JSON.parse(JSON.stringify(cartItems));
                   if (quantity > 0) {
@@ -79,24 +76,27 @@ const CheckoutItem = ({item, total, setTotal, cartItems, setCartItems}) => {
                     setQuantity(quantity - 1);
                   }
                   setCartItems(copy);
-                }}
+                }}>
+              <ACTION_ICONS.minus
+                color={COLORS.white}
               />
+              </TouchableOpacity>
               <P>{quantity}</P>
-              <TouchableOpacity>
+              <TouchableOpacity 
+                style={{paddingHorizontal: 10, height:iconSize, width:iconSize, justifyContent:'center'}}
+                onPress={() => {
+                  let copy = JSON.parse(JSON.stringify(cartItems));
+                  setTotal(prevTotal => prevTotal + item.price);
+                  copy.forEach(element => {
+                    if (element.id == item.id) {
+                      element.quantity = quantity + 1;
+                      setCart(element.id, element.quantity);
+                    }
+                  });
+                  setQuantity(quantity + 1);
+                  setCartItems(copy);
+                }}>
                 <ACTION_ICONS.plus
-                  style={{paddingHorizontal: 10}}
-                  onPress={() => {
-                    let copy = JSON.parse(JSON.stringify(cartItems));
-                    setTotal(prevTotal => prevTotal + item.price);
-                    copy.forEach(element => {
-                      if (element.id == item.id) {
-                        element.quantity = quantity + 1;
-                        setCart(element.id, element.quantity);
-                      }
-                    });
-                    setQuantity(quantity + 1);
-                    setCartItems(copy);
-                  }}
                 />
               </TouchableOpacity>
             </View>
