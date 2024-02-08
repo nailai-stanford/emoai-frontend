@@ -2,6 +2,7 @@
 
 export const Config = {
   // BASE_URL: "http://127.0.0.1:8000",
+  // BASE_URL: "http://192.168.1.231:8000",
   BASE_URL: "http://3.92.214.49:80",
 
   IOS_CLIENT_ID:

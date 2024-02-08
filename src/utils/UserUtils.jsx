@@ -60,6 +60,7 @@ export const onPressSignIn = () => {
                 )
                 .then(response => {
                   setUserInfoInStore(userInfo);
+                  console.log('login user_info:', userInfo)
                   handleResponse(response, userInfo);
                   resolve({response, userInfo});
                 })

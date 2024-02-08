@@ -2,7 +2,6 @@ import React, {useState, useEffect} from "react";
 import { StyleSheet, View, Text, Image, Pressable, Button, ScrollView } from "react-native";
 import { TABs } from "../static/Constants";
 import { NailSelector } from "../components/NailSelector";
-import { useDesignContext } from '../providers/DesignProvider';
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { BASE_URL } from "../utils/API";
 
@@ -13,7 +12,6 @@ import { COLORS, PADDINGS, FONTS } from "../styles/theme";
 const prompt = "Can you generate an abstract and artistic short title as well as a short description of how is the design inspired of nail art design with these description: $message"
 
 export const NailDesignTab = ({ navigation, route }) => {
-  const { designIds } = useDesignContext();
   const [title, setTitle] = useState(null);
   const [tags, setTags] = useState({});
   const { userInfo} = useAuthenticationContext();
