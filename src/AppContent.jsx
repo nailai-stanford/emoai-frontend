@@ -1,15 +1,12 @@
 
 import React, { useEffect, useState } from "react";
 import { StyleSheet, View, ImageBackground, Image } from "react-native";
-import { StatusBar } from "react-native";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 // import Svg, { Path, SvgXml,SvgUri } from 'react-native-svg';
 import { BlurView } from "@react-native-community/blur";
 
 
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
-import {GoogleSigninButton} from '@react-native-google-signin/google-signin';
 
 import {TABs} from './static/Constants';
 import {useAuthenticationContext} from './providers/AuthenticationProvider';
@@ -18,6 +15,8 @@ import {
   onPressSignIn,
   onPressLogout,
 } from './utils/UserUtils';
+
+import {LogInPage} from './tabs/LogInPage';
 
 import {HomeTab} from './tabs/HomeTab';
 import {DiscoverTab} from './tabs/DiscoverTab';
@@ -73,26 +72,6 @@ export const AppContent = () => {
   });
 
 
-  if (!isLoggedInState) {
-    return (
-      <View style={styles.container}>
-        <GoogleSigninButton
-          size={GoogleSigninButton.Size.Wide}
-          color={GoogleSigninButton.Color.Dark}
-          onPress={() => {
-            onPressSignIn()
-              .then(({response, userInfo}) => {
-                setIsLoggedInState(true);
-                setUserInfo(userInfo);
-              })
-              .catch(e => {});
-          }}
-        />
-        <StatusBar style="auto" />
-      </View>
-    );
-  }
-
   // https://reactnavigation.org/docs/tab-based-navigation/
   return (
 
@@ -100,6 +79,7 @@ export const AppContent = () => {
       source={require('../assets/bg/bg.png')}
       resizeMode="cover"
       style={styles.imageContainer}>
+      {!isLoggedInState ? <LogInPage setIsLoggedInState={setIsLoggedInState} setUserInfo={setUserInfo}/> : 
       <NavigationContainer theme={navTheme}>
         <Tab.Navigator
         backBehavior="history"
@@ -309,6 +289,7 @@ export const AppContent = () => {
           />
         </Tab.Navigator>
       </NavigationContainer>
+      } 
     </ImageBackground>
   );
 };
