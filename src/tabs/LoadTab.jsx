@@ -2,151 +2,57 @@ import React, { useState, useEffect } from 'react';
 import { View, Text } from 'react-native';
 import * as Progress from 'react-native-progress';
 import { TABs } from '../static/Constants';
-import { useDesignContext } from '../providers/DesignProvider';
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
-import axios from "axios";
-import { APIs, BASE_URL, getHeader } from "../utils/API";
-import { convertCompilerOptionsFromJson } from 'typescript';
+import { BASE_URL, APIs, getHeader } from "../utils/API";
 
-export const LoadTab = ({ navigation, route }) => {
-  console.log('LoadTab received params:', route.params.userTags);
+
+export const LoadTab = ({ navigation }) => {
   const [progress, setProgress] = useState(0);
   const { userInfo} = useAuthenticationContext();
-  const { addDesignIds } = useDesignContext();
   // const { userTags } = route.params;
 
-const generateImage = async (userPreferences, userInfo) => {
-    const prompt = `nails art with hand, round nail shape, short nails, ${userPreferences.THEME} theme, ${userPreferences.COLOR} tone, ${userPreferences.BRAND}, ${userPreferences.ELEMENT}, low contrast, high saturation, original design, ${userPreferences.TEXTURE} texture, minimalism, matte finish, oil painting brush texture, 8K`;
 
-    console.log("prompTTT:", prompt);
-    try {
-      const response = await fetch(`${BASE_URL}/api/generate-image/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({prompt: prompt}),
-      });
-      
-      const data = await response.json();
-      console.log(data)
-      
-      if (data.imageUrls) {
-        const designIds = await handleSaveImages(data.imageUrls, userPreferences, prompt);
-        console.log("designIds from save images", designIds);
-
-        const singleNailsList = await Promise.all(data.imageUrls.map(async imageUrl => {
-          try {
-            return await decomposeNails(imageUrl, userInfo);
-          } catch (error) {
-            console.error(`Error decomposing nail for image URL ${imageUrl}:`, error);
-            return null;
-          }
-      }));
-        
-        await handleSingleNailSave(singleNailsList, designIds);
-      } else {
-        console.error('No image URL received from server.');
-      }
-    } catch (error) {
-      console.error('Error generating image:', error);
-    }
-  };
-  //using shopify api to save hand designs and return a list of design_id
-async function handleSaveImages(imageUrls, userPreferences, g_prompt) {
-    const payload = {
-        prompt: g_prompt,
-        credit_cost: 0.1,
-        image_urls: imageUrls,
-        tags: JSON.stringify(userPreferences),
-    };
-
+  useEffect(() => {
     const { idToken } = userInfo;
     const headers = getHeader(idToken);
-
-    return new Promise((resolve, reject) => {
-        axios
-          .post(
-            `${BASE_URL}/api/hand_designs/multiple/`,
-            payload,
-            { headers }
-          )
-          .then((response) => {
-            const data = response.data;
-            const shopifyProductIds = data.hand_designs.map(item => item.shopify_product_id);
-            addDesignIds(shopifyProductIds);
-            console.log("shopifyProductIds:", shopifyProductIds);
-            resolve(shopifyProductIds); // Resolve with shopifyProductIds
-          })
-          .catch((error) => {
-            console.error("Error saving hand design occurred:", error);
-            reject(error); // Reject in case of an error
-          });
-    });
-}
-  const decomposeNails = async (img_url, userInfo) => {
-    try {
-      const { idToken } = userInfo;
-      const headers = getHeader(idToken);
-
-      const response = await fetch(`${BASE_URL}/api/decompose-single-nails/`, {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify({ image_url: img_url }),
-      });
-
-      const data = await response.json(); // direcly recieve single nail image url
-      
-      if (data.nails) {  
-        return data.nails;
-      }
-    } catch (error) {
-      console.error('Error decomposing nails:', error);
-    }
-  };
-
-  async function handleSingleNailSave(nailData, designIds) {
-    // console.log(nailData);
-    // console.log(designIds);
-    try {
-        const allNailDesigns = nailData.flatMap((images, index) =>
-            images.map(image => ({
-                hand_design_id: designIds[index],
-                image: image
-            }))
-        );
-
-        const { idToken } = userInfo;
-        const headers = getHeader(idToken);
-        
-        const response = await axios.post(
-            `${BASE_URL}/api/nail_designs/multiple/`,
-            { nail_designs: allNailDesigns },
-            { headers }
-        );
-
-        const data = response.data;
-        console.log("Saved Nail Data Ids", data.nail_designs);
-        return data.nail_designs;
-    } catch (error) {
-        console.error('Error saving single nail:', error);
-        // Consider how you want to handle the error. Maybe rethrow it or return a specific value
-        throw error;
-    }
-}
-
-
-useEffect(() => {
-    console.log("Navigate to here!!!");
   
-    // Immediately-invoked async function
-    (async () => {
-      await generateImage(route.params.userTags, userInfo); // Wait for generateImage to complete
-      navigation.navigate(TABs.WORKSHOP, {userTags: route.params.userTags, key: new Date().getTime().toString()}); // Then navigate to the Workshop tab
-      // console.log("passed from load:", route.params.userTags);
-    })();
-    
-  }, [route, userInfo]);
+    const get_last_task_status = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/api/task/last_status`, {
+          method: 'GET',
+          headers: headers,
+        });
+        if (!response.ok) {
+          console.error('Failed to fetch task status');
+          return;
+        }
+        const data = await response.json();
+        task_id = data.task_id
+        task_status = data.status
+        console.log(task_id, task_status)
+        if (task_status === 3) {
+          // task_id = "506b07a3-84e2-4545-8840-ddb17da54193"
+          navigation.navigate(TABs.WORKSHOP, {task_id: task_id})
+          clearInterval(intervalId);
+        } else if (task_status === 4 || task_status === 5) {
+          clearInterval(intervalId);
+          // how to deal with failed?  need talk with PM
+          navigation.navigate(TABs.AICHAT)
+        }
+      } catch (error) {
+        console.error('Error fetching task status:', error);
+      }
+    };
+  
+    const intervalId = setInterval(() => {
+      get_last_task_status();
+    }, 5000); // 5000 milliseconds = 5 seconds
+  
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [userInfo]); // Dependencies array
+  
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

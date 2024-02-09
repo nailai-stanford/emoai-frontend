@@ -21,16 +21,7 @@ import {ACTION_ICONS} from '../styles/icons'
 import { err } from 'react-native-svg';
 import { disabled } from 'deprecated-react-native-prop-types/DeprecatedTextPropTypes';
 
-const PRE_PROMPT = [
-  {state:"THEME", prompt:"Generate a short greeting for users as a nail art designer asking the user what nail art theme do they want, you can suggest users to choose from the themes such as: Concrete items, Institutions, Seasons, Domestic and international holidays, Art styles, Decorative materials, Clothing patterns, etc. Please reply less than 35 words. Reply with a JSON file with key named 'query'."}, 
-  {state:"COLOR", prompt:"Generate an ask to user to specify a related color tone for the $THEME theme, please be artistic and engaging. Reply with a JSON file containing the keys 'query' and 'options'. In the 'query' key, provide the ask statement. In the 'options' key, list the color tones in the format: [color tone 1, color tone 2, ...] without any additional words. "}, 
-  {state:"BRAND", prompt:"Ask the user to specify a relavant brand name for the $THEME theme and $COLOR color tone, for example, Dior, Chanel, Gucci, and Prada, please always generate variant brands, please be artistic and engaging. Reply with a JSON file containing the keys 'query' and 'options'. In the 'query' key, provide the ask statement. In the 'options' key, list the color tones in the format: [brand name 1, brand name 2, ...] without any additional words."}, 
-  {state:"ELEMENT", prompt:"Ask the user to specify some nail art elements for the $THEME theme, $COLOR color tone and $BRAND brand vide nail art, please be artistic and engaging. Reply with a JSON file containing the keys 'query' and 'options'. In the 'query' key, provide the ask statement. In the 'options' key, list your suggested elements in the format: [element 1, element 2, ...] without any additional words. Ths list length should be less than 10."}, 
-  {state:"TEXTURE", prompt: "Ask the user to specify a nail art texture for the $THEME theme, $COLOR color tone, $BRAND brand vide and $ELEMENT elements nail art, please be artistic and engaging. Reply with a JSON file containing the keys 'query' and 'options'. In the 'query' key, provide the ask statement. In the 'options' key, list the textures in the format: [texture 1, texture 2, ...] without any additional words."}, 
-  {state:"FINISH", prompt:"Generate an ask to user if they are ready to generate an image, please be artistic, friendly and engaging. "},
-]
 const iconSize = 20;
-// const IMAGE_PROMPT = f"nails art with hand, oval nail shape,  {item.THEME} theme,  {item.COLOR} tone,  {item.BRAND}, {item.ELEMENT}, low contrast, high saturation, original design, {item.TEXTURE} texture,  minimalism, glossy, 8K";
 
 const imageUrl = "https://lh3.googleusercontent.com/a/ACg8ocJ_4W0g904G63FggpCwjxgtXCSDYebsGsGodISX-k9x0wk=s120";
 const CHAT_IMAGE_PATH = "../../assets/portrait-robot_1.png";
@@ -156,6 +147,7 @@ export const AIChatTab = ({ navigation }) => {
     let intervalId;
     const fetchChatHistory = async () => {
       try {
+        console.log('start call')
         const { idToken } = userInfo;
         const headers = getHeader(idToken)
         url = `${BASE_URL}/api/chat/history`
@@ -184,31 +176,35 @@ export const AIChatTab = ({ navigation }) => {
         if(resp.threading_id) {
           setThreadingId(resp.threading_id)
         }
+        if (resp.completed) {
+          console.log('stop call ')
+          setFetchHistory(false)
+        }
         if (resp.messages == null || resp.messages.length == 0) {
-          console.log('need send message')
           setCurrentStage('THEME')
           sendMessage('THEME', {})
-          setFetchHistory(false)
         } else {
           if (resp.completed) {
-            setFetchHistory(false)
             let last_message = resp.messages[resp.messages.length - 1]
             let last_options = last_message.options
-            console.log('last_options', last_options)
             setOptions(last_options)
+            appendChatHistory(resp.messages)
           }
-          appendChatHistory(resp.messages)
         }
         
       } catch (error) {
         console.error('Failed to fetch chat history:', error);
       }
     };
+
+    if (intervalId) {
+      clearInterval(intervalId);
+    }
   
     if (fetchHistory) {
       intervalId = setInterval(() => {
         fetchChatHistory();
-      }, 300);
+      }, 1000);
     }
     return () => {
       if (intervalId) {
@@ -338,7 +334,7 @@ export const AIChatTab = ({ navigation }) => {
       return [...currentHistory, formattedMessage]
     })
   }
-  const handleUserInput = (input = '', userInfo) => {
+  const handleUserInput = async (input = '', userInfo) => {
     let finalInput = '';
 
     if (input) {
@@ -355,7 +351,27 @@ export const AIChatTab = ({ navigation }) => {
       if (finalInput === 'Yes') {
         // submit task and redirect to loading page
         sendMessage(currentStage, {'submit': 'Yes'})
-
+        try{
+          const { idToken } = userInfo;
+          const headers = getHeader(idToken)
+          console.log({tags: JSON.stringify(tags)})
+          const response = await fetch(`${BASE_URL}/api/task/submit`, {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({tags: JSON.stringify(tags)}),
+          })
+          console.log(response)
+          if (!response.ok) {
+            console.error('submit ai design task failed')
+          }
+          setFetchHistory(false)
+          data = await response.json()
+          console.log('AI design task submitted, resp:', data)
+          navigation.navigate(TABs.LOAD)
+        } catch(error) {
+          console.error('submit ai design task failed', error)
+        }
+    
       } else {
         sendMessage(currentStage, {'submit': 'No'})
       }
