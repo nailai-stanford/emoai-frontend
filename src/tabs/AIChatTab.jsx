@@ -134,98 +134,74 @@ export const AIChatTab = ({ navigation }) => {
   const [options, setOptions] = useState([]);
   const [tags, setTags] = useState({})
   const [multipleInputs, setMultipleInputs] = useState([])
-  const [images, setImages] = useState([]);
   const [modalVisible, setModalVisible] = useState(false)
-  const [fetchHistory, setFetchHistory] = useState(true)
   const [currentStage, setCurrentStage] = useState(null)
-  const [assistantId, setAssistantId] = useState(null)
-  const [threadingId, setThreadingId] = useState(null)
-  
   const [pendingReply, setPendingReply] = useState(true)
+  const [fetchHistory, setFetchHistory] = useState(false)
+
+
+  const fetchChatHistory = async () => {
+    console.log('fetch history')
+    try {
+      const { idToken } = userInfo;
+      const headers = getHeader(idToken)
+      url = `${BASE_URL}/api/chat/chat_history`
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: headers,
+      });
+
+      if (!response.ok) {
+        console.log('fetch history failed')
+        return
+      }
+      const resp = await response.json();
+
+      if (resp.messages == null || resp.messages.length == 0) {
+        setCurrentStage('THEME')
+        console.log('send message THEME')
+        setFetchHistory(false)
+        sendMessage('THEME', {})
+      } else {
+        if (resp.completed) {
+          let last_message = resp.messages[resp.messages.length - 1]
+          let last_options = last_message.options
+          console.log('last_message', last_message)
+          console.log(resp)
+          console.log('set options, ', last_options)
+          setOptions(last_options)
+          appendChatHistory(resp.messages)
+          setPendingReply(false);
+          setFetchHistory(false);
+        }
+      }
+      
+    } catch (error) {
+      console.error('Failed to fetch chat history:', error);
+    }
+  };
 
   useEffect(() => {
-    let intervalId;
-    const fetchChatHistory = async () => {
-      try {
-        console.log('start call')
-        const { idToken } = userInfo;
-        const headers = getHeader(idToken)
-        url = `${BASE_URL}/api/chat/history`
-        if (threadingId != null && assistantId != null) {
-          const queryParams = new URLSearchParams({
-            threading_id: threadingId,
-            assistant_id: assistantId,
-          }).toString();
-          url = `${BASE_URL}/api/chat/history?${queryParams}`
-        }
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: headers,
-        });
-        
-        if (!response.ok) {
-          console.log('fetch history failed')
-          return
-        }
-        
-        const resp = await response.json();
-        setPendingReply(false)
-        if(resp.assistant_id) {
-          setAssistantId(resp.assistant_id)
-        }
-        if(resp.threading_id) {
-          setThreadingId(resp.threading_id)
-        }
-        if (resp.completed) {
-          console.log('stop call ')
-          setFetchHistory(false)
-        }
-        if (resp.messages == null || resp.messages.length == 0) {
-          setCurrentStage('THEME')
-          sendMessage('THEME', {})
-        } else {
-          if (resp.completed) {
-            let last_message = resp.messages[resp.messages.length - 1]
-            let last_options = last_message.options
-            setOptions(last_options)
-            appendChatHistory(resp.messages)
-          }
-        }
-        
-      } catch (error) {
-        console.error('Failed to fetch chat history:', error);
-      }
-    };
-
-    if (intervalId) {
-      clearInterval(intervalId);
-    }
-  
-    if (fetchHistory) {
-      intervalId = setInterval(() => {
-        fetchChatHistory();
-      }, 1000);
-    }
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
+    console.log(fetchChatHistory)
+    fetchChatHistory()
   },[fetchHistory, userInfo]); 
 
   const appendChatHistory = (messages) => {
     last_user_msg = null
+    last_role = 'user'
     for (i = 0; i < messages.length; i ++) {
       if(messages[i].role == 'user') {
         last_user_msg = messages[i]
       }
+      last_role = messages[i].role
+      last_content = messages[i].content
     }
 
     if (last_user_msg != null) {
       if (last_user_msg.next_stage) {
         console.log('next stage:', last_user_msg.next_stage)
         setCurrentStage(last_user_msg.next_stage)
-        if (last_user_msg.next_stage === 'SUBMIT') {
+        if (last_user_msg.next_stage === 'SUBMIT' && last_role !== 'user') {
           setOptions(['Yes', 'No'])
         }
       }
@@ -234,7 +210,6 @@ export const AIChatTab = ({ navigation }) => {
         setTags(JSON.parse(last_user_msg.current_tags.replace(/'/g, '"')))
       }      
     }
-    console.log('current_tags:', tags, "current_stage:", currentStage)
     setChatHistory(() => {
       const newMessages = messages.filter(msg => msg.show && msg.content).map(msg => {
         const content = msg.role !== "user" && (!msg.content || msg.content === "") ? "thinking..." : msg.content;
@@ -259,8 +234,6 @@ export const AIChatTab = ({ navigation }) => {
   }
 
   useEffect(() => {
-    console.log('tags updated:', tags);
-    console.log('options:', options)
   }, [tags, options]);
 
 
@@ -281,28 +254,25 @@ export const AIChatTab = ({ navigation }) => {
       const { idToken } = userInfo;
       const headers = getHeader(idToken)
       
-      console.log('send message', stage)
       if (stage == 'THEME') {
         content = null
       }
       console.log('start send message', stage, )
-      setPendingReply(true)
-      const response = await fetch(`${BASE_URL}/api/chat/message`, {
+      const response = await fetch(`${BASE_URL}/api/chat/chat`, {
         method: 'POST',
         headers: headers,
-        body: JSON.stringify({stage: stage, content: JSON.stringify(request_tags), assistant_id: assistantId || "", threading_id: threadingId || ""}),
+        body: JSON.stringify({stage: stage, content: JSON.stringify(request_tags), assistant_id: "", threading_id: ""}),
       })
       if (!response.ok) {
         console.log('send message failed', response)
         setPendingReply(false)
         return
       }
-      data = response.json()
-      console.log(data.messages)
-      
+      setPendingReply(true)
       setFetchHistory(true)
+      data = await response.json()
+      console.log('send message resp:', data)
       setOptions([])
-
     } catch (error) {
       setPendingReply(false)
       console.error('send message failed', error)
@@ -318,9 +288,7 @@ export const AIChatTab = ({ navigation }) => {
 
   const handleOptionPress = (option, userInfo) => {
     console.log('option press:', option)
-    handleUserInput(option, userInfo);
-    // setOptions([]);
-    
+    handleUserInput(option, userInfo);    
   };
 
   function append_tmp_chat(content) {
