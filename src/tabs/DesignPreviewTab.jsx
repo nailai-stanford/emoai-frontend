@@ -16,7 +16,7 @@ const PROMPT = "Can you generate an abstract and artistic short title as well as
 
 export const DesignPreviewTab = ({ navigation, route }) => {
     const [quantity, setQuantity] = React.useState(1);
-    const { designIds } = useDesignContext();
+    const { designIds, setDesignIds} = useState([]);
     const { userInfo} = useAuthenticationContext();
     const [title, setTitle] = useState('');
     const [tags, setTags] = useState({});
@@ -29,6 +29,10 @@ export const DesignPreviewTab = ({ navigation, route }) => {
     const [designSetId, setDesignSetId] = useState('');
 
     const price = "$19.9";
+
+    useEffect(()=> {
+
+    })
     useEffect(() => {
       fetchImageTags(designIds[0]);
     }, [designIds]);
@@ -36,6 +40,7 @@ export const DesignPreviewTab = ({ navigation, route }) => {
       navigation.goBack();
   };
     useEffect(() => {
+      console.log('leftHandNails', leftHandNails, 'rightHandNails', rightHandNails)
       if (designIds && designIds.length > 0) {
           designIds.forEach(id => {
               fetchImageUrl(id).then(url => {
@@ -90,9 +95,9 @@ export const DesignPreviewTab = ({ navigation, route }) => {
         nail_design_id_list: designSetData.nailDesignIdList,
         image_main: designSetData.imageMain,
         image_list: designSetData.imageList,
-        price: designSetData.price,
         title: designSetData.title,
         description: designSetData.description,
+
       };
     
       const { idToken } = userInfo;
