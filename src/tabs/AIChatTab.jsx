@@ -5,7 +5,6 @@ import {
   Platform, TouchableOpacity, Animated, Dimensions
 } from 'react-native';
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
-import { useDesignContext } from '../providers/DesignProvider';
 import {useTagsContext} from '../providers/TagsProvider';
 import { TABs } from '../static/Constants';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -15,22 +14,14 @@ import { ButtonAction, ButtonSelection, GradientButtonSelection } from "../style
 import { P, ButtonP, ButtonH,TitleHeader, MenuHeader } from "../styles/texts";
 import { InputView } from "../styles/inputs";
 import { COLORS,PADDINGS, ICON_SIZES } from "../styles/theme";
-import { Input } from 'react-native-elements';
-import { APIs, getHeader } from "../utils/API";
-import { BASE_URL } from '../utils/API';
+import { FAB, Input } from 'react-native-elements';
+import { BASE_URL, APIs, getHeader } from "../utils/API";
 
 import {ACTION_ICONS} from '../styles/icons'
+import { err } from 'react-native-svg';
+import { disabled } from 'deprecated-react-native-prop-types/DeprecatedTextPropTypes';
 
-const PRE_PROMPT = [
-  {state:"THEME", prompt:"Generate a short greeting for users as a nail art designer asking the user what nail art theme do they want, you can suggest users to choose from the themes such as: Concrete items, Institutions, Seasons, Domestic and international holidays, Art styles, Decorative materials, Clothing patterns, etc. Please reply less than 35 words. Reply with a JSON file with key named 'query'."}, 
-  {state:"COLOR", prompt:"Generate an ask to user to specify a related color tone for the $THEME theme, please be artistic and engaging. Reply with a JSON file containing the keys 'query' and 'options'. In the 'query' key, provide the ask statement. In the 'options' key, list the color tones in the format: [color tone 1, color tone 2, ...] without any additional words. "}, 
-  {state:"BRAND", prompt:"Ask the user to specify a relavant brand name for the $THEME theme and $COLOR color tone, for example, Dior, Chanel, Gucci, and Prada, please always generate variant brands, please be artistic and engaging. Reply with a JSON file containing the keys 'query' and 'options'. In the 'query' key, provide the ask statement. In the 'options' key, list the color tones in the format: [brand name 1, brand name 2, ...] without any additional words."}, 
-  {state:"ELEMENT", prompt:"Ask the user to specify some nail art elements for the $THEME theme, $COLOR color tone and $BRAND brand vide nail art, please be artistic and engaging. Reply with a JSON file containing the keys 'query' and 'options'. In the 'query' key, provide the ask statement. In the 'options' key, list your suggested elements in the format: [element 1, element 2, ...] without any additional words. Ths list length should be less than 10."}, 
-  {state:"TEXTURE", prompt: "Ask the user to specify a nail art texture for the $THEME theme, $COLOR color tone, $BRAND brand vide and $ELEMENT elements nail art, please be artistic and engaging. Reply with a JSON file containing the keys 'query' and 'options'. In the 'query' key, provide the ask statement. In the 'options' key, list the textures in the format: [texture 1, texture 2, ...] without any additional words."}, 
-  {state:"FINISH", prompt:"Generate an ask to user if they are ready to generate an image, please be artistic, friendly and engaging. "},
-]
 const iconSize = 20;
-// const IMAGE_PROMPT = f"nails art with hand, oval nail shape,  {item.THEME} theme,  {item.COLOR} tone,  {item.BRAND}, {item.ELEMENT}, low contrast, high saturation, original design, {item.TEXTURE} texture,  minimalism, glossy, 8K";
 
 const imageUrl = "https://lh3.googleusercontent.com/a/ACg8ocJ_4W0g904G63FggpCwjxgtXCSDYebsGsGodISX-k9x0wk=s120";
 const CHAT_IMAGE_PATH = "../../assets/portrait-robot_1.png";
@@ -124,12 +115,13 @@ const HistoryModal = ({ navigation, modalVisible, setModalVisible }) => {
 
 export const AIChatTab = ({ navigation }) => {
   // const { currentUser } = useAuthenticationContext();
-  const { addDesignIds } = useDesignContext();
   const { setUserTags, userTags } = useTagsContext();
 
   const [userInput, setUserInput] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
   const [conversationStage, setConversationStage] = useState('THEME');
+  const { userInfo, signout } = useAuthenticationContext();
+
   const [userPreferences, setUserPreferences] = useState({
     THEME: null,
     COLOR: null,
@@ -139,74 +131,210 @@ export const AIChatTab = ({ navigation }) => {
     FINISH: null,
   });
   const scrollViewRef = useRef();
-  const [options, setOptions] = useState(['LGBTQ', 'New Year', 'Geometry', 'Stanford']);
+  const [options, setOptions] = useState([]);
+  const [tags, setTags] = useState({})
   const [multipleInputs, setMultipleInputs] = useState([])
   const [images, setImages] = useState([]);
   const [modalVisible, setModalVisible] = useState(false)
+  const [fetchHistory, setFetchHistory] = useState(true)
+  const [currentStage, setCurrentStage] = useState(null)
+  const [assistantId, setAssistantId] = useState(null)
+  const [threadingId, setThreadingId] = useState(null)
+  
+  const [pendingReply, setPendingReply] = useState(true)
+
+  useEffect(() => {
+    let intervalId;
+    const fetchChatHistory = async () => {
+      try {
+        console.log('start call')
+        const { idToken } = userInfo;
+        const headers = getHeader(idToken)
+        url = `${BASE_URL}/api/chat/history`
+        if (threadingId != null && assistantId != null) {
+          const queryParams = new URLSearchParams({
+            threading_id: threadingId,
+            assistant_id: assistantId,
+          }).toString();
+          url = `${BASE_URL}/api/chat/history?${queryParams}`
+        }
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: headers,
+        });
+        
+        if (!response.ok) {
+          console.log('fetch history failed')
+          return
+        }
+        
+        const resp = await response.json();
+        setPendingReply(false)
+        if(resp.assistant_id) {
+          setAssistantId(resp.assistant_id)
+        }
+        if(resp.threading_id) {
+          setThreadingId(resp.threading_id)
+        }
+        if (resp.completed) {
+          console.log('stop call ')
+          setFetchHistory(false)
+        }
+        if (resp.messages == null || resp.messages.length == 0) {
+          setCurrentStage('THEME')
+          sendMessage('THEME', {})
+        } else {
+          if (resp.completed) {
+            let last_message = resp.messages[resp.messages.length - 1]
+            let last_options = last_message.options
+            setOptions(last_options)
+            appendChatHistory(resp.messages)
+          }
+        }
+        
+      } catch (error) {
+        console.error('Failed to fetch chat history:', error);
+      }
+    };
+
+    if (intervalId) {
+      clearInterval(intervalId);
+    }
+  
+    if (fetchHistory) {
+      intervalId = setInterval(() => {
+        fetchChatHistory();
+      }, 1000);
+    }
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  },[fetchHistory, userInfo]); 
+
+  const appendChatHistory = (messages) => {
+    last_user_msg = null
+    for (i = 0; i < messages.length; i ++) {
+      if(messages[i].role == 'user') {
+        last_user_msg = messages[i]
+      }
+    }
+
+    if (last_user_msg != null) {
+      if (last_user_msg.next_stage) {
+        console.log('next stage:', last_user_msg.next_stage)
+        setCurrentStage(last_user_msg.next_stage)
+        if (last_user_msg.next_stage === 'SUBMIT') {
+          setOptions(['Yes', 'No'])
+        }
+      }
+      if (last_user_msg.current_tags) {
+        console.log('last_tags', last_user_msg.current_tags)
+        setTags(JSON.parse(last_user_msg.current_tags.replace(/'/g, '"')))
+      }      
+    }
+    console.log('current_tags:', tags, "current_stage:", currentStage)
+    setChatHistory(() => {
+      const newMessages = messages.filter(msg => msg.show && msg.content).map(msg => {
+        const content = msg.role !== "user" && (!msg.content || msg.content === "") ? "thinking..." : msg.content;
+        return {
+          from: msg.role === 'user' ? 'user' : 'system', 
+          content: msg.content,
+          id: msg.messageId
+        };
+      });
+      return newMessages;
+    });
+  }
+
+
+  function add_tag(key, value) {
+    const newTags = {
+      ...tags,
+      [key]: value
+    };
+    setTags(newTags);
+    return newTags;
+  }
+
+  useEffect(() => {
+    console.log('tags updated:', tags);
+    console.log('options:', options)
+  }, [tags, options]);
+
+
+  const find_pre_stage = () => {
+    stages = {
+      'THEME': "",
+      'COLOR': 'theme',
+      'BRAND': 'color',
+      'ELEMENT': 'brand',
+      'TEXTURE': 'element',
+      'FINISH': 'texture'
+    }
+    return stages[currentStage] || "unknow_stage"
+  }
+  
+  const sendMessage = async (stage, request_tags) => {
+    try {
+      const { idToken } = userInfo;
+      const headers = getHeader(idToken)
+      
+      console.log('send message', stage)
+      if (stage == 'THEME') {
+        content = null
+      }
+      console.log('start send message', stage, )
+      setPendingReply(true)
+      const response = await fetch(`${BASE_URL}/api/chat/message`, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({stage: stage, content: JSON.stringify(request_tags), assistant_id: assistantId || "", threading_id: threadingId || ""}),
+      })
+      if (!response.ok) {
+        console.log('send message failed', response)
+        setPendingReply(false)
+        return
+      }
+      data = response.json()
+      console.log(data.messages)
+      
+      setFetchHistory(true)
+      setOptions([])
+
+    } catch (error) {
+      setPendingReply(false)
+      console.error('send message failed', error)
+    }
+  }
+
 
   useEffect(() => {
     scrollViewRef.current?.scrollToEnd({ animated: true });
   }, [chatHistory]);
 
 
-  
-  const sendToServer = async (message) => {
-    console.log('Sending to server:', message);
-    
-    try {
-      const response = await fetch(`${BASE_URL}/api/message`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({prompt: message}),
-      });
-      
-      if (!response.ok) {
-        console.error('Server responded with status:', response.status);
-        const errorText = await response.text(); // Read the text (or Blob) response
-        console.error('Error response text:', errorText);
-        return;
-      }
-      
-      const data = await response.json();
-      console.log("server response:", data.content.content);
-      try{
-        const json_data = JSON.parse(data.content.content);
-        setChatHistory(currentHistory => [...currentHistory, { from: 'system', content: json_data.query }]);
-        if (json_data.options) {
-          setOptions(json_data.options); // Set the options state
 
-        }
-      } catch(error){
-        setChatHistory(currentHistory => [...currentHistory, { from: 'system', content: data.content.content }]);
-      }
-    } catch (error) {
-      console.error("Error while sending message:", error);
-    }
+  const handleOptionPress = (option, userInfo) => {
+    console.log('option press:', option)
+    handleUserInput(option, userInfo);
+    // setOptions([]);
     
   };
 
-  const updatePreferences = (field, value) => {
-    setUserPreferences(prevPreferences => ({
-      ...prevPreferences,
-      [field]: value
-    }));
-    // also update the prompt using the user Input/userPreference
-    setUserTags({ [field]: value });
-    PRE_PROMPT.forEach(item => {
-      item.prompt = item.prompt.replace(new RegExp("\\$" + field, "g"), value);
-  });
-    
-  };
+  function append_tmp_chat(content) {
+    console.log('append tmp')
+    setChatHistory(currentHistory => {
+      const formattedMessage = {
+        from: 'user',
+        content: content,
 
-  const handleOptionPress = (option) => {
-    handleUserInput(option);
-    setOptions([]);
-    
-  };
-
-  const handleUserInput = (input = '') => {
+      };
+      return [...currentHistory, formattedMessage]
+    })
+  }
+  const handleUserInput = async (input = '', userInfo) => {
     let finalInput = '';
 
     if (input) {
@@ -215,62 +343,50 @@ export const AIChatTab = ({ navigation }) => {
         finalInput = userInput;
     }
 
+    append_tmp_chat(finalInput)
+    setOptions([])
+    if (currentStage === 'SUBMIT') {
+      console.log('submit', finalInput)
+      setTags({})
+      if (finalInput === 'Yes') {
+        // submit task and redirect to loading page
+        sendMessage(currentStage, {'submit': 'Yes'})
+        try{
+          const { idToken } = userInfo;
+          const headers = getHeader(idToken)
+          console.log({tags: JSON.stringify(tags)})
+          const response = await fetch(`${BASE_URL}/api/task/submit`, {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify({tags: JSON.stringify(tags)}),
+          })
+          console.log(response)
+          if (!response.ok) {
+            console.error('submit ai design task failed')
+          }
+          setFetchHistory(false)
+          data = await response.json()
+          console.log('AI design task submitted, resp:', data)
+          navigation.navigate(TABs.LOAD)
+        } catch(error) {
+          console.error('submit ai design task failed', error)
+        }
     
-    console.log('final type', typeof finalInput);
-    console.log('final input', finalInput);
-    setChatHistory(currentHistory => [...currentHistory, { from: 'user', content: finalInput }]);
-    
-    switch (conversationStage) {
-      
-      case 'COLOR':
-        updatePreferences('THEME', finalInput)
-        //console.log('Pre prompt', userInput);
-        setConversationStage('BRAND');
-        // sendToServer(prompt);
-        break;
-      case 'BRAND':
-        updatePreferences('COLOR', finalInput)
-        setConversationStage('ELEMENT');
-        // sendToServer(prompt);
-        break;
-      case 'ELEMENT':
-        updatePreferences('BRAND', finalInput)
-        setConversationStage('TEXTURE');
-        // sendToServer(prompt);
-        break;
-      case 'TEXTURE':
-        updatePreferences('ELEMENT', finalInput)
-        setConversationStage('FINISH');
-        // sendToServer(prompt);
-        
-        break;
-      case 'FINISH':
-        updatePreferences('TEXTURE', finalInput)
-        setConversationStage('IMAGE');
-        setOptions(['Yes', 'Not Ready']);
-        // sendToServer(prompt);
-        
-        break;
+      } else {
+        sendMessage(currentStage, {'submit': 'No'})
+      }
+      return
     }
-    if (conversationStage === 'IMAGE') {
-      console.log("navigate to load");
-      console.log('Navigating to:', TABs.LOAD, 'with tags:', userTags);
-      navigation.navigate(TABs.LOAD, { userTags: userTags });
-
-      setConversationStage('IDLE');
-    }else{
-      prompt = PRE_PROMPT.find(item => item.state === conversationStage).prompt;
-     
-      sendToServer(prompt);
-    }
-    
-
+    console.log(currentStage, finalInput)
+    console.log('currentStage:', currentStage)
+    new_tags = add_tag(find_pre_stage(currentStage), finalInput)
+    sendMessage(currentStage, new_tags)
     setUserInput('');
   };
 
-  const handlePotentialMultipleSelection = (input = '') => {
+  const handlePotentialMultipleSelection = (input = '', userInfo) => {
     if (conversationStage != "TEXTURE") {
-      handleOptionPress(input);
+      handleOptionPress(input, userInfo);
       return
     } 
     if (multipleInputs.find(e => e == input)) {
@@ -282,33 +398,18 @@ export const AIChatTab = ({ navigation }) => {
     } 
   }
 
-  const handlePotentialMultipleChoiceSend = (input = '') => {
+  const handlePotentialMultipleChoiceSend = (input = '', userInfo) => {
     if (conversationStage != "TEXTURE") {
-      handleUserInput(input);
+      handleUserInput(input, userInfo);
       return
     } 
     multipleInputs.push(input)
     const processedInput = multipleInputs.join(",")
-    handleUserInput(processedInput)
+    handleUserInput(processedInput, userInfo)
     setMultipleInputs([])
   }
 
-  useEffect(() => {
-    prompt = PRE_PROMPT.find(item => item.state === conversationStage).prompt;
-    sendToServer(prompt);
-    
-    setConversationStage('COLOR');
-  }, []);
-  // useEffect(() => {
-  //   console.log('Current Chat History:', chatHistory);
-  // }, [chatHistory]);
-   // Debug: UseEffect to log userPreferences whenever it changes
-  //  useEffect(() => {
-  //   console.log('Current userPreferences:', userPreferences);
-  // }, [userPreferences]);
-  useEffect(() => {
-    console.log('Current options:', options);
-  }, [options]);
+
   return (
     <KeyboardAvoidingView 
     behavior={"padding"}
@@ -350,8 +451,8 @@ export const AIChatTab = ({ navigation }) => {
         {options.map((option, index) => {
         
         return (
-          <ChatButton key={index} title={option}
-            onPress={() =>  handlePotentialMultipleSelection(option) } 
+          <ChatButton key={index} title={option} disabled={pendingReply}
+            onPress={() =>  handlePotentialMultipleSelection(option, userInfo) } 
             selection={multipleInputs.find(e => e == option)?true:false}
            />
         )
@@ -366,9 +467,9 @@ export const AIChatTab = ({ navigation }) => {
         value={userInput}
         onChangeText={setUserInput}
         style={{flex:1, color:COLORS.white}}/>
-        <TouchableOpacity style={{ alignSelf: "center", flex: 0.1 }}
-             onPress={() => handlePotentialMultipleChoiceSend(userInput)}>
-          <ACTION_ICONS.send width={ICON_SIZES.standard} height={ICON_SIZES.standard}   />
+        <TouchableOpacity style={{ alignSelf: "center", flex: 0.1 }} disabled={pendingReply}
+             onPress={() => handlePotentialMultipleChoiceSend(userInput, userInfo)}>
+          <ACTION_ICONS.send width={ICON_SIZES.standard} height={ICON_SIZES.standard} />
         </TouchableOpacity>
     </InputView> 
 

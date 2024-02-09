@@ -1,5 +1,5 @@
 import { React, useEffect, useState } from "react";
-import { StyleSheet, ScrollView, View, SafeAreaView } from "react-native";
+import { StyleSheet, ScrollView, View } from "react-native";
 import axios from "axios";
 import { handleError } from "../utils/Common";
 import { GalleryCard } from "../components/gallery/GalleryCard";
@@ -8,8 +8,8 @@ import { Themes } from "../components/Themes";
 import { getHeader, APIs } from "../utils/API";
 
 
-import { ButtonSelection, GradientButtonSelection } from "../styles/buttons";
-import { P, ButtonP, MenuHeader,GradientMenuHeader, TitleHeader } from "../styles/texts";
+import { GradientButtonSelection } from "../styles/buttons";
+import { ButtonP ,GradientMenuHeader } from "../styles/texts";
 
 
 export const HomeTab = (navigation) => {

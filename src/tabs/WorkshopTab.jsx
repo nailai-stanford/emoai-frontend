@@ -1,6 +1,5 @@
 import { TABs } from "../static/Constants";
 import { NailSelector } from "../components/NailSelector";
-import { useDesignContext } from '../providers/DesignProvider';
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import axios from "axios";
 import { APIs, BASE_URL, getHeader } from "../utils/API";
@@ -73,87 +72,94 @@ const INTRO_DATA = [
 const generateMoreImage = "../../assets/generate_more.png";
 
 export const WorkshopTab = ({ navigation, route }) => {
-  const { designIds } = useDesignContext();
   const { userInfo} = useAuthenticationContext();
   const width = Dimensions.get('window').width - 2*PADDINGS.sm;
   const scrollX = useRef(new Animated.Value(0)).current;
-  // const [nailsData, setNailsData] = useState([]); // State to store decomposed nails data
   const [editMode, setEditMode] = useState(false);
-  // const [imageUrls, setImageUrls] = useState({}); // hand design urls
-  // const [nailImages, setNailImages] = useState([]);// nail urls
   const [imageUrls, setImageUrls] = useState({}); // hand design urls
   const [nailImages, setNailImages] = useState([]);// nail urls
   const [combinedData, setCombinedData] = useState([]); // State for combined image data
+  const [taskProducts, setTaskProducts] = useState([])
   const [selectedNails, setSelectedNails] = useState(new Array(10).fill(''));
   const [originalCollect, setOriginalCollect] = useState([]);
   // Initialize default values for userTags and key
-  let userTags = null;
-  let key = null;
+  let task_id = null;
 
   // Check if route.params exists and has properties before destructuring
-  if (route.params && route.params.userTags && route.params.key) {
-    userTags = route.params.userTags;
-    key = route.params.key;
+  if (route.params && route.params.task_id) {
+    task_id = route.params.task_id;
   }
   // console.log(userTags);
   // console.log("workshop: route.params", route.params.userTags);
-  const [hasChatData, setHasChatData] = useState(false);
+  // const [hasChatData, setHasChatData] = useState(false);
 
   useEffect(() => {
-    designIds.forEach(async id => {
-      // fetchImageUrl(id);
-      // decomposeNails(id); 
-      fetchImageUrl(id, userInfo.idToken);
-    });
-  }, [designIds, userInfo.idToken]);
-  useEffect(() => {
-    const fetchNailsData = async () => {
+    const getTaskProducts = async(task_id) => {
+      const { idToken } = userInfo;
+      const headers = getHeader(idToken);
       try {
-        for (const designId of designIds) {
-          const singleNailIds = await fetchSingleNailIds(designId);
-          const imageUrlsPromises = singleNailIds.map(nailId => fetchNailData(nailId));
-          const imageUrls = await Promise.all(imageUrlsPromises);
-          setNailImages(prevNailImages => ({
-            ...prevNailImages,
-            [designId]: imageUrls
-          }));
-        }
-      } catch (error) {
-        console.error("Error fetching nails data:", error);
+        const response = await axios.get(`${BASE_URL}/api/task/${task_id}/products`, { headers });
+        return response.data
+      } catch(error) {
+        console.error(error);
       }
-    };
+    }
 
-    fetchNailsData();
-  }, [designIds, route]);
+    if (task_id) {
+      getTaskProducts(task_id).then(data => {
+          products = data;
+          hand_designs = products.data
+          console.log('start imageUrls: ', imageUrls)
+          console.log(products.data)
+          setTaskProducts(products.data)
+      }).catch(error => {
+        console.error('error when calling getTaskProducts')
+      })
+    }
+    console.log('task_products:', taskProducts)
+
+
+  }, [task_id, route]);
+
   const goBackToLoadTab = () => {
     navigation.goBack();
   };
-  useEffect(() => {
-    if(designIds.length > 0 || !userTags){
-      setHasChatData(true);
-      console.log("hasChatData", hasChatData )
-    }
-  }, [designIds]);
+
 
   useEffect(() => {
-    // Assuming designIds, imageUrls, and nailImages are populated
-    console.log("imageUrls", imageUrls);
-  }, [designIds, imageUrls, nailImages]);
+    console.log('update taskProducts:', taskProducts)
+    const newImageUrls = taskProducts.reduce((acc, product) => {
+        acc[product.hand_design_id] = product.img_src;
+        return acc;
+    }, {});
+    setImageUrls(prevUrls => ({ ...prevUrls, ...newImageUrls }));
+    console.log('new imageUrls: ', imageUrls)
+    taskProducts.forEach((product, index) => {
+      console.log(`Product ${index}:`, product);
+    });
+    
+    let newNailImages = {};
+    taskProducts.forEach(product => {
+      newNailImages[product.hand_design_id] = product.nail_products.map(nailProduct => nailProduct.img_src);
+  });
 
-  useEffect(() => {
-    // Assuming designIds, imageUrls, and nailImages are populated
-    const newCombinedData = designIds.map((designId, index) => {
+    setNailImages(newNailImages);
+    console.log('newNailImages:', newNailImages)
+
+    let newCombinedData = taskProducts.map(product => {
       return {
-        imageUrl: imageUrls[designId], // Assuming imageUrls and designIds are aligned
-        nailImages: nailImages[designId] || [],
+          imageUrl: product.img_src,
+          nailImages: product.nail_products.map(nailProduct => nailProduct.img_src)
       };
     });
-    newCombinedData.push({
+   newCombinedData.push({
       imageUrl: generateMoreImage,
       nailImages: []
     });
-    setCombinedData(newCombinedData); // Update the state
-  }, [imageUrls, nailImages, route]);
+    setCombinedData(newCombinedData);
+
+    console.log('newCombinedData:', newCombinedData)
+  }, [taskProducts, route]);
 
   const toggleEditMode = () => {
     setEditMode(!editMode);
@@ -164,9 +170,9 @@ export const WorkshopTab = ({ navigation, route }) => {
   }, [nailImages]);
   
   useEffect(() => {
-    console.log("designIds", designIds);
     console.log("Current combinedData:", combinedData);
   }, [combinedData]);
+
 
   const fetchSingleNailIds = async (designId) => {
     return new Promise((resolve, reject) => {
@@ -231,7 +237,6 @@ export const WorkshopTab = ({ navigation, route }) => {
       throw error; // Re-throw the error so it can be handled further up the call chain
     }
   };
-  
 
   const fetchImageUrl = async (productId, idToken) => {
     try {
@@ -252,8 +257,6 @@ export const WorkshopTab = ({ navigation, route }) => {
       throw error; // Re-throw the error for further handling if necessary
     }
   };
-  
-
 
 
 // const handleNailSelect = (nailUrl) => {
@@ -267,10 +270,12 @@ const handleNailSelect = (nailUrl) => {
     }
     return nail;
   });
+  console.log('updatedNails:', updatedNails, "originalCollect:", originalCollect)
+  
   setSelectedNails(updatedNails);
 };
 useEffect(() => {
-  console.log('originalCollect has changed:', originalCollect);
+  console.log('originalCollect has changed:');
 }, [originalCollect]);
 
   const handleNailDeletion = (index) => {
@@ -278,6 +283,12 @@ useEffect(() => {
     updatedNails[index] = ''; // Remove the selected nail
     setSelectedNails(updatedNails);
   };
+
+  const navigate_to_load = () => {
+    console.log('navigate_to_load')
+    navigation.navigate(TABs.LOAD, { userTags: userTags, key: new Date().getTime().toString()})
+  }
+
   return (
     <View testID="safe-area-view" style={{flexDirection: 'column', padding:PADDINGS.sm}}>
       
@@ -295,9 +306,8 @@ useEffect(() => {
           {combinedData.map((data, index) => {
             if (data.imageUrl === generateMoreImage) {
               let src = require(generateMoreImage);
-              console.log("passed from workshop:", userTags);
               return (
-                <TouchableOpacity key={index} onPress={() => navigation.navigate(TABs.LOAD, { userTags: userTags, key: new Date().getTime().toString()})}>
+                <TouchableOpacity key={index} onPress={navigate_to_load}>
                   <Image source={src} style={styles.imageStyle} />
                   {/* Optionally, add other styles or elements to indicate it's a button */}
                 </TouchableOpacity>
@@ -389,7 +399,7 @@ useEffect(() => {
       </ScrollView>
 
         <GradientButtonAction style={{alignSelf:"center"}}
-          onPress={() => navigation.navigate(TABs.HAND_DESIGN, { selectedNails, originalCollect })}>
+          onPress={() => navigation.navigate(TABs.HAND_DESIGN, { selectedNails, originalCollect, task_id: task_id, userInfo: userInfo})}>
             <ButtonP>Start Selection</ButtonP>
         </GradientButtonAction>
         

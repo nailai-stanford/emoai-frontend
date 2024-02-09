@@ -1,7 +1,3 @@
-
-
-
-
 import React, { Component } from 'react';
 import { ImageBackground, PixelRatio } from 'react-native';
 import { StyleSheet, View, PanResponder, Animated, Image, Text, Button, ScrollView } from 'react-native';
@@ -15,11 +11,12 @@ import { P, ButtonP, MenuHeader, TitleHeader, SubHeader, ButtonH} from "../style
 import { COLORS, PADDINGS, FONTS } from "../styles/theme";
 import { LEFTHAND_NAILS } from '../styles/nails';
 import { BlurView } from "@react-native-community/blur";
+import { BASE_URL, APIs, getHeader } from "../utils/API";
 
 
 import MaskedView from "@react-native-masked-view/masked-view";
 import { width } from 'deprecated-react-native-prop-types/DeprecatedImagePropType';
-
+import axios from 'axios';
 
 const TOP_BAR = 130;
 const leftHandDropZonePositions = [
@@ -42,26 +39,34 @@ const leftHandMasks = [<LEFTHAND_NAILS.left5/>, <LEFTHAND_NAILS.left4/>, <LEFTHA
 const rightHandMasks = [<LEFTHAND_NAILS.left1 style={{  transform:[{ scaleX: -1 }]}}/>, <LEFTHAND_NAILS.left2 style={{ transform:[{ scaleX: -1 }]}}/>, <LEFTHAND_NAILS.left3 style={{ transform:[{ scaleX: -1 }] }}/>, <LEFTHAND_NAILS.left4 style={{ transform:[{ scaleX: -1 }] }}/>, <LEFTHAND_NAILS.left5 style={{ transform:[{ scaleX: -1 }] }}/>]
 
 export default class HandDesignTab extends Component {
+
   constructor(props) {
+
     super(props);
     // const selectedNails = ['../../assets/nail_model.png','../../assets/left_hand_model.png','../../assets/8.jpeg','../../assets/8.jpeg','../../assets/8.jpeg' ];
     const selectedNails = this.props.route.params?.selectedNails || [];
+    const task_id = this.props.route.params?.task_id || "";
     console.log("selectedNails", selectedNails);
+    const userInfo = this.props.route.params?.userInfo || null;
+
     this.state = {
       currentHand: 'left', 
       nailCategory: 'selected',
       nails: selectedNails.map(() => new Animated.ValueXY()),
       selectedNails: selectedNails,
+      taskId: task_id,
       droppedZone: null,
       leftHandModel: require('../../assets/workshop/hand_left.png'),
       rightHandModel: require('../../assets/workshop/hand_right.png'),
       leftHandNails: Array(5).fill(''),
       rightHandNails: Array(5).fill(''),
       originalCollect: [],
+      userInfo: userInfo
       // nailRenderList: Array
     };
 
   }
+
 
 
   handleNailCategorySelection = (category) => {
@@ -277,11 +282,27 @@ export default class HandDesignTab extends Component {
   }
 
   navigateToPreview = () => {
-    let { leftHandNails, rightHandNails } = this.state;
-    this.props.navigation.navigate(TABs.DESIGN_PREVIEW, { 
-      leftHandNails: leftHandNails,
-      rightHandNails: rightHandNails, 
+    // let { leftHandNails, rightHandNails } = this.state;
+
+    let payload = {
+      task_id: this.state.taskId,
+      status: 5
+    };
+    const { idToken } = this.state.userInfo;
+    const headers = getHeader(idToken); 
+    axios
+    .post(`${BASE_URL}/api/task/status`, payload, { headers }) // Replace 'your-endpoint' with the actual endpoint
+    .then(response => {
+      const data = response.data;
+      console.log(data)
+    })
+    .catch(error => {
+      console.log(error)
     });
+    // this.props.navigation.navigate(TABs.DESIGN_PREVIEW, { 
+    //   leftHandNails: leftHandNails,
+    //   rightHandNails: rightHandNails, 
+    // });
   }
 
   render() {

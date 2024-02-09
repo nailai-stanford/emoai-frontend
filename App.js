@@ -5,9 +5,6 @@ import {TagsProvider} from './src/providers/TagsProvider';
 import {AppContent} from './src/AppContent';
 import {ModalPortal} from 'react-native-modals';
 import {StripeProvider} from '@stripe/stripe-react-native';
-import {StyleSheet, ImageBackground} from 'react-native';
-import {Image} from 'react-native-elements';
-import {Dimensions} from 'react-native';
 
 export default function App() {
   return (
