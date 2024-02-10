@@ -290,7 +290,7 @@ useEffect(() => {
   }
 
   return (
-    <ScrollView testID="safe-area-view" contentContainerStyle={{flexDirection: 'column', padding:PADDINGS.sm, height:'80%'}}>
+    <ScrollView testID="safe-area-view" contentContainerStyle={{flexDirection: 'column', padding:PADDINGS.sm}}>
       
         <ScrollView
             horizontal
