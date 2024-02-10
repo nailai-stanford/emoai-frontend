@@ -18,24 +18,25 @@ import MaskedView from "@react-native-masked-view/masked-view";
 import { width } from 'deprecated-react-native-prop-types/DeprecatedImagePropType';
 import axios from 'axios';
 
+const DROPZONE_WIDTH = 60;
+const DROPZONE_HEIGHT = 60;
 const TOP_BAR = 130;
 const leftHandDropZonePositions = [
-  { top: 111, left: 20, width: 60, height: 60 },
-  { top: 38, left: 80, width: 60, height: 60 },
-  { top: 3, left: 148, width: 60, height: 60 },
-  { top: 16, left: 230, width: 60, height: 60 },
-  { top: 165, left: 308, width: 60, height: 60 },
+  { top: 171, left: 20, width: DROPZONE_WIDTH, height: DROPZONE_HEIGHT},
+  { top: 98, left: 80 , width: DROPZONE_WIDTH, height: DROPZONE_HEIGHT},
+  { top: 63, left: 148 , width: DROPZONE_WIDTH, height: DROPZONE_HEIGHT},
+  { top: 76, left: 230 , width: DROPZONE_WIDTH, height: DROPZONE_HEIGHT},
+  { top: 225, left: 308 , width: DROPZONE_WIDTH, height: DROPZONE_HEIGHT},
 ];
 
 const rightHandDropZonePositions = [
-  { top: 165, left: 25, width: 60, height: 60 },
-  { top: 15, left: 103, width: 60, height: 60 },
-  { top: 2, left: 185, width: 60, height: 60 },
-  { top: 38, left: 253, width: 60, height: 60 },
-  { top: 110, left: 313, width: 60, height: 60 },
+  { top: 225, left: 25 , width: DROPZONE_WIDTH, height: DROPZONE_HEIGHT},
+  { top: 76, left: 103 , width: DROPZONE_WIDTH, height: DROPZONE_HEIGHT},
+  { top: 63, left: 185 , width: DROPZONE_WIDTH, height: DROPZONE_HEIGHT},
+  { top: 98, left: 253, width: DROPZONE_WIDTH, height: DROPZONE_HEIGHT },
+  { top: 171, left: 313 , width: DROPZONE_WIDTH, height: DROPZONE_HEIGHT},
 ];
 
-// import svg masks
 const leftHandMasks = [<LEFTHAND_NAILS.left5/>, <LEFTHAND_NAILS.left4/>, <LEFTHAND_NAILS.left3/>, <LEFTHAND_NAILS.left2/>, <LEFTHAND_NAILS.left1/>];
 const rightHandMasks = [<LEFTHAND_NAILS.left1 style={{  transform:[{ scaleX: -1 }]}}/>, <LEFTHAND_NAILS.left2 style={{ transform:[{ scaleX: -1 }]}}/>, <LEFTHAND_NAILS.left3 style={{ transform:[{ scaleX: -1 }] }}/>, <LEFTHAND_NAILS.left4 style={{ transform:[{ scaleX: -1 }] }}/>, <LEFTHAND_NAILS.left5 style={{ transform:[{ scaleX: -1 }] }}/>]
 
@@ -112,26 +113,6 @@ export default class HandDesignTab extends Component {
     });
   }
 
-  componentDidMount() {
-    this.getOriginalCollect();
-  }
-
-  getOriginalCollect = async () => {
-    try {
-      // Assuming APIS and headers are defined somewhere in your code
-      const response = await axios.get(
-        path.join(APIS.GET_PRODUCTS, "collections/original single nails", "/"),
-        { headers }
-      );
-
-      console.log("query single nails", response.data.products);
-      let copy = JSON.parse(JSON.stringify(response.data.products));
-      this.setState({ originalCollect: copy });
-    } catch (e) {
-      console.error(e);
-      this.setState({ originalCollect: [] }); // Set to empty array in case of error
-    }
-  };
 
   updateNailImage = (hand, index, newImage) => {
     if (hand === 'left') {
@@ -190,8 +171,6 @@ export default class HandDesignTab extends Component {
           </View>}>
       <TouchableOpacity
         key={index}
-        // style={[styles.clickableZone, position]}
-        // onPress={() => this.props.navigation.navigate(TABs.NAIL_DESIGN)}
         onPress={() => {
           const selectedNailData = nailListRender[index];
 
@@ -204,7 +183,9 @@ export default class HandDesignTab extends Component {
         }}
         activeOpacity={1}
       >
-        {nailListRender[index] ? <Image source={{uri:nailListRender[index]}} style={styles.nailImage} ></Image> : <View style={[styles.nailImage, {backgroundColor:COLORS.dark}]}/> }
+        {nailListRender[index] ? 
+          <Image source={{uri:nailListRender[index]}} style={styles.nailImage} ></Image>
+           : <View style={[styles.nailImage, {backgroundColor:COLORS.dark}]}/> }
         <Image source={{uri:nailListRender[index]}} style={styles.nailImage} ></Image>
 
       </TouchableOpacity>
@@ -217,14 +198,13 @@ export default class HandDesignTab extends Component {
   isDropZone(gesture, index) {
     let dropIndex = -1;
     const dropZonePositions = this.state.currentHand === 'left' ? leftHandDropZonePositions : rightHandDropZonePositions;
-
     const draggedItemCenterX = gesture.moveX;
     const draggedItemCenterY = gesture.moveY - TOP_BAR;
-
+    const dropZonePadding = 30;
     for (let i=0; i<dropZonePositions.length; i++) {
       zone = dropZonePositions[i];
-      const isWithinX = draggedItemCenterX >= zone.left && draggedItemCenterX <= zone.left + zone.width;
-      const isWithinY = draggedItemCenterY >= zone.top && draggedItemCenterY <= zone.top + zone.height;
+      const isWithinX = draggedItemCenterX >= zone.left-dropZonePadding && draggedItemCenterX <= zone.left + zone.width +dropZonePadding;
+      const isWithinY = draggedItemCenterY >= zone.top-dropZonePadding && draggedItemCenterY <= zone.top + zone.height+dropZonePadding;
   
       if (isWithinX && isWithinY) {
         dropIndex = i;
@@ -318,7 +298,7 @@ export default class HandDesignTab extends Component {
          <View style={styles.background}
           >
           <Image source={handImage} ref={this.backgroundRef} style={styles.handImage} />
-
+          <View style={{backgroundColor:COLORS.dark, width:'100%', top:'100%'}}/>
           {this.renderClickableZones()}
       
           </View>
@@ -331,7 +311,7 @@ export default class HandDesignTab extends Component {
           />
             
           <SubHeader style={{paddingHorizontal: PADDINGS.sm}}>Drag Nails from Collections</SubHeader>
-          {this.renderNailCategoryButtons()}
+          {/* {this.renderNailCategoryButtons()} */}
           {this.renderNails()}
         </View>
         <ButtonAction onPress={this.navigateToPreview} 
@@ -346,18 +326,15 @@ export default class HandDesignTab extends Component {
 const styles = StyleSheet.create({
   background: {
     position: 'absolute',
-    top: 50,
+    top: 0,
     width: '100%',
     height: 600,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   handImage: {
     position: 'absolute',
-    top: -60,
+    top: 0,
     width: "100%",
     height: 700,
-
   },
   container: {
     flex: 1,
@@ -372,7 +349,7 @@ const styles = StyleSheet.create({
   },
   clickableZone: {
     position: 'absolute',
-    borderWidth: 1, // Set to 0 for invisibility
+    borderWidth: 0, // Set to 0 for invisibility
     borderColor: COLORS.white, 
     // backgroundColor: 'transparent', // Uncomment for complete invisibility
     // ... (other styles as needed)
@@ -399,9 +376,10 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
   },
   nailImage: {
-    width: 60,
+    width: 50,
     height: 60,
-    borderWidth: 2,
+    resizeMode:'contain',
+    marginHorizontal: 5,
     // Add any additional styles for the image if necessary
   },
   redBox_1: {
