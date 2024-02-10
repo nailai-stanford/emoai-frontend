@@ -17,22 +17,25 @@ import { BASE_URL, APIs, getHeader } from "../utils/API";
 import MaskedView from "@react-native-masked-view/masked-view";
 import { width } from 'deprecated-react-native-prop-types/DeprecatedImagePropType';
 import axios from 'axios';
+import { position } from 'html2canvas/dist/types/css/property-descriptors/position';
 
+const DROPZONE_WIDTH = 60;
+const DROPZONE_HEIGHT = 60;
 const TOP_BAR = 130;
 const leftHandDropZonePositions = [
-  { top: 111, left: 20, width: 60, height: 60 },
-  { top: 38, left: 80, width: 60, height: 60 },
-  { top: 3, left: 148, width: 60, height: 60 },
-  { top: 16, left: 230, width: 60, height: 60 },
-  { top: 165, left: 308, width: 60, height: 60 },
+  { top: 171, left: 20, width: DROPZONE_WIDTH, height: DROPZONE_HEIGHT},
+  { top: 98, left: 80 , width: DROPZONE_WIDTH, height: DROPZONE_HEIGHT},
+  { top: 63, left: 148 , width: DROPZONE_WIDTH, height: DROPZONE_HEIGHT},
+  { top: 76, left: 230 , width: DROPZONE_WIDTH, height: DROPZONE_HEIGHT},
+  { top: 225, left: 308 , width: DROPZONE_WIDTH, height: DROPZONE_HEIGHT},
 ];
 
 const rightHandDropZonePositions = [
-  { top: 165, left: 25, width: 60, height: 60 },
-  { top: 15, left: 103, width: 60, height: 60 },
-  { top: 2, left: 185, width: 60, height: 60 },
-  { top: 38, left: 253, width: 60, height: 60 },
-  { top: 110, left: 313, width: 60, height: 60 },
+  { top: 225, left: 25 , width: DROPZONE_WIDTH, height: DROPZONE_HEIGHT},
+  { top: 76, left: 103 , width: DROPZONE_WIDTH, height: DROPZONE_HEIGHT},
+  { top: 63, left: 185 , width: DROPZONE_WIDTH, height: DROPZONE_HEIGHT},
+  { top: 98, left: 253, width: DROPZONE_WIDTH, height: DROPZONE_HEIGHT },
+  { top: 171, left: 313 , width: DROPZONE_WIDTH, height: DROPZONE_HEIGHT},
 ];
 
 const leftHandMasks = [<LEFTHAND_NAILS.left5/>, <LEFTHAND_NAILS.left4/>, <LEFTHAND_NAILS.left3/>, <LEFTHAND_NAILS.left2/>, <LEFTHAND_NAILS.left1/>];
@@ -111,26 +114,6 @@ export default class HandDesignTab extends Component {
     });
   }
 
-  componentDidMount() {
-    this.getOriginalCollect();
-  }
-
-  getOriginalCollect = async () => {
-    try {
-      // Assuming APIS and headers are defined somewhere in your code
-      const response = await axios.get(
-        path.join(APIS.GET_PRODUCTS, "collections/original single nails", "/"),
-        { headers }
-      );
-
-      console.log("query single nails", response.data.products);
-      let copy = JSON.parse(JSON.stringify(response.data.products));
-      this.setState({ originalCollect: copy });
-    } catch (e) {
-      console.error(e);
-      this.setState({ originalCollect: [] }); // Set to empty array in case of error
-    }
-  };
 
   updateNailImage = (hand, index, newImage) => {
     if (hand === 'left') {
@@ -143,6 +126,7 @@ export default class HandDesignTab extends Component {
       this.setState({ rightHandNails: updatedRightHandNails });
     }
   };
+
   renderNailCategoryButtons = () => {
     return (
         <ScrollView 
@@ -169,9 +153,7 @@ export default class HandDesignTab extends Component {
   renderClickableZones() {
     let dropZonePositions = this.state.currentHand === 'left' ? leftHandDropZonePositions : rightHandDropZonePositions;
     let nailListRender = this.state.currentHand === 'left' ? this.state.leftHandNails : this.state.rightHandNails;
-    let hand = this.state.currentHand;
-    console.log("nail render" + nailListRender);
-    
+    let hand = this.state.currentHand; 
     return dropZonePositions.map((position, index) => (
      <MaskedView
      style={[styles.clickableZone, position]}
@@ -189,8 +171,6 @@ export default class HandDesignTab extends Component {
           </View>}>
       <TouchableOpacity
         key={index}
-        // style={[styles.clickableZone, position]}
-        // onPress={() => this.props.navigation.navigate(TABs.NAIL_DESIGN)}
         onPress={() => {
           const selectedNailData = nailListRender[index];
 
@@ -203,7 +183,9 @@ export default class HandDesignTab extends Component {
         }}
         activeOpacity={1}
       >
-        {nailListRender[index] ? <Image source={{uri:nailListRender[index]}} style={styles.nailImage} ></Image> : <View style={[styles.nailImage, {backgroundColor:COLORS.dark}]}/> }
+        {nailListRender[index] ? 
+          <Image source={{uri:nailListRender[index]}} style={styles.nailImage} ></Image>
+           : <View style={[styles.nailImage, {backgroundColor:COLORS.dark}]}/> }
         <Image source={{uri:nailListRender[index]}} style={styles.nailImage} ></Image>
 
       </TouchableOpacity>
@@ -216,14 +198,13 @@ export default class HandDesignTab extends Component {
   isDropZone(gesture, index) {
     let dropIndex = -1;
     const dropZonePositions = this.state.currentHand === 'left' ? leftHandDropZonePositions : rightHandDropZonePositions;
-
     const draggedItemCenterX = gesture.moveX;
     const draggedItemCenterY = gesture.moveY - TOP_BAR;
-
+    const dropZonePadding = 30;
     for (let i=0; i<dropZonePositions.length; i++) {
       zone = dropZonePositions[i];
-      const isWithinX = draggedItemCenterX >= zone.left && draggedItemCenterX <= zone.left + zone.width;
-      const isWithinY = draggedItemCenterY >= zone.top && draggedItemCenterY <= zone.top + zone.height;
+      const isWithinX = draggedItemCenterX >= zone.left-dropZonePadding && draggedItemCenterX <= zone.left + zone.width +dropZonePadding;
+      const isWithinY = draggedItemCenterY >= zone.top-dropZonePadding && draggedItemCenterY <= zone.top + zone.height+dropZonePadding;
   
       if (isWithinX && isWithinY) {
         dropIndex = i;
@@ -236,13 +217,11 @@ export default class HandDesignTab extends Component {
 
   renderNails() {
     let nailsToRender = [];
-
     if (this.state.nailCategory === 'emoSingle') {
       nailsToRender = this.state.originalCollect;
     } else {
       nailsToRender = this.state.selectedNails;
     }
-
     return (
 
       <View style={styles.nailContainer}>
@@ -251,7 +230,6 @@ export default class HandDesignTab extends Component {
             // If the image URI is empty or undefined, do not render this item
             return null;
           }
-          console.log("image in renderNails", image);
           const panStyle = {
             transform: this.state.nails[index].getTranslateTransform(),
           };
@@ -261,9 +239,7 @@ export default class HandDesignTab extends Component {
               {...this.panResponders[index].panHandlers}
               style={[panStyle]}
             >
-              
               <Image source={{ uri: image }} style={styles.nailImage} />
-              
             </Animated.View>
           );
         })}
@@ -275,15 +251,33 @@ export default class HandDesignTab extends Component {
 
   renderDropZones() {
     const dropZonePositions = this.state.currentHand === 'left' ? leftHandDropZonePositions : rightHandDropZonePositions;
-
     return dropZonePositions.map((position, index) => (
       <View key={index} style={[styles.dropZone, position]} />
     ));
   }
 
-  navigateToPreview = () => {
-    // let { leftHandNails, rightHandNails } = this.state;
+  // check if nails are all selected, if true, navigate to preview
+  checkIfAllNailsAreSelected = () => {
+    let { leftHandNails, rightHandNails } = this.state;
+    let missingNails = 0;
+    let allNailsSelected = true;
+    for (let i=0; i<5; i++) {
+      if (leftHandNails[i] === '') {
+        missingNails++;
+      }
+      if (rightHandNails[i] === '') {
+        missingNails++;
+      }
+    }
+    return missingNails;
+  }
 
+  navigateToPreview = () => {
+    let { leftHandNails, rightHandNails } = this.state;
+    if (this.checkIfAllNailsAreSelected() !== 0) {
+      alert(`Please ensure all nails for both hands are assigned. Currently, there are ${this.checkIfAllNailsAreSelected()} nails empty.`);
+      return;
+    }
     let payload = {
       task_id: this.state.taskId,
       status: 5
@@ -299,10 +293,11 @@ export default class HandDesignTab extends Component {
     .catch(error => {
       console.log(error)
     });
-    // this.props.navigation.navigate(TABs.DESIGN_PREVIEW, { 
-    //   leftHandNails: leftHandNails,
-    //   rightHandNails: rightHandNails, 
-    // });
+    this.props.navigation.navigate(TABs.DESIGN_PREVIEW, { 
+      leftHandNails: leftHandNails,
+      rightHandNails: rightHandNails, 
+      nailsId: this.state.taskId,
+    });
   }
 
   render() {
@@ -317,26 +312,29 @@ export default class HandDesignTab extends Component {
          <View style={styles.background}
           >
           <Image source={handImage} ref={this.backgroundRef} style={styles.handImage} />
-
+          <View style={{backgroundColor:COLORS.dark, width:'100%', top:'100%'}}/>
           {this.renderClickableZones()}
       
           </View>
-        <View style={{flexDirection:"column", position:"absolute", bottom:120}}>
+        <View style={{flexDirection:"column", position:"absolute", bottom:120, paddingHorizontal:PADDINGS.sm}}>
           {/* <View style={{position:"absolute", width:"100%",backgroundColor:COLORS.dark, opacity:0.9, height:180,bottom:0}}></View> */}
           <BlurView
             blurType="dark"
             blurAmount={30}
-            style={{height:180, width:"100%", position:"absolute", bottom:0}}
+            style={{height:160, width:"100%", position:"absolute", bottom:0}}
           />
             
           <SubHeader style={{paddingHorizontal: PADDINGS.sm}}>Drag Nails from Collections</SubHeader>
-          {this.renderNailCategoryButtons()}
+          <P style={{paddingHorizontal: PADDINGS.sm, paddingBottom: PADDINGS.md}}  $alignLeft>Assign nail styles to specific fingers. Mix and match as you like!</P>
+          {/* {this.renderNailCategoryButtons()} */}
           {this.renderNails()}
         </View>
-        <ButtonAction onPress={this.navigateToPreview} 
-        style={{marginVertical:PADDINGS.md, position:"absolute", bottom:75, width:"60%"}}>
-          <ButtonH>Preview</ButtonH>
-        </ButtonAction>
+        <View style={{position:"absolute", bottom: 75, width:"60%"}}>
+        <GradientButtonSelection $selected onPress={this.navigateToPreview} 
+        style={{marginVertical:PADDINGS.sm,  borderWidth:0}}>
+          <ButtonP>Next</ButtonP>
+        </GradientButtonSelection>
+        </View>
       </View>
     );
   }
@@ -345,18 +343,16 @@ export default class HandDesignTab extends Component {
 const styles = StyleSheet.create({
   background: {
     position: 'absolute',
-    top: 50,
+    top: 0,
     width: '100%',
     height: 600,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   handImage: {
     position: 'absolute',
-    top: -60,
-    width: "100%",
+    top: 0,
+    left: 0,
+    width: 393,
     height: 700,
-
   },
   container: {
     flex: 1,
@@ -371,7 +367,7 @@ const styles = StyleSheet.create({
   },
   clickableZone: {
     position: 'absolute',
-    borderWidth: 1, // Set to 0 for invisibility
+    borderWidth: 0, // Set to 0 for invisibility
     borderColor: COLORS.white, 
     // backgroundColor: 'transparent', // Uncomment for complete invisibility
     // ... (other styles as needed)
@@ -398,9 +394,10 @@ const styles = StyleSheet.create({
     paddingBottom: 30,
   },
   nailImage: {
-    width: 60,
+    width: 50,
     height: 60,
-    borderWidth: 2,
+    resizeMode:'contain',
+    marginHorizontal: 5,
     // Add any additional styles for the image if necessary
   },
   redBox_1: {

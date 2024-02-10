@@ -290,7 +290,7 @@ useEffect(() => {
   }
 
   return (
-    <View testID="safe-area-view" style={{flexDirection: 'column', padding:PADDINGS.sm}}>
+    <ScrollView testID="safe-area-view" contentContainerStyle={{flexDirection: 'column', padding:PADDINGS.sm}}>
       
         <ScrollView
             horizontal
@@ -367,7 +367,7 @@ useEffect(() => {
         {/* <ButtonP>{editMode ? 'Done' : 'Edit'}</ButtonP> */}
       <ScrollView
         horizontal
-        showsHorizontalScrollIndicator={false}
+        showsHorizontalScrollIndicator
         style={{flexDirection: 'row', marginBottom: PADDINGS.md}}
       >
         {selectedNails.map((nail, index) => (
@@ -404,7 +404,7 @@ useEffect(() => {
         </GradientButtonAction>
         
 
-    </View>
+    </ScrollView>
   );
 }
 

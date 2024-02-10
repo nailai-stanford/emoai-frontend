@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, ActivityIndicator } from 'react-native';
 import * as Progress from 'react-native-progress';
 import { TABs } from '../static/Constants';
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { BASE_URL, APIs, getHeader } from "../utils/API";
+import LottieView from "lottie-react-native";
 
+import {TitleHeader, P, GradientMenuHeader, ButtonP} from '../styles/texts.tsx'
+import { PADDINGS, COLORS } from '../styles/theme.jsx';
+import { GradientButtonAction } from '../styles/buttons.tsx';
 
 export const LoadTab = ({ navigation }) => {
   const [progress, setProgress] = useState(0);
@@ -55,9 +59,20 @@ export const LoadTab = ({ navigation }) => {
   
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Loading Images...</Text>
-      <Progress.Bar progress={progress} width={200} />
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal:PADDINGS.md}}>
+      <GradientMenuHeader style={{textAlign:'center', paddingHorizontal:PADDINGS.md}}>Our Nail AI is creating your own nail design</GradientMenuHeader>
+      <ActivityIndicator size="large" color={COLORS.white} />
+
+      <P style={{padding:PADDINGS.md, paddingBottom:10}}>Please check back soon. 
+      Meanwhile, you can tour around the nail design by other creators!</P>
+      <GradientButtonAction onPress={() => {navigation.navigate(TABs.DISCOVER)}}><ButtonP>Explore</ButtonP></GradientButtonAction>
+      {/* <Progress.Bar progress={progress} width={200} /> */}
+      {/* <LottieView
+      source={require("../../assets/lottie/progress_lottie.json")}
+      style={{width: "100%", height: 300, position: "absolute", top: 0, zIndex: -1}}
+      autoPlay
+      loop
+      /> */}
     </View>
   );
 };

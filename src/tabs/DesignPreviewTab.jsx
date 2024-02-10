@@ -48,7 +48,7 @@ export const DesignPreviewTab = ({ navigation, route }) => {
               });
           });
       }
-      // generateProductImages();
+      generateProductImages();
   }, [leftHandNails, rightHandNails, designIds]);
 
   useEffect(() => {
@@ -120,26 +120,7 @@ export const DesignPreviewTab = ({ navigation, route }) => {
       });
     };
   const shareDesign = async () => {
-    // if (!apiCalled) {
-    //   let designSetData = {
-    //     nailDesignIdList: nailsId,
-    //     imageMain: productImage,
-    //     imageList: productImageList,
-    //     price: price,
-    //     title: title,
-    //     description: description,
-    //   };
-    //   try {
-    //     // const designSetId = await postDesignSet(designSetData, userInfo);
-    //     // setApiCalled(true);
-    //     // console.log("Design Set ID:", designSetId);
-    //     navigation.navigate(TABs.SHARE_DESIGN, {title: title, description: description});
-    //   } catch (error) {
-    //     console.error("Error in Share Design:", error);
-    //   }
-    // } else {
       navigation.navigate(TABs.SHARE_DESIGN, {title: title, description: description, product_url: productImage});
-    // }
   };
   
 
@@ -247,6 +228,10 @@ export const DesignPreviewTab = ({ navigation, route }) => {
     
         fetchTitle();
       }, [tags]);
+
+      /* -------------------------------------------------------------------------- */
+      /*                              render this page                              */
+      /* -------------------------------------------------------------------------- */
       return (
         <View style={{ padding: 20 }}>
           <View style={{

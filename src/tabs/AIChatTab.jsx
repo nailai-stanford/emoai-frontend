@@ -390,9 +390,9 @@ export const AIChatTab = ({ navigation }) => {
           color={COLORS.white}
             />
         </TouchableOpacity>
-        <HistoryModal navigation={navigation} 
+        {/* <HistoryModal navigation={navigation} 
           modalVisible={modalVisible}
-          setModalVisible={setModalVisible} />
+          setModalVisible={setModalVisible} /> */}
         <View style={{flex: 4, alignItems: "center"}}>
         <MenuHeader> EMO.AI</MenuHeader>
         </View>
