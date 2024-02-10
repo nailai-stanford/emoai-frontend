@@ -351,7 +351,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     left: 0,
-    width: "100%",
+    width: 400,
     height: 700,
   },
   container: {

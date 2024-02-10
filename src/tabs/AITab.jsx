@@ -56,7 +56,7 @@ export const AITab = ({ navigation }) => {
         blurType="dark"
         blurAmount={30}
         style={{
-          marginTop: 150,
+          marginBottom: 10,
           borderRadius: 25,
           paddingHorizontal: 35,
           paddingVertical: 50,
@@ -65,7 +65,7 @@ export const AITab = ({ navigation }) => {
           justifyContent: "center",
           textAlign: "center",
           position: "absolute",
-          top: 200,
+          bottom: 100,
 
         }}
       >
