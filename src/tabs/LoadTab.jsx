@@ -61,17 +61,18 @@ export const LoadTab = ({ navigation }) => {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal:PADDINGS.md}}>
       <GradientMenuHeader style={{textAlign:'center', paddingHorizontal:PADDINGS.md}}>Our Nail AI is creating your own nail design</GradientMenuHeader>
+      <ActivityIndicator size="large" color={COLORS.white} />
+
       <P style={{padding:PADDINGS.md, paddingBottom:10}}>Please check back soon. 
       Meanwhile, you can tour around the nail design by other creators!</P>
       <GradientButtonAction onPress={() => {navigation.navigate(TABs.DISCOVER)}}><ButtonP>Explore</ButtonP></GradientButtonAction>
-      {/* <ActivityIndicator size="large" color={COLORS.white} /> */}
       {/* <Progress.Bar progress={progress} width={200} /> */}
-      <LottieView
-      source={require("../../assets/lottie/logo_lottie.json")}
-      style={{width: "100%", height: "100%", position: "absolute", top: -200, zIndex: -1}}
+      {/* <LottieView
+      source={require("../../assets/lottie/progress_lottie.json")}
+      style={{width: "100%", height: 300, position: "absolute", top: 0, zIndex: -1}}
       autoPlay
       loop
-      />
+      /> */}
     </View>
   );
 };

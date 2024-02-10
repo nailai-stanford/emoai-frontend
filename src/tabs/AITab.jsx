@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Text, Button, Image } from "react-native";
 
 import { ButtonAction, ButtonSelection, GradientButtonAction } from "../styles/buttons";
@@ -12,6 +12,7 @@ import { BASE_URL, APIs, getHeader } from "../utils/API";
 export const AITab = ({ navigation }) => {
 
   const { userInfo} = useAuthenticationContext();
+  const [ taskStatus, setTaskStatus ] = useState(0);
 
   const { idToken } = userInfo;
   const headers = getHeader(idToken);
@@ -29,6 +30,7 @@ export const AITab = ({ navigation }) => {
       const data = await response.json();
       task_id = data.task_id
       task_status = data.status
+      setTaskStatus(task_status);
       console.log(task_id, task_status)
       if (task_status === 1 || task_status === 2) {
         navigation.navigate(TABs.LOAD)
@@ -69,6 +71,8 @@ export const AITab = ({ navigation }) => {
 
         }}
       >
+        { taskStatus === 0 ? 
+        <>
         <TitleHeader >
           Start Generating Images Using EMO.AI
         </TitleHeader>
@@ -79,11 +83,20 @@ export const AITab = ({ navigation }) => {
           <GradientButtonAction onPress={() => check_last_task_status()}>
             <ButtonH>Start Now</ButtonH>
           </GradientButtonAction>
-          {/* <Button
-            title="Start Now"
-            onPress={() => navigation.navigate(TABs.AICHAT)}
-          /> */}
         </View>
+        </> 
+        :  
+        <>
+        <TitleHeader >
+        {taskStatus>2 ? "Your Design is Here!" : "Welcome Back!"}
+      </TitleHeader>
+      <View>
+      <GradientButtonAction onPress={() => check_last_task_status()}>
+        <ButtonH>{taskStatus>2 ? "Go To Workshop" : "Check Status"}</ButtonH>
+      </GradientButtonAction>
+    </View>
+    </>
+} 
       </BlurView>
     </View>
   );
