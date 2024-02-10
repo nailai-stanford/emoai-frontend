@@ -239,8 +239,9 @@ export const AIChatTab = ({ navigation }) => {
 
   const find_pre_stage = () => {
     stages = {
-      'THEME': "",
-      'COLOR': 'theme',
+      'THEME': '',
+      'THEME_SECOND': 'theme',
+      'COLOR': 'theme_second',
       'BRAND': 'color',
       'ELEMENT': 'brand',
       'TEXTURE': 'element',
