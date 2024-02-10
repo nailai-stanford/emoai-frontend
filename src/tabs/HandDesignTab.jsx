@@ -125,6 +125,7 @@ export default class HandDesignTab extends Component {
       this.setState({ rightHandNails: updatedRightHandNails });
     }
   };
+
   renderNailCategoryButtons = () => {
     return (
         <ScrollView 
@@ -151,9 +152,7 @@ export default class HandDesignTab extends Component {
   renderClickableZones() {
     let dropZonePositions = this.state.currentHand === 'left' ? leftHandDropZonePositions : rightHandDropZonePositions;
     let nailListRender = this.state.currentHand === 'left' ? this.state.leftHandNails : this.state.rightHandNails;
-    let hand = this.state.currentHand;
-    console.log("nail render" + nailListRender);
-    
+    let hand = this.state.currentHand; 
     return dropZonePositions.map((position, index) => (
      <MaskedView
      style={[styles.clickableZone, position]}
@@ -217,13 +216,11 @@ export default class HandDesignTab extends Component {
 
   renderNails() {
     let nailsToRender = [];
-
     if (this.state.nailCategory === 'emoSingle') {
       nailsToRender = this.state.originalCollect;
     } else {
       nailsToRender = this.state.selectedNails;
     }
-
     return (
 
       <View style={styles.nailContainer}>
@@ -242,9 +239,7 @@ export default class HandDesignTab extends Component {
               {...this.panResponders[index].panHandlers}
               style={[panStyle]}
             >
-              
               <Image source={{ uri: image }} style={styles.nailImage} />
-              
             </Animated.View>
           );
         })}
@@ -256,15 +251,30 @@ export default class HandDesignTab extends Component {
 
   renderDropZones() {
     const dropZonePositions = this.state.currentHand === 'left' ? leftHandDropZonePositions : rightHandDropZonePositions;
-
     return dropZonePositions.map((position, index) => (
       <View key={index} style={[styles.dropZone, position]} />
     ));
   }
 
-  navigateToPreview = () => {
-    // let { leftHandNails, rightHandNails } = this.state;
+  // check if nails are all selected, if true, navigate to preview
+  checkIfAllNailsAreSelected = () => {
+    let { leftHandNails, rightHandNails } = this.state;
+    let allNailsSelected = true;
+    for (let i=0; i<5; i++) {
+      if (leftHandNails[i] === '' || rightHandNails[i] === '') {
+        allNailsSelected = false;
+        break;
+      }
+    }
+    return allNailsSelected;
+  }
 
+  navigateToPreview = () => {
+    let { leftHandNails, rightHandNails } = this.state;
+    if (!this.checkIfAllNailsAreSelected()) {
+      alert('Please select all nails for both hands');
+      return;
+    }
     let payload = {
       task_id: this.state.taskId,
       status: 5
