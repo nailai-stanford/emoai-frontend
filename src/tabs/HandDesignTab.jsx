@@ -35,6 +35,7 @@ const rightHandDropZonePositions = [
   { top: 110, left: 313, width: 60, height: 60 },
 ];
 
+// import svg masks
 const leftHandMasks = [<LEFTHAND_NAILS.left5/>, <LEFTHAND_NAILS.left4/>, <LEFTHAND_NAILS.left3/>, <LEFTHAND_NAILS.left2/>, <LEFTHAND_NAILS.left1/>];
 const rightHandMasks = [<LEFTHAND_NAILS.left1 style={{  transform:[{ scaleX: -1 }]}}/>, <LEFTHAND_NAILS.left2 style={{ transform:[{ scaleX: -1 }]}}/>, <LEFTHAND_NAILS.left3 style={{ transform:[{ scaleX: -1 }] }}/>, <LEFTHAND_NAILS.left4 style={{ transform:[{ scaleX: -1 }] }}/>, <LEFTHAND_NAILS.left5 style={{ transform:[{ scaleX: -1 }] }}/>]
 
@@ -299,10 +300,10 @@ export default class HandDesignTab extends Component {
     .catch(error => {
       console.log(error)
     });
-    // this.props.navigation.navigate(TABs.DESIGN_PREVIEW, { 
-    //   leftHandNails: leftHandNails,
-    //   rightHandNails: rightHandNails, 
-    // });
+    this.props.navigation.navigate(TABs.DESIGN_PREVIEW, { 
+      leftHandNails: leftHandNails,
+      rightHandNails: rightHandNails, 
+    });
   }
 
   render() {
