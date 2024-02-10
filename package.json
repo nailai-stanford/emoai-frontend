@@ -26,6 +26,7 @@
     "@stripe/stripe-react-native": "^0.35.1",
     "axios": "^1.6.2",
     "deprecated-react-native-prop-types": "^5.0.0",
+    "lottie-react-native": "^6.6.0",
     "react": "18.2.0",
     "react-native": "0.73.2",
     "react-native-animated-pagination-dots": "^0.1.73",

@@ -416,15 +416,15 @@ export const AIChatTab = ({ navigation }) => {
     style={{ flex: 1, paddingHorizontal: PADDINGS.sm, marginTop: 60,  marginBottom: 80}}
     >
       <View style={{flexDirection: "row", flex: 0.1, alignItems: "center"}}>
-        <TouchableOpacity style={{ alignItems: "center", flex: 1 }} onPress={()=>{setModalVisible(true)}}>
+        {/* <TouchableOpacity style={{ alignItems: "center", flex: 1 }} onPress={()=>{setModalVisible(true)}}>
         <ACTION_ICONS.menu
           size={iconSize}
           color={COLORS.white}
             />
-        </TouchableOpacity>
-        <HistoryModal navigation={navigation} 
+        </TouchableOpacity> */}
+        {/* <HistoryModal navigation={navigation} 
           modalVisible={modalVisible}
-          setModalVisible={setModalVisible} />
+          setModalVisible={setModalVisible} /> */}
         <View style={{flex: 4, alignItems: "center"}}>
         <MenuHeader> EMO.AI</MenuHeader>
         </View>

@@ -17,6 +17,7 @@ import { BASE_URL, APIs, getHeader } from "../utils/API";
 import MaskedView from "@react-native-masked-view/masked-view";
 import { width } from 'deprecated-react-native-prop-types/DeprecatedImagePropType';
 import axios from 'axios';
+import { position } from 'html2canvas/dist/types/css/property-descriptors/position';
 
 const DROPZONE_WIDTH = 60;
 const DROPZONE_HEIGHT = 60;
@@ -229,7 +230,6 @@ export default class HandDesignTab extends Component {
             // If the image URI is empty or undefined, do not render this item
             return null;
           }
-          console.log("image in renderNails", image);
           const panStyle = {
             transform: this.state.nails[index].getTranslateTransform(),
           };
@@ -259,20 +259,23 @@ export default class HandDesignTab extends Component {
   // check if nails are all selected, if true, navigate to preview
   checkIfAllNailsAreSelected = () => {
     let { leftHandNails, rightHandNails } = this.state;
+    let missingNails = 0;
     let allNailsSelected = true;
     for (let i=0; i<5; i++) {
-      if (leftHandNails[i] === '' || rightHandNails[i] === '') {
-        allNailsSelected = false;
-        break;
+      if (leftHandNails[i] === '') {
+        missingNails++;
+      }
+      if (rightHandNails[i] === '') {
+        missingNails++;
       }
     }
-    return allNailsSelected;
+    return missingNails;
   }
 
   navigateToPreview = () => {
     let { leftHandNails, rightHandNails } = this.state;
-    if (!this.checkIfAllNailsAreSelected()) {
-      alert('Please select all nails for both hands');
+    if (this.checkIfAllNailsAreSelected() !== 0) {
+      alert(`Please ensure all nails for both hands are assigned. Currently, there are ${this.checkIfAllNailsAreSelected()} nails empty.`);
       return;
     }
     let payload = {
@@ -293,6 +296,7 @@ export default class HandDesignTab extends Component {
     this.props.navigation.navigate(TABs.DESIGN_PREVIEW, { 
       leftHandNails: leftHandNails,
       rightHandNails: rightHandNails, 
+      nailsId: this.state.taskId,
     });
   }
 
@@ -312,22 +316,25 @@ export default class HandDesignTab extends Component {
           {this.renderClickableZones()}
       
           </View>
-        <View style={{flexDirection:"column", position:"absolute", bottom:120}}>
+        <View style={{flexDirection:"column", position:"absolute", bottom:120, paddingHorizontal:PADDINGS.sm}}>
           {/* <View style={{position:"absolute", width:"100%",backgroundColor:COLORS.dark, opacity:0.9, height:180,bottom:0}}></View> */}
           <BlurView
             blurType="dark"
             blurAmount={30}
-            style={{height:180, width:"100%", position:"absolute", bottom:0}}
+            style={{height:160, width:"100%", position:"absolute", bottom:0}}
           />
             
           <SubHeader style={{paddingHorizontal: PADDINGS.sm}}>Drag Nails from Collections</SubHeader>
+          <P style={{paddingHorizontal: PADDINGS.sm, paddingBottom: PADDINGS.md}}  $alignLeft>Assign nail styles to specific fingers. Mix and match as you like!</P>
           {/* {this.renderNailCategoryButtons()} */}
           {this.renderNails()}
         </View>
-        <ButtonAction onPress={this.navigateToPreview} 
-        style={{marginVertical:PADDINGS.md, position:"absolute", bottom:75, width:"60%"}}>
-          <ButtonH>Preview</ButtonH>
-        </ButtonAction>
+        <View style={{position:"absolute", bottom: 75, width:"60%"}}>
+        <GradientButtonSelection $selected onPress={this.navigateToPreview} 
+        style={{marginVertical:PADDINGS.sm,  borderWidth:0}}>
+          <ButtonP>Next</ButtonP>
+        </GradientButtonSelection>
+        </View>
       </View>
     );
   }
@@ -343,6 +350,7 @@ const styles = StyleSheet.create({
   handImage: {
     position: 'absolute',
     top: 0,
+    left: 0,
     width: "100%",
     height: 700,
   },
