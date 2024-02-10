@@ -25,6 +25,9 @@ import Like from "../../assets/icons/like.svg";
 import Plus from "../../assets/icons/plus.svg";
 import Minus from "../../assets/icons/minus.svg";
 
+// other icons
+import Google from "../../assets/icons/google_logo.svg";
+
 export const TAB_BAR_ICONS = {
     home: Home,
     homeSelected: HomeSelected,
@@ -53,4 +56,9 @@ export const ACTION_ICONS = {
     like: Like,
     plus: Plus,
     minus: Minus,
+}
+
+
+export const OTHER_ICONS = {
+    google: Google
 }

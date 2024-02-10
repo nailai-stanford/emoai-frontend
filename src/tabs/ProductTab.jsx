@@ -226,13 +226,13 @@ export const ProductTab = ({ route, navigation }) => {
     <View style={{height:"88%"}}>
         <ScrollView>
         <View style={styles.container}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => {
+                navigation.goBack();
+              }}>
               <ACTION_ICONS.back
               size={iconSize}
               style={{ color:COLORS.white, right: 0 }}
-              onPress={() => {
-                navigation.goBack();
-              }}/>
+              />
           </TouchableOpacity>
         <Image style={{height:200, borderRadius: BORDERS.standartRadius}} source={{uri:item.image.src }}/> 
         <View style={{height:item.body_html ? 100: 60, marginBottom:PADDINGS.sm}}>

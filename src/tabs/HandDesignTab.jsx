@@ -18,8 +18,6 @@ import MaskedView from "@react-native-masked-view/masked-view";
 import { width } from 'deprecated-react-native-prop-types/DeprecatedImagePropType';
 import axios from 'axios';
 
-
-
 const TOP_BAR = 130;
 const leftHandDropZonePositions = [
   { top: 111, left: 20, width: 60, height: 60 },
