@@ -18,8 +18,6 @@ import { FAB, Input } from 'react-native-elements';
 import { BASE_URL, APIs, getHeader } from "../utils/API";
 
 import {ACTION_ICONS} from '../styles/icons'
-import { err } from 'react-native-svg';
-import { disabled } from 'deprecated-react-native-prop-types/DeprecatedTextPropTypes';
 
 const iconSize = 20;
 
@@ -166,9 +164,6 @@ export const AIChatTab = ({ navigation }) => {
         if (resp.completed) {
           let last_message = resp.messages[resp.messages.length - 1]
           let last_options = last_message.options
-          console.log('last_message', last_message)
-          console.log(resp)
-          console.log('set options, ', last_options)
           setOptions(last_options)
           appendChatHistory(resp.messages)
           setPendingReply(false);
