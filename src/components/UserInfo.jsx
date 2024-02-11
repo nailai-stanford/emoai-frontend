@@ -88,7 +88,7 @@ export const UserInfo = (props) => {
           </P>
         </View>
 
-        <View
+        {/* <View
           style={{
             flex: 1,
             alignSelf: "center",
@@ -98,7 +98,7 @@ export const UserInfo = (props) => {
         >
           <P style={{ flex: 1}}>0</P>
           <P style={{ flex: 1, alignSelf: "center", fontWeight: "bold" }}>Followers</P>
-        </View>
+        </View> */}
       </View>
       {/* <ButtonAction
         onPress={() => {
