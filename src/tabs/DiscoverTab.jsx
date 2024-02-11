@@ -8,8 +8,8 @@ import {GalleryCard} from '../components/gallery/GalleryCard';
 import {Tab} from '@rneui/themed';
 import {getHeader, APIs} from '../utils/API';
 
-import {ButtonSelection} from '../styles/buttons';
-import {P, ButtonP, MenuHeader, TitleHeader} from '../styles/texts';
+import {GradientButtonSelection} from '../styles/buttons';
+import {P, ButtonP, MenuHeader, TitleHeader, GradientMenuHeader} from '../styles/texts';
 import {COLORS, PADDINGS} from '../styles/theme';
 
 const ThemeHeader = ({index, setIndex}) => {
@@ -51,14 +51,14 @@ const ThemeHeader = ({index, setIndex}) => {
   return (
     <View >
       <View>
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} >
           {themeList.map((e, idx) => (
-            <ButtonSelection
+            <GradientButtonSelection
               $selected={index == idx}
               key={idx}
               onPress={() => setIndex(idx)}>
               <ButtonP>{e.split('-')[1]}</ButtonP>
-            </ButtonSelection>
+            </GradientButtonSelection>
           ))}
         </ScrollView>
       </View>
@@ -115,10 +115,10 @@ export const DiscoverTab = ({ route }) => {
           borderRadius: 3,
         }}>
         <Tab.Item>
-          <MenuHeader $colored={index === 0}>Original</MenuHeader>
+          <GradientMenuHeader $colored={index === 0}>Original</GradientMenuHeader>
         </Tab.Item>
         <Tab.Item>
-          <MenuHeader $colored={index === 1}>Community</MenuHeader>
+          <GradientMenuHeader $colored={index === 1}>Community</GradientMenuHeader>
         </Tab.Item>
       </Tab>
       {index == 0 && <ThemeHeader index={tagIdx} setIndex={setTagIdx} />}
