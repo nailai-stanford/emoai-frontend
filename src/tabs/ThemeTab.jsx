@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from "react";
 import { TouchableOpacity, View, Text, FlatList} from "react-native";
 import { GalleryCard } from "../components/gallery/GalleryCard";
-import { ButtonSelection } from "../styles/buttons";
-import { P, ButtonP, MenuHeader, TitleHeader} from "../styles/texts";
+import { ButtonSelection, GradientButtonSelection } from "../styles/buttons";
+import { P, ButtonP,ButtonH, MenuHeader, TitleHeader} from "../styles/texts";
 import axios from "axios";
 import { getHeader, APIs } from "../utils/API";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { handleError } from "../utils/Common";
+import { PADDINGS } from "../styles/theme";
 
 const Tab = ({ content, selected, setSelected, setSubList }) => {
     const { userInfo } = useAuthenticationContext();
@@ -27,16 +28,16 @@ const Tab = ({ content, selected, setSelected, setSubList }) => {
     }, [selected])
     
     let currSelected = selected == content ? true : false
-        return <ButtonSelection $selected={currSelected} onPress={()=>{setSelected(content);}}>
-                    <ButtonP>{content}</ButtonP>
-                </ButtonSelection>
+        return <GradientButtonSelection $selected={currSelected} onPress={()=>{setSelected(content);}}>
+                    <ButtonH>{content}</ButtonH>
+                </GradientButtonSelection>
 }
 
 const SubElement = ({content, selected, setSelected}) => {
     let currSelected = selected == content ? true : false
-    return <ButtonSelection $selected={currSelected} onPress={()=>setSelected(content)}>
-                <ButtonP>{content.split('-')[1]}</ButtonP>
-            </ButtonSelection>
+    return <GradientButtonSelection $selected={currSelected} onPress={()=>setSelected(content)} >
+                <ButtonP style={{fontSize:12}}>{content.split('-')[1]}</ButtonP>
+            </GradientButtonSelection>
 }
 
 const ThemeHeader = () => {

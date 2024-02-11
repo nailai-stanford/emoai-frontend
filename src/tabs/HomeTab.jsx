@@ -10,6 +10,7 @@ import { getHeader, APIs } from "../utils/API";
 
 import { GradientButtonSelection } from "../styles/buttons";
 import { ButtonP ,GradientMenuHeader } from "../styles/texts";
+import { PADDINGS } from "../styles/theme";
 
 
 export const HomeTab = (navigation) => {
@@ -92,6 +93,6 @@ const styles = StyleSheet.create({
     display:"flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 20,
+    marginTop: 0,
   },
 });
