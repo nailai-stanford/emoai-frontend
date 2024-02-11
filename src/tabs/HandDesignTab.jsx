@@ -48,6 +48,7 @@ export default class HandDesignTab extends Component {
     super(props);
     // const selectedNails = ['../../assets/nail_model.png','../../assets/left_hand_model.png','../../assets/8.jpeg','../../assets/8.jpeg','../../assets/8.jpeg' ];
     const selectedNails = this.props.route.params?.selectedNails || [];
+    const imageUrls = this.props.route.params?.imageUrls || [];
     const task_id = this.props.route.params?.task_id || "";
     console.log("selectedNails", selectedNails);
     const userInfo = this.props.route.params?.userInfo || null;
@@ -57,6 +58,7 @@ export default class HandDesignTab extends Component {
       nailCategory: 'selected',
       nails: selectedNails.map(() => new Animated.ValueXY()),
       selectedNails: selectedNails,
+      imageUrls: imageUrls,
       taskId: task_id,
       droppedZone: null,
       leftHandModel: require('../../assets/workshop/hand_left.png'),
@@ -200,7 +202,7 @@ export default class HandDesignTab extends Component {
     const dropZonePositions = this.state.currentHand === 'left' ? leftHandDropZonePositions : rightHandDropZonePositions;
     const draggedItemCenterX = gesture.moveX;
     const draggedItemCenterY = gesture.moveY - TOP_BAR;
-    const dropZonePadding = 30;
+    const dropZonePadding = 20;
     for (let i=0; i<dropZonePositions.length; i++) {
       zone = dropZonePositions[i];
       const isWithinX = draggedItemCenterX >= zone.left-dropZonePadding && draggedItemCenterX <= zone.left + zone.width +dropZonePadding;
@@ -260,7 +262,6 @@ export default class HandDesignTab extends Component {
   checkIfAllNailsAreSelected = () => {
     let { leftHandNails, rightHandNails } = this.state;
     let missingNails = 0;
-    let allNailsSelected = true;
     for (let i=0; i<5; i++) {
       if (leftHandNails[i] === '') {
         missingNails++;
@@ -273,7 +274,7 @@ export default class HandDesignTab extends Component {
   }
 
   navigateToPreview = () => {
-    let { leftHandNails, rightHandNails } = this.state;
+    let { leftHandNails, rightHandNails, imageUrls } = this.state;
     if (this.checkIfAllNailsAreSelected() !== 0) {
       alert(`Please ensure all nails for both hands are assigned. Currently, there are ${this.checkIfAllNailsAreSelected()} nails empty.`);
       return;
@@ -296,7 +297,7 @@ export default class HandDesignTab extends Component {
     this.props.navigation.navigate(TABs.DESIGN_PREVIEW, { 
       leftHandNails: leftHandNails,
       rightHandNails: rightHandNails, 
-      nailsId: this.state.taskId,
+      handDesignUrls: imageUrls,
     });
   }
 

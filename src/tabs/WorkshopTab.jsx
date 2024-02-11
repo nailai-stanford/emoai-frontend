@@ -89,9 +89,6 @@ export const WorkshopTab = ({ navigation, route }) => {
   if (route.params && route.params.task_id) {
     task_id = route.params.task_id;
   }
-  // console.log(userTags);
-  // console.log("workshop: route.params", route.params.userTags);
-  // const [hasChatData, setHasChatData] = useState(false);
 
   useEffect(() => {
     const getTaskProducts = async(task_id) => {
@@ -121,9 +118,6 @@ export const WorkshopTab = ({ navigation, route }) => {
 
   }, [task_id, route]);
 
-  const goBackToLoadTab = () => {
-    navigation.goBack();
-  };
 
 
   useEffect(() => {
@@ -174,23 +168,6 @@ export const WorkshopTab = ({ navigation, route }) => {
   }, [combinedData]);
 
 
-  const fetchSingleNailIds = async (designId) => {
-    return new Promise((resolve, reject) => {
-      const { idToken } = userInfo;
-      const headers = getHeader(idToken);
-      axios
-        .get(`${BASE_URL}/api/hand_designs/${designId}/`, { headers })
-        .then((response) => {
-          const singleNailIds = response.data.hand_design.nail_design_id_list;
-          console.log("query single nails:", singleNailIds);
-          resolve(singleNailIds);
-        })
-        .catch((error) => {
-          console.error(`Error fetching single nail IDs for design ID ${designId}:`, error);
-          reject(error);
-        });
-    });
-  };
 
   const getOriginalCollect = async () => {
 
@@ -259,9 +236,6 @@ export const WorkshopTab = ({ navigation, route }) => {
   };
 
 
-// const handleNailSelect = (nailUrl) => {
-//   setSelectedNails(prevNails => [...prevNails, nailUrl]);
-// };
 const handleNailSelect = (nailUrl) => {
   // Update one of the placeholders with the selected nail
   const updatedNails = selectedNails.map((nail, index) => {
@@ -361,13 +335,14 @@ useEffect(() => {
             {editMode ? <SubHeader>Done</SubHeader> : <ACTION_ICONS.edit size={ICON_SIZES.standard}/> }
           </TouchableOpacity>
       </View>
-      <P style={{paddingBottom:PADDINGS.md}} $alignLeft={true}>Select five nails if you don't like them you can click edit to cancel and replace them!</P>
+      <P style={{paddingBottom:PADDINGS.md}} $alignLeft={true}>Select 10 nails if you don't like them you can click edit to cancel and replace them!</P>
       
       {/* <TouchableOpacity onPress={toggleEditMode}> */}
         {/* <ButtonP>{editMode ? 'Done' : 'Edit'}</ButtonP> */}
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator
+        indicatorStyle="white"
         style={{flexDirection: 'row', marginBottom: PADDINGS.md}}
       >
         {selectedNails.map((nail, index) => (
@@ -399,7 +374,7 @@ useEffect(() => {
       </ScrollView>
 
         <GradientButtonAction style={{alignSelf:"center"}}
-          onPress={() => navigation.navigate(TABs.HAND_DESIGN, { selectedNails, originalCollect, task_id: task_id, userInfo: userInfo})}>
+          onPress={() => navigation.navigate(TABs.HAND_DESIGN, { selectedNails, originalCollect, imageUrls, task_id: task_id, userInfo: userInfo})}>
             <ButtonP>Start Selection</ButtonP>
         </GradientButtonAction>
         
