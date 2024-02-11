@@ -96,6 +96,7 @@ export const Banner = () => {
           renderItem={_renderItem}
           onSnapToItem={(index) => setActiveIndex(index)}
           hasParallaxImages={true}
+          style ={{   marginBottom:0, paddingBottom:0}}
         />
         <Pagination
           dotsLength={banner.length}
@@ -118,6 +119,8 @@ export const Banner = () => {
             // Define styles for inactive dots here
           }}
           inactiveDotOpacity={1}
+          style ={{    marginTop:0, paddingTop:0}}
+
       />
     </SafeAreaView>
   );

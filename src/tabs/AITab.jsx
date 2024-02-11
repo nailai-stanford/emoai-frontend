@@ -71,7 +71,7 @@ export const AITab = ({ navigation }) => {
 
         }}
       >
-        { taskStatus === 0 ? 
+        { taskStatus === 0 || taskStatus >3  ? 
         <>
         <TitleHeader >
           Start Generating Images Using EMO.AI

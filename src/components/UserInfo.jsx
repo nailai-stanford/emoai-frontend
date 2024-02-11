@@ -10,6 +10,7 @@ import { P, ButtonP, MenuHeader, GradientP} from "../styles/texts";
 import { COLORS, PADDINGS } from "../styles/theme";
 
 export const UserInfo = (props) => {
+  const {myDesignNum, myCollectionNum, followersNum} = props;
   const { userInfo, signout } = useAuthenticationContext();
   const { onSignout } = props;
   const headers = getHeader(userInfo.idToken);
@@ -69,7 +70,7 @@ export const UserInfo = (props) => {
             flexDirection: "column",
           }}
         >
-          <P style={{ flex: 1 }}>68</P>
+          <P style={{ flex: 1 }}>{myCollectionNum}</P>
           <P style={{ flex: 1, fontWeight: "bold" }}>Collection</P>
         </View>
 
@@ -81,7 +82,7 @@ export const UserInfo = (props) => {
             flexDirection: "column",
           }}
         >
-          <P style={{ flex: 1}}>245</P>
+          <P style={{ flex: 1}}>{myDesignNum}</P>
           <P style={{ flex: 1, fontWeight: "bold" }}>
             My Design
           </P>
@@ -95,7 +96,7 @@ export const UserInfo = (props) => {
             flexDirection: "column",
           }}
         >
-          <P style={{ flex: 1}}>25</P>
+          <P style={{ flex: 1}}>0</P>
           <P style={{ flex: 1, alignSelf: "center", fontWeight: "bold" }}>Followers</P>
         </View>
       </View>

@@ -71,7 +71,7 @@ export const ProfileTab = ({ onSignout }) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <UserInfo onSignout={onSignout} />
+      <UserInfo onSignout={onSignout} myDesignNum={design.length} myCollectionNum={collected.length}/>
       <GradientMenuHeader $colored={true} style={{alignSelf:"flex-start", paddingHorizontal: PADDINGS.md}}>My Gallery</GradientMenuHeader>
       <View style={styles.buttonRow}>
           <GradientButtonSelection onPress={() => {setIndex(0)}} style={styles.buttonSelectionStyle} $selected={index===0 && true}><ButtonP>My Design</ButtonP></GradientButtonSelection>
