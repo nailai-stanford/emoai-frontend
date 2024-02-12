@@ -32,6 +32,7 @@ import { GradientButtonAction } from "../styles/buttons";
 import { P, ButtonP, MenuHeader, TitleHeader, SubHeader, ButtonH} from "../styles/texts";
 import { COLORS, PADDINGS, FONTS, ICON_SIZES } from "../styles/theme";
 import { ACTION_ICONS } from "../styles/icons";
+import { err } from "react-native-svg";
 
 // const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
@@ -76,8 +77,8 @@ export const WorkshopTab = ({ navigation, route }) => {
   const width = Dimensions.get('window').width - 2*PADDINGS.sm;
   const scrollX = useRef(new Animated.Value(0)).current;
   const [editMode, setEditMode] = useState(false);
-  const [imageUrls, setImageUrls] = useState({}); // hand design urls
-  const [nailImages, setNailImages] = useState([]);// nail urls
+  const [handProducts, setHandProducts] = useState({}); // hand design urls
+  const [nails, setNails] = useState([]);// nail urls
   const [combinedData, setCombinedData] = useState([]); // State for combined image data
   const [taskProducts, setTaskProducts] = useState([])
   const [selectedNails, setSelectedNails] = useState(new Array(10).fill(''));
@@ -106,49 +107,47 @@ export const WorkshopTab = ({ navigation, route }) => {
       getTaskProducts(task_id).then(data => {
           products = data;
           hand_designs = products.data
-          console.log('start imageUrls: ', imageUrls)
-          console.log(products.data)
           setTaskProducts(products.data)
       }).catch(error => {
-        console.error('error when calling getTaskProducts')
+        console.error('error when calling getTaskProducts', error)
       })
     }
-    console.log('task_products:', taskProducts)
-
 
   }, [task_id, route]);
 
 
 
   useEffect(() => {
-    console.log('update taskProducts:', taskProducts)
-    const newImageUrls = taskProducts.reduce((acc, product) => {
+    const newHandProducts = taskProducts.reduce((acc, product) => {
         acc[product.hand_design_id] = product.img_src;
         return acc;
     }, {});
-    setImageUrls(prevUrls => ({ ...prevUrls, ...newImageUrls }));
-    console.log('new imageUrls: ', imageUrls)
+    setHandProducts(prevUrls => ({ ...prevUrls, ...newHandProducts }));
     taskProducts.forEach((product, index) => {
       console.log(`Product ${index}:`, product);
     });
     
-    let newNailImages = {};
+    let newNails = {};
     taskProducts.forEach(product => {
-      newNailImages[product.hand_design_id] = product.nail_products.map(nailProduct => nailProduct.img_src);
-  });
+      newNails[product.hand_design_id] = product.nail_products.map(nailProduct => nailProduct.img_src);
+    });
 
-    setNailImages(newNailImages);
-    console.log('newNailImages:', newNailImages)
+    setNails(newNails);
 
     let newCombinedData = taskProducts.map(product => {
       return {
-          imageUrl: product.img_src,
-          nailImages: product.nail_products.map(nailProduct => nailProduct.img_src)
+          handDesignImageUrl: product.img_src,
+          handDesignId: product.hand_design_id,
+          nails: product.nail_products.map(nailProduct => ({
+            nailId: nailProduct.nail_design_id, 
+            nailDesignImageUrl: nailProduct.img_src
+          }))
       };
     });
    newCombinedData.push({
-      imageUrl: generateMoreImage,
-      nailImages: []
+      handDesignImageUrl: generateMoreImage,
+      handDesignId: null,
+      nails: []
     });
     setCombinedData(newCombinedData);
 
@@ -160,8 +159,8 @@ export const WorkshopTab = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    console.log('Current nailImages state:', nailImages);
-  }, [nailImages]);
+    console.log('Current nails state:', nails);
+  }, [nails]);
   
   useEffect(() => {
     console.log("Current combinedData:", combinedData);
@@ -181,7 +180,6 @@ export const WorkshopTab = ({ navigation, route }) => {
       // console.log("query collections single nails", response.data.products);
       // let copy = JSON.parse(JSON.stringify(response.data.products));
       const productImages = response.data.products.map(product => product.image.src);
-      console.log("product Images:", productImages);
       setOriginalCollect(productImages);
     } catch (e) {
       console.error(e);
@@ -192,60 +190,16 @@ export const WorkshopTab = ({ navigation, route }) => {
     getOriginalCollect();
   }, []); // Empty dependency array means this runs once on mount
 
-  const fetchNailData = async (nailId) => {
-    try {
-      const { idToken } = userInfo; // Make sure userInfo is defined and accessible
-      const headers = getHeader(idToken);
-      const response = await axios.get(`${APIs.GET_PRODUCTS}by_ids?ids=${encodeURIComponent([nailId])}`, { headers });
-      console.log("response.data.products", response.data);
-      if (!response || !response.data || !response.data.products || response.data.products.length === 0) {
-        console.error(`No data returned for nail ID ${nailId}`);
-        return null; // Or handle this scenario appropriately
-      }
-      const product = response.data.products[0];
-      if (!product || !product.image || !product.image.src) {
-        console.error(`Image data is missing for product ID ${nailId}`);
-        return null; // Or handle this scenario appropriately
-      }
-      // return response.data.products[0].image.src;
-      return product.image.src;
-    } catch (error) {
-      console.error(`Error fetching nail data for nail ID ${nailId}:`, error);
-      throw error; // Re-throw the error so it can be handled further up the call chain
-    }
-  };
-
-  const fetchImageUrl = async (productId, idToken) => {
-    try {
-      const headers = getHeader(idToken);
-      const response = await axios.get(`${APIs.GET_PRODUCTS}by_ids?ids=${encodeURIComponent(productId)}`, { headers });
-  
-      const product = response.data.products[0];
-      if (!product || !product.image || !product.image.src) {
-        throw new Error(`Image URL not found for product ID ${productId}`);
-      }
-  
-      const imageUrl = product.image.src;
-      setImageUrls(prevUrls => ({ ...prevUrls, [productId]: imageUrl }));
-  
-      return imageUrl;
-    } catch (error) {
-      console.error(`Error fetching product details for product ID ${productId}:`, error);
-      throw error; // Re-throw the error for further handling if necessary
-    }
-  };
 
 
-const handleNailSelect = (nailUrl) => {
+const handleNailSelect = (nail) => {
   // Update one of the placeholders with the selected nail
-  const updatedNails = selectedNails.map((nail, index) => {
-    if (nail === '' && index === selectedNails.findIndex(n => n === '')) {
-      return nailUrl;
+  const updatedNails = selectedNails.map((currentNail, index) => {
+    if (currentNail === '' && index === selectedNails.findIndex(n => n === '')) {
+      return nail;
     }
-    return nail;
-  });
-  console.log('updatedNails:', updatedNails, "originalCollect:", originalCollect)
-  
+    return currentNail;
+  });  
   setSelectedNails(updatedNails);
 };
 useEffect(() => {
@@ -259,7 +213,6 @@ useEffect(() => {
   };
 
   const navigate_to_load = () => {
-    console.log('navigate_to_load')
     navigation.navigate(TABs.LOAD, { userTags: userTags, key: new Date().getTime().toString()})
   }
 
@@ -278,7 +231,7 @@ useEffect(() => {
             style={{flexDirection:'row'}}
           >
           {combinedData.map((data, index) => {
-            if (data.imageUrl === generateMoreImage) {
+            if (data.handDesignImageUrl === generateMoreImage) {
               let src = require(generateMoreImage);
               return (
                 <TouchableOpacity key={index} onPress={navigate_to_load}>
@@ -288,19 +241,19 @@ useEffect(() => {
               );
             }
 
-        return(
-          <View key={index} style={[styles.center, { width}]}>
-            <Image source={{ uri: data.imageUrl }} style={styles.imageStyle} />
-            <View style={{flexDirection: 'row', width:"100%", alignSelf:"center"}}>
+            return(
+              <View key={index} style={[styles.center, { width}]}>
+                <Image source={{ uri: data.handDesignImageUrl }} style={styles.imageStyle} />
+                <View style={{flexDirection: 'row', width:"100%", alignSelf:"center"}}>
 
-              {data.nailImages.map((nailUrl, nIndex) => (
-                <Pressable key={nIndex} onPress={() => handleNailSelect(nailUrl)}>
-                  <Image source={{ uri: nailUrl }} style={styles.nailStyle} />
-                </Pressable>
-              ))}
-            </View>
-          </View>
-        )
+                  {data.nails.map((nail, nIndex) => (
+                    <Pressable key={nIndex} onPress={() => handleNailSelect(nail)}>
+                      <Image source={{ uri: nail.nailDesignImageUrl }} style={styles.nailStyle} />
+                    </Pressable>
+                  ))}
+                </View>
+              </View>
+            )
         // ))}
               })}
 
@@ -349,7 +302,7 @@ useEffect(() => {
           <View key={index} style={styles.selectedNailContainer}>
             {nail ? (
               <View>
-                <Image source={{ uri: nail }} style={styles.image} />
+                <Image source={{ uri: nail.nailDesignImageUrl }} style={styles.image} />
                 {editMode && (
                   <TouchableOpacity
                     style={styles.deleteButton}
@@ -374,7 +327,7 @@ useEffect(() => {
       </ScrollView>
 
         <GradientButtonAction style={{alignSelf:"center"}}
-          onPress={() => navigation.navigate(TABs.HAND_DESIGN, { selectedNails, originalCollect, imageUrls, task_id: task_id, userInfo: userInfo})}>
+          onPress={() => navigation.navigate(TABs.HAND_DESIGN, { selectedNails, originalCollect, handProducts, task_id: task_id, userInfo: userInfo})}>
             <ButtonP>Start Selection</ButtonP>
         </GradientButtonAction>
         
