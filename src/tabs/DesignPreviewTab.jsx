@@ -14,20 +14,19 @@ import { ACTION_ICONS } from '../styles/icons';
 
 
 const PROMPT = "Can you generate an abstract and artistic short title as well as a short description of how is the design inspired of nail art design with these description: [message]. Please only return the result in the json format: { 'title':  title generated within 10 words, 'description': description generated within 50 words}. Please do not return any other words."
-const DEFAULT_PRICE = "$19.9";
+const DEFAULT_PRICE = "$34.9";
 
 export const DesignPreviewTab = ({ navigation, route }) => {
     const [quantity, setQuantity] = React.useState(1);
     const [designIds, setDesignIds] = useState([]);
-    const { userInfo} = useAuthenticationContext();
+    const { userInfo } = useAuthenticationContext();
     const [title, setTitle] = useState('');
     const [tags, setTags] = useState({});
     const [description, setDescription] = useState('');
     const [productImage, setProductImage] = useState('');
     const [productImageList, setProductImageList] = useState('');
     const [generatedProductImages, setGeneratedProductImages] = useState([]);
-    const { leftHandNails, rightHandNails, handDesignUrls} = route.params;
-
+    const { leftHandNails, rightHandNails, handProducts} = route.params;
 
     const price = DEFAULT_PRICE;
 
@@ -40,10 +39,10 @@ export const DesignPreviewTab = ({ navigation, route }) => {
 
     useEffect(() => {
       makeDesignIds();
-    },[handDesignUrls]);
+    },[handProducts]);
 
     const makeDesignIds = () => {
-      setDesignIds(Object.keys(handDesignUrls))
+      setDesignIds(Object.keys(handProducts))
       console.log('designIds', designIds);
     }
 
@@ -63,6 +62,8 @@ export const DesignPreviewTab = ({ navigation, route }) => {
     /*                       handle product image generation                      */
     /* -------------------------------------------------------------------------- */
     useEffect(() => {
+      console.log('preview logs', leftHandNails, rightHandNails, handProducts)
+
       const fetchGeneratedImage = async () => {
         const generatedData = await generateProductImages();
         setGeneratedProductImages(generatedData.blend_images);
@@ -72,19 +73,19 @@ export const DesignPreviewTab = ({ navigation, route }) => {
   }, [leftHandNails, rightHandNails, designIds]);
 
     useEffect(() => {
-      if (generatedProductImages.length > 0) {
+      if (generatedProductImages && generatedProductImages.length > 0) {
         setProductImage(generatedProductImages[0]);
         console.log('productImage has updated');
       }
     }, [generatedProductImages]);
 
     const generateProductImages = async () => {
-      const imageUrls = [...leftHandNails, ...rightHandNails]; 
-      console.log('image_urls', imageUrls);
-      console.log('hand_design_urls', Object.values(handDesignUrls));
+      const leftHandUrls = leftHandNails.map(nail => nail.url);
+      const rightHandUrls = rightHandNails.map(nail => nail.url);
+      const imageUrls = [...leftHandUrls, ...rightHandUrls];
       let payload = {
           image_urls: imageUrls,
-          hand_design_urls: Object.values(handDesignUrls)
+          hand_design_urls: Object.values(handProducts)
       };
       try {
         const response = await fetch(`${BASE_URL}/api/product_image_generation/`, {
@@ -207,11 +208,11 @@ export const DesignPreviewTab = ({ navigation, route }) => {
           </View>
         </View>
         <View style={{ marginVertical: 10, flexDirection:'row' }}>
-        <GradientButtonAction onPress={shareDesign}>
+        {/* <GradientButtonAction onPress={shareDesign}>
           <ButtonP >Share Design</ButtonP>
-        </GradientButtonAction> 
+        </GradientButtonAction>  */}
         <GradientButtonAction >
-          <ButtonP >Add to Collection</ButtonP>
+          <ButtonP>Add to Cart</ButtonP>
         </GradientButtonAction> 
         </View>
 

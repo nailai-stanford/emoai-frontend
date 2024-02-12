@@ -46,11 +46,11 @@ export default class HandDesignTab extends Component {
   constructor(props) {
 
     super(props);
-    // const selectedNails = ['../../assets/nail_model.png','../../assets/left_hand_model.png','../../assets/8.jpeg','../../assets/8.jpeg','../../assets/8.jpeg' ];
     const selectedNails = this.props.route.params?.selectedNails || [];
-    const imageUrls = this.props.route.params?.imageUrls || [];
-    const task_id = this.props.route.params?.task_id || "";
-    console.log("selectedNails", selectedNails);
+    const handProducts = this.props.route.params?.handProducts || [];
+    const taskId = this.props.route.params?.taskId || "";
+
+
     const userInfo = this.props.route.params?.userInfo || null;
 
     this.state = {
@@ -58,8 +58,8 @@ export default class HandDesignTab extends Component {
       nailCategory: 'selected',
       nails: selectedNails.map(() => new Animated.ValueXY()),
       selectedNails: selectedNails,
-      imageUrls: imageUrls,
-      taskId: task_id,
+      handProducts: handProducts,
+      taskId: taskId,
       droppedZone: null,
       leftHandModel: require('../../assets/workshop/hand_left.png'),
       rightHandModel: require('../../assets/workshop/hand_right.png'),
@@ -98,16 +98,24 @@ export default class HandDesignTab extends Component {
             }).start();
           let dropedFinger = this.isDropZone(gesture, index);
           if (dropedFinger >= 0) {
-              
-            console.log("dropedFinger:" + dropedFinger);
+
+
             // update leftHandNail or rightHandNails with newly dragged image
             if (this.state.currentHand === "left"){
               let tempArray = [].concat(this.state.leftHandNails);
-              tempArray[dropedFinger] = this.state.selectedNails[index];
+              tempArray[dropedFinger] = {
+                id: this.state.selectedNails[index].nailId,
+                url: this.state.selectedNails[index].nailDesignImageUrl
+              }
+              // tempArray[dropedFinger] = this.state.selectedNails[index].nailDesignImageUrl;
               this.setState({leftHandNails:tempArray});
-            }else{
+            } else {
               let tempArray = [].concat(this.state.rightHandNails);
-              tempArray[dropedFinger] = this.state.selectedNails[index];
+              // tempArray[dropedFinger] = this.state.selectedNails[index].nailDesignImageUrl;
+              tempArray[dropedFinger] = {
+                id: this.state.selectedNails[index].nailId,
+                url: this.state.selectedNails[index].nailDesignImageUrl
+              }
               this.setState({rightHandNails:tempArray});
             }
           }
@@ -186,9 +194,9 @@ export default class HandDesignTab extends Component {
         activeOpacity={1}
       >
         {nailListRender[index] ? 
-          <Image source={{uri:nailListRender[index]}} style={styles.nailImage} ></Image>
+          <Image source={{uri:nailListRender[index].url}} style={styles.nailImage} ></Image>
            : <View style={[styles.nailImage, {backgroundColor:COLORS.dark}]}/> }
-        <Image source={{uri:nailListRender[index]}} style={styles.nailImage} ></Image>
+        <Image source={{uri:nailListRender[index]}.url} style={styles.nailImage} ></Image>
 
       </TouchableOpacity>
       </MaskedView>
@@ -222,13 +230,15 @@ export default class HandDesignTab extends Component {
     if (this.state.nailCategory === 'emoSingle') {
       nailsToRender = this.state.originalCollect;
     } else {
-      nailsToRender = this.state.selectedNails;
+      nailsToRender = this.state.selectedNails.map(nail => nail.nailDesignImageUrl);
+
+      // nailsToRender = this.state.selectedNails;
     }
     return (
 
       <View style={styles.nailContainer}>
-        {nailsToRender.map((image, index) => {
-          if (!image || image.trim() === '') {
+        {nailsToRender.map((nail, index) => {
+          if (!nail || nail.trim() === '') {
             // If the image URI is empty or undefined, do not render this item
             return null;
           }
@@ -241,7 +251,7 @@ export default class HandDesignTab extends Component {
               {...this.panResponders[index].panHandlers}
               style={[panStyle]}
             >
-              <Image source={{ uri: image }} style={styles.nailImage} />
+              <Image source={{ uri: nail }} style={styles.nailImage} />
             </Animated.View>
           );
         })}
@@ -274,30 +284,32 @@ export default class HandDesignTab extends Component {
   }
 
   navigateToPreview = () => {
-    let { leftHandNails, rightHandNails, imageUrls } = this.state;
+    let { leftHandNails, rightHandNails, handProducts, taskId } = this.state;
     if (this.checkIfAllNailsAreSelected() !== 0) {
       alert(`Please ensure all nails for both hands are assigned. Currently, there are ${this.checkIfAllNailsAreSelected()} nails empty.`);
       return;
     }
-    let payload = {
-      task_id: this.state.taskId,
-      status: 5
-    };
-    const { idToken } = this.state.userInfo;
-    const headers = getHeader(idToken); 
-    axios
-    .post(`${BASE_URL}/api/task/status`, payload, { headers }) // Replace 'your-endpoint' with the actual endpoint
-    .then(response => {
-      const data = response.data;
-      console.log(data)
-    })
-    .catch(error => {
-      console.log(error)
-    });
+    // let payload = {
+    //   task_id: this.state.taskId,
+    //   status: 5
+    // };
+    // const { idToken } = this.state.userInfo;
+    // const headers = getHeader(idToken); 
+    // axios
+    // .post(`${BASE_URL}/api/task/status`, payload, { headers }) // Replace 'your-endpoint' with the actual endpoint
+    // .then(response => {
+    //   const data = response.data;
+    //   console.log(data)
+    // })
+    // .catch(error => {
+    //   console.log(error)
+    // });
+
     this.props.navigation.navigate(TABs.DESIGN_PREVIEW, { 
       leftHandNails: leftHandNails,
       rightHandNails: rightHandNails, 
-      handDesignUrls: imageUrls,
+      handProducts: handProducts,
+      taskId: taskId
     });
   }
 
