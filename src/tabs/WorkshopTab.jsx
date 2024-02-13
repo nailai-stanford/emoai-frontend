@@ -87,8 +87,8 @@ export const WorkshopTab = ({ navigation, route }) => {
   let task_id = null;
 
   // Check if route.params exists and has properties before destructuring
-  if (route.params && route.params.task_id) {
-    task_id = route.params.task_id;
+  if (route.params) {
+    task_id = route.params['task_id']
   }
 
   useEffect(() => {
@@ -327,7 +327,7 @@ useEffect(() => {
       </ScrollView>
 
         <GradientButtonAction style={{alignSelf:"center"}}
-          onPress={() => navigation.navigate(TABs.HAND_DESIGN, { selectedNails, originalCollect, handProducts, task_id: task_id, userInfo: userInfo})}>
+          onPress={() => navigation.navigate(TABs.HAND_DESIGN, { selectedNails, originalCollect, handProducts, task_id, userInfo: userInfo})}>
             <ButtonP>Start Selection</ButtonP>
         </GradientButtonAction>
         
