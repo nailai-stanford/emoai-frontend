@@ -13,82 +13,22 @@ import { COLORS, PADDINGS, FONTS } from "../styles/theme";
 import { ACTION_ICONS } from '../styles/icons';
 
 
-
 export const DesignPreviewTab = ({ navigation, route }) => {
     const [quantity, setQuantity] = React.useState(1);
     const [designIds, setDesignIds] = useState([]);
     const [enableAddToCart, setEnableAddToCart] = useState(false)
     const { userInfo } = useAuthenticationContext();
     const [title, setTitle] = useState('');
-    const [tags, setTags] = useState({});
-    const [description, setDescription] = useState('');
+    const [description, setDescription] = useState("Embrace your exclusive nail design! Add it to your cart now for crafting and share your unique creation with the community by naming it. Let's get your one-of-a-kind nails in production pronto!");
     const [productImage, setProductImage] = useState('');
     const [price, setPrice] = useState('')
+    const [designSetId, setDesignSetId] = useState(null)
     const [productImageList, setProductImageList] = useState('');
-    const [generatedProductImages, setGeneratedProductImages] = useState([]);
     const { leftHandNails, rightHandNails, handProducts, taskId} = route.params;
-
-
-    /* -------------------------------------------------------------------------- */
-    /*                               when init page                               */
-    /* -------------------------------------------------------------------------- */
-  
-  
-    /* -------------------------------------------------------------------------- */
-    /*                              handle page logic                             */
-    /* -------------------------------------------------------------------------- */
 
     const onBack = () => {
       navigation.goBack();
     };
-
-   
-    /* -------------------------------------------------------------------------- */
-    /*                       handle product image generation                      */
-    /* -------------------------------------------------------------------------- */
-  //   useEffect(() => {
-  //     console.log('preview logs', leftHandNails, rightHandNails, handProducts)
-
-  //     const fetchGeneratedImage = async () => {
-  //       const generatedData = await generateProductImages();
-  //       setGeneratedProductImages(generatedData.blend_images);
-  //     };
-    
-  //     fetchGeneratedImage();
-  // }, [leftHandNails, rightHandNails, designIds]);
-
-    // useEffect(() => {
-    //   if (generatedProductImages && generatedProductImages.length > 0) {
-    //     setProductImage(generatedProductImages[0]);
-    //     console.log('productImage has updated');
-    //   }
-    // }, [generatedProductImages]);
-
-    // const generateProductImages = async () => {
-    //   const leftHandUrls = leftHandNails.map(nail => nail.url);
-    //   const rightHandUrls = rightHandNails.map(nail => nail.url);
-    //   const imageUrls = [...leftHandUrls, ...rightHandUrls];
-    //   let payload = {
-    //       image_urls: imageUrls,
-    //       hand_design_urls: Object.values(handProducts)
-    //   };
-    //   try {
-    //     const response = await fetch(`${BASE_URL}/api/product_image_generation/`, {
-    //       method: 'POST',
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //       },
-    //       body: JSON.stringify(payload),
-    //     });
-    //     const data = await response.json();
-    //     return data;
-
-    //   } catch (error) {
-    //       console.error("Error generating product images:", error);
-    //   }
-    //   return null;
-    // };
-
 
       useEffect(() => {
           nails = leftHandNails.concat(rightHandNails)
@@ -97,75 +37,36 @@ export const DesignPreviewTab = ({ navigation, route }) => {
               const { idToken } = userInfo;
               const headers = getHeader(idToken);
               console.log('headers:', headers)
-
-              // const response = await fetch(`${BASE_URL}/api/design_sets`, {
-              //   method: 'POST',
-              //   headers: {
-              //     'Content-Type': 'application/json',
-              //   },
-              //   body: JSON.stringify({
-              //     task_id: taskId,
-              //     nail_designs: nails,
-              //     hand_designs: handProducts
-              //   }),
-              // });
-              
-              // if (!response.ok){
-              //   alert('save designset failed, please try again')
-              //   return
-              // }
-              
-              // const data = await response.json();
-              console.log(data)
+              body = JSON.stringify({
+                    task_id: taskId,
+                    nail_designs: nails,
+                    hand_designs: handProducts
+                  }),
+              console.log(body)
+              const response = await fetch(`${BASE_URL}/api/design_sets/`, {
+                method: 'POST',
+                headers: headers,
+                body: body,
+              });
+              if (!response.ok){
+                alert('save designset failed, please try again')
+                return
+              }
+              const data = await response.json();
+              design_set = data.design_set
+              setTitle(design_set.title); 
+              setDescription(design_set.description)
+              setProductImage(design_set.image_url)
+              setPrice(design_set.price)
+              setDesignSetId(design_set.shopify_product_id)
               setEnableAddToCart(true)
             } catch (error) {
-            
+              alert('save designset failed, please try again')
             }
           }
           save_design_set()
-          
+        
       }, [leftHandNails, rightHandNails, handProducts, userInfo])
-
-    /* -------------------------------------------------------------------------- */
-    /*                            handle product title                            */
-    /* -------------------------------------------------------------------------- */
-    // useEffect(() => {
-    //   const fetchTitle = async () => {
-    //     let message = `nails art with hand, oval nail shape, ${tags.THEME} theme, ${tags.COLOR} tone, ${tags.BRAND}, ${tags.ELEMENT}, low contrast, high saturation, original design, ${tags.TEXTURE} texture, minimalism, glossy, 8K`;;
-    //     console.log("message here", message);
-    //     let finalPrompt = PROMPT.replace('[message]', message);
-    //     console.log("final Prompt", finalPrompt);
-    //     try {
-    //       const response = await fetch(`${BASE_URL}/api/message`, {
-    //         method: 'POST',
-    //         headers: {
-    //           'Content-Type': 'application/json',
-    //         },
-    //         body: JSON.stringify({
-    //           prompt: finalPrompt,
-    //         }),
-    //       });
-
-    //       if (!response.ok) {
-    //         throw new Error('Network response was not ok');
-    //       }
-
-    //       const data = await response.json();
-    //       console.log("server response:", typeof data.content.content);
-    //       // console.log("server response:", data.content.content.title);
-    //       const json_data = JSON.parse(data.content.content.replace(/'/g, '"'));
-    //       console.log("data.content.content", json_data);
-    //       setTitle(json_data.title); 
-    //       setDescription(json_data.description);
-    //     } catch (error) {
-    //       console.error('Error fetching title:', error);
-    //     }
-    //   };
-
-    //   fetchTitle();
-    // }, [tags]);
-
-  
 
 
       /* -------------------------------------------------------------------------- */
@@ -187,14 +88,13 @@ export const DesignPreviewTab = ({ navigation, route }) => {
             Preview
         </TitleHeader>
         {productImageList.length > 1 && <p>has generated image</p>}
-        <Image source={{ uri: `data:image/png;base64,${productImage}` }} style={{ width: '100%', height: 350 }} />
+        <Image source={{ uri: productImage }} style={{ width: '100%', height: 350 }} />
         <MenuHeader style={{ fontSize: 18, fontWeight: 'bold' }}>{title}</MenuHeader>
-        <P $alignLeft={true} style={{ marginVertical: 10 }}>
-          Embrace your exclusive nail design! Add it to your cart now for crafting and share your unique creation with the community by naming it. Let's get your one-of-a-kind nails in production pronto!
+        <P $alignLeft={true} style={{ marginVertical: 10 }}> {description}
         </P>
         
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 10 }}>
-          <SubHeader style={{ fontSize: 16, fontWeight: 'bold' }}>{price}</SubHeader>
+          <SubHeader style={{ fontSize: 16, fontWeight: 'bold' }}>${price}</SubHeader>
           
           {enableAddToCart &&
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
