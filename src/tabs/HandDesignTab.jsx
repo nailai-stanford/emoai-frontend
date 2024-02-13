@@ -48,11 +48,12 @@ export default class HandDesignTab extends Component {
     super(props);
     const selectedNails = this.props.route.params?.selectedNails || [];
     const handProducts = this.props.route.params?.handProducts || [];
-    const taskId = this.props.route.params?.taskId || "";
+    const taskId = this.props.route.params?.task_id || "";
 
 
     const userInfo = this.props.route.params?.userInfo || null;
 
+    console.log('HandDesignTab, taskId', taskId, selectedNails)
     this.state = {
       currentHand: 'left', 
       nailCategory: 'selected',
@@ -285,6 +286,7 @@ export default class HandDesignTab extends Component {
 
   navigateToPreview = () => {
     let { leftHandNails, rightHandNails, handProducts, taskId } = this.state;
+    console.log('taskId:', taskId)
     if (this.checkIfAllNailsAreSelected() !== 0) {
       alert(`Please ensure all nails for both hands are assigned. Currently, there are ${this.checkIfAllNailsAreSelected()} nails empty.`);
       return;
