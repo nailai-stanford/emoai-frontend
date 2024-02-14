@@ -85,6 +85,7 @@ export const DesignPreviewTab = ({ navigation, route }) => {
             </TouchableOpacity>
 
         </View>
+
         {productImage ==='' ? 
         <View>
           <SubHeader>
@@ -96,8 +97,7 @@ export const DesignPreviewTab = ({ navigation, route }) => {
         <Image source={{ uri: productImage }} style={{ width: '100%', height: 350 }} />
         <MenuHeader style={{ fontSize: 18, fontWeight: 'bold' }}>{title}</MenuHeader>
         <P $alignLeft={true} style={{ marginVertical: 10 }}> {description}</P>
-        
-
+       
         
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 10 }}>
           <SubHeader style={{ fontSize: 16, fontWeight: 'bold' }}>${price}</SubHeader>
@@ -126,7 +126,9 @@ export const DesignPreviewTab = ({ navigation, route }) => {
             </GradientButtonAction> 
           </View>
         }
+
         </View>}
+
 
       </ScrollView>
       </View>
