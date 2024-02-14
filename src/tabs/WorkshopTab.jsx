@@ -217,6 +217,7 @@ useEffect(() => {
   }
 
   return (
+    <View style={{height:'90%'}}>
     <ScrollView testID="safe-area-view" contentContainerStyle={{flexDirection: 'column', padding:PADDINGS.sm}}>
       
         <ScrollView
@@ -234,10 +235,13 @@ useEffect(() => {
             if (data.handDesignImageUrl === generateMoreImage) {
               let src = require(generateMoreImage);
               return (
+                <View key={index} style={[styles.center, { width}]}>
                 <TouchableOpacity key={index} onPress={navigate_to_load}>
                   <Image source={src} style={styles.imageStyle} />
                   {/* Optionally, add other styles or elements to indicate it's a button */}
                 </TouchableOpacity>
+                </View>
+
               );
             }
 
@@ -333,6 +337,7 @@ useEffect(() => {
         
 
     </ScrollView>
+    </View>
   );
 }
 
