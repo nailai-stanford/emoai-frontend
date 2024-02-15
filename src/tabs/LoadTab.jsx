@@ -33,7 +33,7 @@ export const LoadTab = ({ navigation }) => {
         const data = await response.json();
         task_id = data.task_id
         task_status = data.status
-        console.log(task_id, task_status)
+        console.log(task_id, task_status, 'progress:', data.progress)
         if (task_status === 3) {
           // task_id = "506b07a3-84e2-4545-8840-ddb17da54193"
           navigation.navigate(TABs.WORKSHOP, {task_id: task_id})
