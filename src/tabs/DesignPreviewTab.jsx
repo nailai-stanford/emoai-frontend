@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Image, TouchableOpacity, TextInput, ScrollView } from 'react-native';
+import { View, Image, TouchableOpacity, TextInput, ScrollView, ActivityIndicator } from 'react-native';
 import { useDesignContext } from '../providers/DesignProvider';
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import axios from "axios";
@@ -73,6 +73,7 @@ export const DesignPreviewTab = ({ navigation, route }) => {
       /*                              render this page                              */
       /* -------------------------------------------------------------------------- */
       return (
+        <View style={{height: '90%'}}>
         <ScrollView style={{ paddingHorizontal: 20, display:'flex', flexDirection:'column' }}>
           <View style={{
         left: 10,
@@ -84,14 +85,19 @@ export const DesignPreviewTab = ({ navigation, route }) => {
             </TouchableOpacity>
 
         </View>
-        <TitleHeader style={{ color:COLORS.white }}>
-            Preview
-        </TitleHeader>
-        {productImageList.length > 1 && <p>has generated image</p>}
+
+        {productImage ==='' ? 
+        <View>
+          <SubHeader>
+            Generating Your Final Product Image, Please Don't Leave This Page
+          </SubHeader>
+          <ActivityIndicator size="large" color={COLORS.white} />
+        </View> :
+        <View>
         <Image source={{ uri: productImage }} style={{ width: '100%', height: 350 }} />
         <MenuHeader style={{ fontSize: 18, fontWeight: 'bold' }}>{title}</MenuHeader>
-        <P $alignLeft={true} style={{ marginVertical: 10 }}> {description}
-        </P>
+        <P $alignLeft={true} style={{ marginVertical: 10 }}> {description}</P>
+       
         
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginVertical: 10 }}>
           <SubHeader style={{ fontSize: 16, fontWeight: 'bold' }}>${price}</SubHeader>
@@ -121,6 +127,10 @@ export const DesignPreviewTab = ({ navigation, route }) => {
           </View>
         }
 
+        </View>}
+
+
       </ScrollView>
+      </View>
     );
   };
