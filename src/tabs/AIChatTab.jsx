@@ -70,7 +70,9 @@ const ChatMessage = ({ item }) => {
 };
 const ChatButton = ({ title, onPress, selection }) => {
   return (
-    <GradientButtonSelection onPress={onPress} $selected={selection} style={{ paddingTop:5, paddingRight:10, paddingLeft: 10, paddingBottom:5}} > 
+    <GradientButtonSelection onPress={onPress} $selected={selection} 
+   style={selection && {paddingTop:4, paddingRight:10, paddingLeft: 10, paddingBottom:0}} 
+    > 
       <ButtonP style={{fontSize:12}}>{title}</ButtonP>
     </GradientButtonSelection>
   );
@@ -404,7 +406,7 @@ export const AIChatTab = ({ navigation }) => {
       ref={scrollViewRef}
       style={{ flex: 1 }}
       contentContainerStyle={{ flexGrow: 1 }}
-    onContentSizeChange={() => scrollViewRef.current.scrollToEnd({animated: true})}
+      onContentSizeChange={() => scrollViewRef.current.scrollToEnd({animated: true})}
     >
       {chatHistory.map((item, index) => (
         <ChatMessage key={index} item={item} />
@@ -423,6 +425,8 @@ export const AIChatTab = ({ navigation }) => {
       })}
     </View>
 
+    {multipleInputs.length>0 ?
+              <GradientButtonAction onPress={() => handlePotentialMultipleChoiceSend(userInput, userInfo)}><ButtonP>Send Selections</ButtonP></GradientButtonAction> :
     <InputView $isFullLength={true} style={{height:40}}> 
         <TextInput 
         placeholder="Type your message..."
@@ -431,11 +435,9 @@ export const AIChatTab = ({ navigation }) => {
         style={{flex:1, color:COLORS.white}}/>
         <TouchableOpacity style={{ alignSelf: "center", flex: 0.1 }} disabled={pendingReply}
              onPress={() => handlePotentialMultipleChoiceSend(userInput, userInfo)}>
-              {multipleInputs.length>0 ?
-              <GradientButtonAction><ButtonP>Send Selections</ButtonP> </GradientButtonAction> :
-              <ACTION_ICONS.send width={ICON_SIZES.standard} height={ICON_SIZES.standard}/>}
+              <ACTION_ICONS.send width={ICON_SIZES.standard} height={ICON_SIZES.standard}/>
         </TouchableOpacity>
-    </InputView> 
+    </InputView> }
 
   </KeyboardAvoidingView>
   );
@@ -462,7 +464,7 @@ const styles = StyleSheet.create({
   },
   chatButton: {
     margin: 5,
-    padding: 10,
+    padding: 5,
     borderRadius: 20,
     borderWidth: 1,
     marginHorizontal: 8,
