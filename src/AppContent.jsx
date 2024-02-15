@@ -24,6 +24,7 @@ import {AITab} from './tabs/AITab';
 import {AIChatTab} from './tabs/AIChatTab';
 import {WorkshopTab} from './tabs/WorkshopTab';
 import {HandDesignTab} from './tabs/HandDesignTab';
+
 import {NailDesignTab} from './tabs/NailDesignTab';
 import {DesignPreviewTab} from './tabs/DesignPreviewTab';
 import {ShareDesignTab} from './tabs/ShareDesignTab';
@@ -50,6 +51,7 @@ import {BottomBar} from "../assets/others/bottomBar.svg";
 // import svg icons
 
 import { TAB_BAR_ICONS } from "./styles/icons";
+
 
 
 const Tab = createBottomTabNavigator();
