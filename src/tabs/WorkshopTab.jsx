@@ -110,6 +110,7 @@ export const WorkshopTab = ({ navigation, route }) => {
     taskProducts.forEach(product => {
       newNails[product.hand_design_id] = product.nail_products.map(nailProduct => nailProduct.img_src);
     });
+    
     setNails(newNails);
 
     setCombinedData([])
@@ -227,8 +228,7 @@ useEffect(() => {
             return(
               <View key={index} style={[styles.center, { width}]}>
                 <Image source={{ uri: data.handDesignImageUrl }} style={styles.imageStyle} />
-                <View style={{flexDirection: 'row', width:"100%", alignSelf:"center"}}>
-
+                <View style={{ flexDirection: 'row', flexGrow: 1, alignSelf: "center", flexWrap: 'wrap'}}>
                   {data.nails.map((nail, nIndex) => (
                     <Pressable key={nIndex} onPress={() => handleNailSelect(nail)}>
                       <Image source={{ uri: nail.nailDesignImageUrl }} style={styles.nailStyle} />
@@ -237,9 +237,7 @@ useEffect(() => {
                 </View>
               </View>
             )
-        // ))}
-              })}
-
+          })}
           </ScrollView>
        
       <View style={styles.dotsContainer}>
