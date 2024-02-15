@@ -432,7 +432,7 @@ export const AIChatTab = ({ navigation }) => {
         <TouchableOpacity style={{ alignSelf: "center", flex: 0.1 }} disabled={pendingReply}
              onPress={() => handlePotentialMultipleChoiceSend(userInput, userInfo)}>
               {multipleInputs.length>0 ?
-              <GradientButtonAction> <ButtonP>Send Selections</ButtonP> </GradientButtonAction> :
+              <GradientButtonAction><ButtonP>Send Selections</ButtonP> </GradientButtonAction> :
               <ACTION_ICONS.send width={ICON_SIZES.standard} height={ICON_SIZES.standard}/>}
         </TouchableOpacity>
     </InputView> 
