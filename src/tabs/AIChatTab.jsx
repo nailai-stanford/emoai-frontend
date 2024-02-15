@@ -10,7 +10,7 @@ import { TABs } from '../static/Constants';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { Modal } from "react-native-modals"
 
-import { ButtonAction, ButtonSelection, GradientButtonSelection } from "../styles/buttons";
+import { ButtonAction, ButtonSelection, GradientButtonAction, GradientButtonSelection } from "../styles/buttons";
 import { P, ButtonP, ButtonH,TitleHeader, MenuHeader } from "../styles/texts";
 import { InputView } from "../styles/inputs";
 import { COLORS,PADDINGS, ICON_SIZES } from "../styles/theme";
@@ -421,10 +421,8 @@ export const AIChatTab = ({ navigation }) => {
            />
         )
       })}
-      
     </View>
 
-   
     <InputView $isFullLength={true} style={{height:40}}> 
         <TextInput 
         placeholder="Type your message..."
@@ -433,7 +431,9 @@ export const AIChatTab = ({ navigation }) => {
         style={{flex:1, color:COLORS.white}}/>
         <TouchableOpacity style={{ alignSelf: "center", flex: 0.1 }} disabled={pendingReply}
              onPress={() => handlePotentialMultipleChoiceSend(userInput, userInfo)}>
-          <ACTION_ICONS.send width={ICON_SIZES.standard} height={ICON_SIZES.standard} />
+              {multipleInputs.length>0 ?
+              <GradientButtonAction> <ButtonP>Send Selections</ButtonP> </GradientButtonAction> :
+              <ACTION_ICONS.send width={ICON_SIZES.standard} height={ICON_SIZES.standard}/>}
         </TouchableOpacity>
     </InputView> 
 

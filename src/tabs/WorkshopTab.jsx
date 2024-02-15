@@ -248,17 +248,16 @@ useEffect(() => {
             return(
               <View key={index} style={[styles.center, { width}]}>
                 <Image source={{ uri: data.handDesignImageUrl }} style={styles.imageStyle} />
-                <View style={{flexDirection: 'row', width:"100%", alignSelf:"center"}}>
+                <ScrollView horizontal style={{flexDirection: 'row', width:"100%", alignSelf:"center"}}>
 
                   {data.nails.map((nail, nIndex) => (
                     <Pressable key={nIndex} onPress={() => handleNailSelect(nail)}>
                       <Image source={{ uri: nail.nailDesignImageUrl }} style={styles.nailStyle} />
                     </Pressable>
                   ))}
-                </View>
+                </ScrollView>
               </View>
             )
-        // ))}
               })}
 
           </ScrollView>
@@ -332,9 +331,8 @@ useEffect(() => {
 
         <GradientButtonAction style={{alignSelf:"center"}}
           onPress={() => navigation.navigate(TABs.HAND_DESIGN, { selectedNails, originalCollect, handProducts, task_id, userInfo: userInfo})}>
-            <ButtonP>Start Selection</ButtonP>
-        </GradientButtonAction>
-        
+            <ButtonP>Start Design</ButtonP>
+        </GradientButtonAction>    
 
     </ScrollView>
     </View>
