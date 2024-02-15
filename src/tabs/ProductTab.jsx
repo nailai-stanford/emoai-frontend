@@ -91,18 +91,6 @@ const ButtonGroup = ({ productID }) => {
     _getCollect()
   },[productID]);
 
-  useEffect(() => {
-    async function _getCollect() {
-      axios.get(
-        `${APIs.LIKE_COLLECT}collected_product?product_id=${String(productID)}`,
-        { headers }
-      ).then(res => {
-        setCollected(res.data.exists)
-      }).catch(e => handleError(e))
-    }
-    _getCollect()
-  },[productID]);
-
   let cart
   useEffect(() => {
       async function _getCart() {
@@ -221,7 +209,37 @@ const Creator = ({ user }) => {
 }
 
 export const ProductTab = ({ route, navigation }) => {
+  const { userInfo } = useAuthenticationContext();
+  const headers = getHeader(userInfo.idToken);
   const item = route.params.product
+  const productId = item.id
+  const [title, setTitle] = useState(item.title ? item.title : "")
+  const [price, setPrice] = useState(item.price ? item.price : "")
+  const [description, setDescription] = useState(item.body_html ? item.body_html : "")
+  const [images, setImages] = useState(item.image && item.image.src ? [item.image.src] : [])
+  const [terms, setTerms] = useState([])
+  const [creator, setCreator] = useState()
+  useEffect(() => {
+    async function get_product_detail() {
+      axios.get(
+        `${APIs.GET_PRODUCTS}${String(productId)}`,
+        { headers }
+      ).then(res => {
+        data = res.data
+        setTitle(data.title)
+        setPrice(data.price)
+        setDescription(data.description)
+        // todo: @heidi, display multiple imgaes 
+        setImages(data.images)
+        // todo: @heidi, display terms 
+        setTerms(data.terms)
+      }).catch(e => {
+        console.log('error', e)
+      })
+    }
+    get_product_detail()
+  }, [productId]) 
+
   return (
     <View style={{height:"88%"}}>
         <ScrollView>
@@ -234,15 +252,15 @@ export const ProductTab = ({ route, navigation }) => {
               style={{ color:COLORS.white, right: 0 }}
               />
           </TouchableOpacity>
-        <Image style={{height:200, borderRadius: BORDERS.standartRadius}} source={{uri:item.image.src }}/> 
+        <Image style={{height:200, borderRadius: BORDERS.standartRadius}} source={{uri: images[0]}}/> 
         <View style={{height:item.body_html ? 100: 60, marginBottom:PADDINGS.sm}}>
             <View style={{flex: 0.8, flexDirection: "row", }}>
-              <SubHeader style={{flex: 2 }}>{item.title}</SubHeader>
+              <SubHeader style={{flex: 2 }}>{title}</SubHeader>
               {/* some optional like when params go in */}
-              {item.user && item.user.fullName !== "emoai-original" && <Like productID={item.id} />}
+              {item.user && item.user.fullName !== "emoai-original" && <Like productID={productId} />}
             </View>
-            <P style={{flex: 0.3}} $alignLeft={true}>${item.price}</P>
-            {!!item.body_html && <P style={{ flex: 1 }} $alignLeft={true}>{ item.body_html }</P>}
+            <P style={{flex: 0.3}} $alignLeft={true}>${price}</P>
+            {!!description && <P style={{ flex: 1 }} $alignLeft={true}>{ description }</P>}
         </View>
         {item.user && item.user.fullName !== "emoai-original" &&  <SubHeader style={{alignSelf:"flex-start", paddingTop:0}}>Creator</SubHeader>}
             {/* some optional creator info */}

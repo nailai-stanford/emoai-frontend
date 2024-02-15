@@ -53,6 +53,10 @@ export const Banner = () => {
         case 'hand_design':
           navigation.navigate(TABs.HAND_DESIGN)
           break
+        case 'products':
+          productId = schema.productId
+          navigation.navigate(TABs.PRODUCT, {product: {'id': productId}})
+          break
       }
     } else if(schema.action === 'url') {
     }

@@ -349,7 +349,7 @@ export const AIChatTab = ({ navigation }) => {
   };
 
   const handlePotentialMultipleSelection = (input = '', userInfo) => {
-    if (conversationStage != "TEXTURE") {
+    if (currentStage != "TEXTURE") {
       handleOptionPress(input, userInfo);
       return
     } 
@@ -363,7 +363,7 @@ export const AIChatTab = ({ navigation }) => {
   }
 
   const handlePotentialMultipleChoiceSend = (input = '', userInfo) => {
-    if (conversationStage != "TEXTURE") {
+    if (currentStage != "TEXTURE") {
       handleUserInput(input, userInfo);
       return
     } 
