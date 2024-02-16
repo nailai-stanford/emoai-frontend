@@ -5,7 +5,6 @@ import {
   Platform, TouchableOpacity, Animated, Dimensions
 } from 'react-native';
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
-import {useTagsContext} from '../providers/TagsProvider';
 import { TABs } from '../static/Constants';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { Modal } from "react-native-modals"
@@ -115,7 +114,6 @@ const HistoryModal = ({ navigation, modalVisible, setModalVisible }) => {
 
 export const AIChatTab = ({ navigation }) => {
   // const { currentUser } = useAuthenticationContext();
-  const { setUserTags, userTags } = useTagsContext();
 
   const [userInput, setUserInput] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
