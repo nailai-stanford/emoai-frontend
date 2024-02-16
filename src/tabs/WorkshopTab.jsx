@@ -234,7 +234,7 @@ useEffect(() => {
                       <Image source={{ uri: nail.nailDesignImageUrl }} style={styles.nailStyle} />
                     </Pressable>
                   ))}
-                </ScrollView>
+                </View>
               </View>
             )
           })}
