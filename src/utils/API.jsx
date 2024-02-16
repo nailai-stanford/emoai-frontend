@@ -9,7 +9,6 @@ export const APIs = {
   LIKE_COLLECT: `${BASE_URL}/api/like_collect/`,
   DELETE_LIKE_COLLECT: `${BASE_URL}/api/like_collect/delete/`,
   GET_COLLECTIONS: `${BASE_URL}/api/like_collect/collections/`,
-  PRODUCT_IMAGE_GENERATION: `${BASE_URL}/api/product_image_generation/`,
   MESSAGE: `${BASE_URL}/api/message/`,
   DESIGN_SETS: `${BASE_URL}/api/design_sets/`,
   PAYMENT: `${BASE_URL}/api/payment/`,

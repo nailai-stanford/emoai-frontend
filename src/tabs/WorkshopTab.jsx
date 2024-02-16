@@ -6,7 +6,10 @@ import { APIs, BASE_URL, getHeader } from "../utils/API";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialIcons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 // import generateMoreImage from '../../assets/generate_more.png';
-import React, { useRef,useState, useEffect } from 'react';
+import React, { useRef,useState, useEffect, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+
+
 import {
   StyleSheet,
   Text,
@@ -36,39 +39,6 @@ import { err } from "react-native-svg";
 
 // const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
-const TEST_IMAGE_URL = {0:'https://cdn.shopify.com/s/files/1/0699/2750/1847/products/img-m1GOvvVr6mStTyrE7X2z6HW9.png?v=1706295416'};
-const TEST_NAIL_URL = ['https://cdn.shopify.com/s/files/1/0699/2750/1847/products/img-m1GOvvVr6mStTyrE7X2z6HW9.png?v=1706295416','https://cdn.shopify.com/s/files/1/0699/2750/1847/products/img-m1GOvvVr6mStTyrE7X2z6HW9.png?v=1706295416','https://cdn.shopify.com/s/files/1/0699/2750/1847/products/img-m1GOvvVr6mStTyrE7X2z6HW9.png?v=1706295416','https://cdn.shopify.com/s/files/1/0699/2750/1847/products/img-m1GOvvVr6mStTyrE7X2z6HW9.png?v=1706295416','https://cdn.shopify.com/s/files/1/0699/2750/1847/products/img-m1GOvvVr6mStTyrE7X2z6HW9.png?v=1706295416','https://cdn.shopify.com/s/files/1/0699/2750/1847/products/img-m1GOvvVr6mStTyrE7X2z6HW9.png?v=1706295416','https://cdn.shopify.com/s/files/1/0699/2750/1847/products/img-m1GOvvVr6mStTyrE7X2z6HW9.png?v=1706295416','https://cdn.shopify.com/s/files/1/0699/2750/1847/products/img-m1GOvvVr6mStTyrE7X2z6HW9.png?v=1706295416']
-
-const INTRO_DATA = [
-  {
-    key: '1',
-    img_url: '',
-  },
-  {
-    key: '2',
-    title: 'Introduction screen 🎉',
-    description:
-      "Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. ",
-  },
-  {
-    key: '3',
-    title: 'And can be anything 🎈',
-    description:
-      'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. ',
-  },
-  {
-    key: '4',
-    title: 'And can be anything 🎈',
-    description:
-      'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. ',
-  },
-  {
-    key: '5',
-    title: 'And can be anything 🎈',
-    description:
-      'Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. ',
-  },
-];
 
 const generateMoreImage = "../../assets/generate_more.png";
 
@@ -91,49 +61,59 @@ export const WorkshopTab = ({ navigation, route }) => {
     task_id = route.params['task_id']
   }
 
-  useEffect(() => {
-    const getTaskProducts = async(task_id) => {
-      const { idToken } = userInfo;
-      const headers = getHeader(idToken);
-      try {
-        const response = await axios.get(`${BASE_URL}/api/task/${task_id}/products`, { headers });
-        return response.data
-      } catch(error) {
-        console.error(error);
-      }
-    }
+ 
 
-    if (task_id) {
-      getTaskProducts(task_id).then(data => {
+  const getTaskProducts = async(task_id) => {
+    const { idToken } = userInfo;
+    const headers = getHeader(idToken);
+    try {
+      const response = await axios.get(`${BASE_URL}/api/task/${task_id}/products`, { headers });
+      return response.data
+    } catch(error) {
+      console.error(error);
+    }
+  }
+
+  useFocusEffect(
+    useCallback(() => {
+      if (task_id) {
+        getTaskProducts(task_id).then(data => {
           products = data;
           hand_designs = products.data
           setTaskProducts(products.data)
-      }).catch(error => {
-        console.error('error when calling getTaskProducts', error)
-      })
-    }
-
-  }, [task_id, route]);
-
-
+        }).catch(error => {
+          console.error('error when calling getTaskProducts', error)
+        })
+      }
+      return () => {
+        setCombinedData([])
+        setTaskProducts([])
+        setSelectedNails(new Array(10).fill(''))
+      };
+    }, [task_id, route])
+  );
 
   useEffect(() => {
+    setSelectedNails(new Array(10).fill(''))
     const newHandProducts = taskProducts.reduce((acc, product) => {
         acc[product.hand_design_id] = product.img_src;
         return acc;
     }, {});
-    setHandProducts(prevUrls => ({ ...prevUrls, ...newHandProducts }));
+    // setHandProducts(prevUrls => ({ ...prevUrls, ...newHandProducts }));
+    setHandProducts(newHandProducts);
     taskProducts.forEach((product, index) => {
       console.log(`Product ${index}:`, product);
     });
     
+    setNails([])
     let newNails = {};
     taskProducts.forEach(product => {
       newNails[product.hand_design_id] = product.nail_products.map(nailProduct => nailProduct.img_src);
     });
-
+    
     setNails(newNails);
 
+    setCombinedData([])
     let newCombinedData = taskProducts.map(product => {
       return {
           handDesignImageUrl: product.img_src,
@@ -144,26 +124,26 @@ export const WorkshopTab = ({ navigation, route }) => {
           }))
       };
     });
-   newCombinedData.push({
-      handDesignImageUrl: generateMoreImage,
-      handDesignId: null,
-      nails: []
-    });
+  //  newCombinedData.push({
+  //     handDesignImageUrl: generateMoreImage,
+  //     handDesignId: null,
+  //     nails: []
+  //   });
     setCombinedData(newCombinedData);
 
-    console.log('newCombinedData:', newCombinedData)
   }, [taskProducts, route]);
+
 
   const toggleEditMode = () => {
     setEditMode(!editMode);
   };
 
   useEffect(() => {
-    console.log('Current nails state:', nails);
+    console.log(' nails state:');
   }, [nails]);
   
   useEffect(() => {
-    console.log("Current combinedData:", combinedData);
+    console.log("combinedData updated");
   }, [combinedData]);
 
 
@@ -248,8 +228,7 @@ useEffect(() => {
             return(
               <View key={index} style={[styles.center, { width}]}>
                 <Image source={{ uri: data.handDesignImageUrl }} style={styles.imageStyle} />
-                <ScrollView horizontal style={{flexDirection: 'row', width:"100%", alignSelf:"center"}}>
-
+                <View style={{ flexDirection: 'row', flexGrow: 1, alignSelf: "center", flexWrap: 'wrap'}}>
                   {data.nails.map((nail, nIndex) => (
                     <Pressable key={nIndex} onPress={() => handleNailSelect(nail)}>
                       <Image source={{ uri: nail.nailDesignImageUrl }} style={styles.nailStyle} />
@@ -258,8 +237,7 @@ useEffect(() => {
                 </ScrollView>
               </View>
             )
-              })}
-
+          })}
           </ScrollView>
        
       <View style={styles.dotsContainer}>
@@ -333,7 +311,6 @@ useEffect(() => {
           onPress={() => navigation.navigate(TABs.HAND_DESIGN, { selectedNails, originalCollect, handProducts, task_id, userInfo: userInfo})}>
             <ButtonP>Start Design</ButtonP>
         </GradientButtonAction>    
-
     </ScrollView>
     </View>
   );

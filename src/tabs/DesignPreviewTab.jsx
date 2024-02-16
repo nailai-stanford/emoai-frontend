@@ -11,6 +11,7 @@ import { ButtonAction, ButtonSelection, GradientButtonAction } from "../styles/b
 import { P, ButtonP, MenuHeader, TitleHeader, SubHeader, ButtonH} from "../styles/texts";
 import { COLORS, PADDINGS, FONTS } from "../styles/theme";
 import { ACTION_ICONS } from '../styles/icons';
+import { useFocusEffect } from '@react-navigation/native';
 
 
 export const DesignPreviewTab = ({ navigation, route }) => {
@@ -29,44 +30,57 @@ export const DesignPreviewTab = ({ navigation, route }) => {
     const onBack = () => {
       navigation.goBack();
     };
+    useFocusEffect(
+      React.useCallback(() => {
+        return () => {
+          setTitle(''); 
+          setDescription('')
+          setProductImage('')
+          setPrice('')
+          setDesignSetId(null)
+          setEnableAddToCart(false)
+        };
+      }, [])
+    );
 
-      useEffect(() => {
-          nails = leftHandNails.concat(rightHandNails)
-          const save_design_set = async() => {
-            try {
-              const { idToken } = userInfo;
-              const headers = getHeader(idToken);
-              console.log('headers:', headers)
-              body = JSON.stringify({
-                    task_id: taskId,
-                    nail_designs: nails,
-                    hand_designs: handProducts
-                  }),
-              console.log(body)
-              const response = await fetch(`${BASE_URL}/api/design_sets/`, {
-                method: 'POST',
-                headers: headers,
-                body: body,
-              });
-              if (!response.ok){
-                alert('save designset failed, please try again')
-                return
-              }
-              const data = await response.json();
-              design_set = data.design_set
-              setTitle(design_set.title); 
-              setDescription(design_set.description)
-              setProductImage(design_set.image_url)
-              setPrice(design_set.price)
-              setDesignSetId(design_set.shopify_product_id)
-              setEnableAddToCart(true)
-            } catch (error) {
+  
+    useEffect(() => {
+        nails = leftHandNails.concat(rightHandNails)
+        const save_design_set = async() => {
+          try {
+            const { idToken } = userInfo;
+            const headers = getHeader(idToken);
+            console.log('headers:', headers)
+            body = JSON.stringify({
+                  task_id: taskId,
+                  nail_designs: nails,
+                  hand_designs: handProducts
+                }),
+            console.log(body)
+            const response = await fetch(`${BASE_URL}/api/design_sets/`, {
+              method: 'POST',
+              headers: headers,
+              body: body,
+            });
+            if (!response.ok){
               alert('save designset failed, please try again')
+              return
             }
+            const data = await response.json();
+            design_set = data.design_set
+            setTitle(design_set.title); 
+            setDescription(design_set.description)
+            setProductImage(design_set.image_url)
+            setPrice(design_set.price)
+            setDesignSetId(design_set.shopify_product_id)
+            setEnableAddToCart(true)
+          } catch (error) {
+            alert('save designset failed, please try again')
           }
-          save_design_set()
-        
-      }, [leftHandNails, rightHandNails, handProducts, userInfo])
+        }
+        save_design_set()
+      
+    }, [leftHandNails, rightHandNails, handProducts, userInfo])
 
 
       /* -------------------------------------------------------------------------- */
