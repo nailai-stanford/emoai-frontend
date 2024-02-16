@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import {TouchableOpacity, View, Image, TextInput, Button, StyleSheet, Share, Text } from 'react-native';
 import axios from 'axios';
 import { APIs, getHeader } from "../utils/API";
-import { useDesignContext } from '../providers/DesignProvider';
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { getCart, setCart } from "../utils/UserUtils";
 import { ButtonAction, ButtonSelection } from "../styles/buttons";
@@ -16,7 +15,6 @@ const prompt = "Can you generate an abstract and artistic short title as well as
 export const ShareDesignTab = ({navigation, route}) => {
 
     const { title, description, product_url } = route.params;
-    const { designIds } = useDesignContext();
     const { userInfo} = useAuthenticationContext();
     const [ptitle, setTitle] = useState(title);
     const [pdescription, setDescription] = useState(description);

@@ -120,6 +120,7 @@ export const PaymentTab = ({route, navigation}) => {
       customerEphemeralKeySecret: ephemeralKey,
       paymentIntentClientSecret: paymentIntent,
       allowsDelayedPaymentMethods: false,
+      // returnUrl: 'yourapp://post-payment',
       defaultBillingDetails: {
         name: name,
         country: country,
