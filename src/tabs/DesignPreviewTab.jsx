@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { View, Image, TouchableOpacity, TextInput, ScrollView, ActivityIndicator } from 'react-native';
-import { useDesignContext } from '../providers/DesignProvider';
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import axios from "axios";
 import { APIs, BASE_URL, getHeader } from "../utils/API";
