@@ -43,6 +43,7 @@ const SubElement = ({content, selected, setSelected}) => {
 const ThemeHeader = () => {
     const [themeSelected, setThemeSelected] = useState("")
     const [elementSelected, setElementSelected] = useState("")
+    const [currSelected, setCurrSelected] = useState([themeSelected, elementSelected])
     const [subList, setSubList] = useState([])
     const { userInfo } = useAuthenticationContext();
     const headers = getHeader(userInfo.idToken);
@@ -61,6 +62,14 @@ const ThemeHeader = () => {
         }
         _getThemes()
     },[])
+
+    useEffect(() => {
+        setCurrSelected([themeSelected])
+    }, [themeSelected])
+
+    useEffect(() => {
+        setCurrSelected([ elementSelected])
+    }, [elementSelected])
     return <View style={{flexDirection: "column"}}>
         <View style={{ flexDirection: "row" }}>
         <FlatList
@@ -89,7 +98,7 @@ const ThemeHeader = () => {
             horizontal
             />
         </View>
-        <ThemeItems elementSelected={[elementSelected]}/>
+        <ThemeItems elementSelected={currSelected}/>
     </View>
     
 }

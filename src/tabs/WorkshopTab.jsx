@@ -234,7 +234,7 @@ useEffect(() => {
                       <Image source={{ uri: nail.nailDesignImageUrl }} style={styles.nailStyle} />
                     </Pressable>
                   ))}
-                </View>
+                </ScrollView>
               </View>
             )
           })}
@@ -309,8 +309,8 @@ useEffect(() => {
 
         <GradientButtonAction style={{alignSelf:"center"}}
           onPress={() => navigation.navigate(TABs.HAND_DESIGN, { selectedNails, originalCollect, handProducts, task_id, userInfo: userInfo})}>
-            <ButtonP>Start Selection</ButtonP>
-        </GradientButtonAction>
+            <ButtonP>Start Design</ButtonP>
+        </GradientButtonAction>    
     </ScrollView>
     </View>
   );

@@ -10,7 +10,7 @@ import { TABs } from '../static/Constants';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { Modal } from "react-native-modals"
 
-import { ButtonAction, ButtonSelection, GradientButtonSelection } from "../styles/buttons";
+import { ButtonAction, ButtonSelection, GradientButtonAction, GradientButtonChatSelection, GradientButtonSelection } from "../styles/buttons";
 import { P, ButtonP, ButtonH,TitleHeader, MenuHeader } from "../styles/texts";
 import { InputView } from "../styles/inputs";
 import { COLORS,PADDINGS, ICON_SIZES } from "../styles/theme";
@@ -70,9 +70,11 @@ const ChatMessage = ({ item }) => {
 };
 const ChatButton = ({ title, onPress, selection }) => {
   return (
-    <GradientButtonSelection onPress={onPress} $selected={selection} style={{ paddingTop:5, paddingRight:10, paddingLeft: 10, paddingBottom:5}} > 
+    <GradientButtonChatSelection onPress={onPress} $selected={selection} 
+   style={selection && {paddingTop:3, paddingBottom:0}} 
+    > 
       <ButtonP style={{fontSize:12}}>{title}</ButtonP>
-    </GradientButtonSelection>
+    </GradientButtonChatSelection>
   );
 };
 
@@ -404,7 +406,7 @@ export const AIChatTab = ({ navigation }) => {
       ref={scrollViewRef}
       style={{ flex: 1 }}
       contentContainerStyle={{ flexGrow: 1 }}
-    onContentSizeChange={() => scrollViewRef.current.scrollToEnd({animated: true})}
+      onContentSizeChange={() => scrollViewRef.current.scrollToEnd({animated: true})}
     >
       {chatHistory.map((item, index) => (
         <ChatMessage key={index} item={item} />
@@ -421,21 +423,24 @@ export const AIChatTab = ({ navigation }) => {
            />
         )
       })}
-      
     </View>
 
-   
     <InputView $isFullLength={true} style={{height:40}}> 
         <TextInput 
-        placeholder="Type your message..."
+        placeholder="Type your own answer..."
+        placeholderTextColor={COLORS.grey}
         value={userInput}
         onChangeText={setUserInput}
         style={{flex:1, color:COLORS.white}}/>
         <TouchableOpacity style={{ alignSelf: "center", flex: 0.1 }} disabled={pendingReply}
              onPress={() => handlePotentialMultipleChoiceSend(userInput, userInfo)}>
-          <ACTION_ICONS.send width={ICON_SIZES.standard} height={ICON_SIZES.standard} />
+              {multipleInputs.length===0 &&<ACTION_ICONS.send width={ICON_SIZES.standard} height={ICON_SIZES.standard}/>}
         </TouchableOpacity>
     </InputView> 
+    {multipleInputs.length>0 &&<GradientButtonAction onPress={() => handlePotentialMultipleChoiceSend(userInput, userInfo)}>
+      <ButtonP>Send Multi Selections</ButtonP>
+      </GradientButtonAction>} 
+
 
   </KeyboardAvoidingView>
   );
@@ -462,7 +467,7 @@ const styles = StyleSheet.create({
   },
   chatButton: {
     margin: 5,
-    padding: 10,
+    padding: 5,
     borderRadius: 20,
     borderWidth: 1,
     marginHorizontal: 8,

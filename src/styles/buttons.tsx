@@ -35,6 +35,15 @@ export const ButtonActionNew = styled.TouchableOpacity<{ $isWhite?:boolean}>`
     padding: ${PADDINGS.buttonSelectionY}px ${PADDINGS.buttonSelectionX}px;
 `;
 
+export const ButtonSelectionChat = styled.TouchableOpacity<{ $selected?:boolean}>`
+    background-color: ${props => props.$selected ? "transparent": "transparent"};
+    border: ${props => props.$selected ? "0px" : "1px"};
+    border-color: ${COLORS.gradientSub1};
+    border-radius: ${BORDERS.buttonSelectionRadius}px;
+    margin: ${props => props.$selected ? "0px" : "5px"};
+    padding: ${PADDINGS.buttonSelectionY}px 15px;
+`;
+
 
 
 export const GradientButtonSelection = (props) => {
@@ -63,6 +72,20 @@ export const GradientButtonSelection = (props) => {
     );
   };
 
+  export const GradientButtonChatSelection = (props) => {
+    return (
+        props.$selected ? 
+        <LinearGradient style={[props.style, styles.gradientButtonChatSelection]}
+          colors={COLORS.gradient1}
+          useAngle={true} angle={45} angleCenter={{x:0.5,y:0.5}}
+          locations={[0.14,0.49,0.83]}
+        >
+            <ButtonSelectionChat {...props} />
+        </LinearGradient>
+        : <ButtonSelectionChat {...props} />
+    );
+  };
+
 
   const styles = StyleSheet.create({
     gradientButtonSelection:{
@@ -73,7 +96,16 @@ export const GradientButtonSelection = (props) => {
         // paddingHorizontal: PADDINGS.buttonSelectionY, 
         // paddingVertical:PADDINGS.buttonSelectionX,
         height: 33,
-    } 
+    },
+    gradientButtonChatSelection:{
+      borderRadius: BORDERS.buttonSelectionRadius,
+      borderWidth:1,
+      padding: 0,
+      margin: 5,
+      // paddingHorizontal: PADDINGS.buttonSelectionY, 
+      // paddingVertical:PADDINGS.buttonSelectionX,
+      height: 30,
+  }  
   });
 
   
