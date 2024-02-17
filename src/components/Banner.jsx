@@ -123,7 +123,7 @@ export const Banner = () => {
             // Define styles for inactive dots here
           }}
           inactiveDotOpacity={1}
-          style ={{    marginTop:0, paddingTop:0}}
+          containerStyle ={{   marginTop:0, paddingTop:0}}
 
       />
     </SafeAreaView>

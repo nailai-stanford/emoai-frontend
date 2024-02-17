@@ -69,7 +69,7 @@ const Title = () => {
   const navigation = useNavigation();
   return (
 
-    <View style={{flexDirection: "row", alignItems: "center",paddingVertical: 10}}>
+    <View style={{flexDirection: "row", alignItems: "center",paddingBottom: 10}}>
       <GradientMenuHeader style={{ flex:2 }} >Themes</GradientMenuHeader>
       <TouchableOpacity style={{flex:4, justifyContent:"flex-end", flexDirection: "row", alignItems: "center", }}
         onPress={() => {navigation.navigate(TABs.THEME)}}>
