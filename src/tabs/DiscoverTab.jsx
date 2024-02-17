@@ -141,10 +141,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'flex-start',
-    marginTop: 20,
+    paddingBottom: 200,
   },
   container: {
     flex: 1,
-    padding: PADDINGS.sm,
+    paddingHorizontal: PADDINGS.sm,
+
   },
 });

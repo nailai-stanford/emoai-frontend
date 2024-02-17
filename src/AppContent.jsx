@@ -123,7 +123,7 @@ export const AppContent = () => {
           },
           tabBarStyle:{
             backgroundColor: 'rgba(52, 52, 52, 0.7)',
-            height:80,
+            height:75,
             position: 'absolute'
           },
           tabBarBackground: () => (
@@ -131,8 +131,8 @@ export const AppContent = () => {
             <BlurView
         style={{position: 'absolute', bottom: 0, left: 0, right: 0, height: 80, zIndex: 1000}}
         blurType="dark"
-        blurAmount={10}
-        reducedTransparencyFallbackColor="black"
+        blurAmount={2}
+        blurRadius={5}
       />
 
           ),
@@ -323,7 +323,7 @@ const navTheme = {
 const screenOptions = {
   tabBarStyle: {
     background: 'transparent',
-    height: 100,
+    height: 70,
   },
   tabBarItemStyle: {
     margin: 5,

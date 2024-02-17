@@ -62,12 +62,11 @@ export const LoadTab = ({ navigation }) => {
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal:PADDINGS.md}}>
-      <GradientMenuHeader style={{textAlign:'center', paddingHorizontal:PADDINGS.md}}>Our Nail AI is creating your own nail design</GradientMenuHeader>
-
-      <P style={{padding:PADDINGS.md, paddingBottom:10}}>Please check back soon. 
+      <GradientMenuHeader style={{textAlign:'center', paddingHorizontal:PADDINGS.md, marginBottom:20}}>Our Nail AI is creating your own nail design...</GradientMenuHeader>
+      <Progress.Circle progress={progress/100} size={120} showsText={true} color={COLORS.white}/>
+      <P style={{padding:PADDINGS.md, width:290, marginBottom:50}}>Please check back soon. 
       Meanwhile, you can tour around the nail design by other creators!</P>
       <GradientButtonAction onPress={() => {navigation.navigate(TABs.DISCOVER)}}><ButtonP>Explore</ButtonP></GradientButtonAction>
-      <Progress.Circle progress={progress/100} showsText={true} color={COLORS.white}/>
     </View>
   );
 };
