@@ -24,6 +24,14 @@ export const GalleryCard = ({ item, style }) => {
       }
       _getCart()
   })
+
+  // remove after text in title after :
+  const truncateTitle = (title) => {
+    let titleList = title.split(':')
+    console.log(titleList[0])
+    return titleList[0]
+  }
+    
   return (
     <View
       style={{
@@ -68,7 +76,7 @@ export const GalleryCard = ({ item, style }) => {
         </View>
       )}
       <View style={{ flex: 0.8 }}>
-        <P $alignLeft style={{ color: "white", fontSize: 14}}>{item.title}</P>
+        <P $alignLeft style={{ color: "white", fontSize: 14}} numberOfLines={1}>{truncateTitle(item.title)}</P>
       </View>
       <View style={{ flex: 1 }}>
         <P $alignLeft style={{ color: "white" }}>${item.price}</P>

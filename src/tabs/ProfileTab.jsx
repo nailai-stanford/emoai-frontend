@@ -104,6 +104,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
+    paddingBottom: 80,
   },
   buttonRow:{
     display:"flex",

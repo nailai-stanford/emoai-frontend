@@ -145,6 +145,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: PADDINGS.sm,
+    paddingHorizontal: PADDINGS.sm,
+    paddingBottom: 80,
   },
 });
