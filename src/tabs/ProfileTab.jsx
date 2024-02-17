@@ -76,13 +76,13 @@ export const ProfileTab = ({ onSignout }) => {
       <View style={styles.buttonRow}>
           <GradientButtonSelection onPress={() => {setIndex(0)}} style={styles.buttonSelectionStyle} $selected={index===0 && true}><ButtonP>My Design</ButtonP></GradientButtonSelection>
           <GradientButtonSelection onPress={() => setIndex(1)} style={styles.buttonSelectionStyle} $selected={index===1 && true} ><ButtonP>Collection</ButtonP></GradientButtonSelection>
-          <GradientButtonSelection onPress={() => setIndex(2)}  style={styles.buttonSelectionStyle} $selected={index===2 && true}><ButtonP>Single Nail</ButtonP></GradientButtonSelection>
+          {/* <GradientButtonSelection onPress={() => setIndex(2)}  style={styles.buttonSelectionStyle} $selected={index===2 && true}><ButtonP>Single Nail</ButtonP></GradientButtonSelection> */}
       </View>
       <View
           style={{
           flexDirection: "row",
+          alignSelf: "flex-start",
           flexWrap: "wrap",
-          alignItems: "center",
           }} >
       {
         index==0 && design.map((e, idx) => <GalleryCard key={idx} item={e} style={{width: 100}} />)
@@ -90,9 +90,9 @@ export const ProfileTab = ({ onSignout }) => {
       {
           index==1 && collected.map((e, idx) => <GalleryCard key={idx} item={e} style={{width: 100}} />)
       }
-      {
+      {/* {
         index==2 && singleNail.map((e, idx) => <GalleryCard key={idx} item={e} style={{width: 100}} />)
-      }
+      } */}
       </View>
     </ScrollView>
   );
@@ -110,10 +110,10 @@ const styles = StyleSheet.create({
     display:"flex",
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 20,
+    marginTop: 20
   },
   buttonSelectionStyle:{
-    paddingLeft: 15,
-    paddingRight: 15,
+    paddingLeft: 30,
+    paddingRight: 30,
   }
 });

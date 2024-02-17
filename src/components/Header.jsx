@@ -55,7 +55,7 @@ const ProfileIconGroup = ({ navigation }) => {
     flexDirection: "row",
   }}>
      
-    <TouchableOpacity   style={{ position: "absolute", right: 40 }} onPress={() => navigation.navigate(TABs.SETTINGS)}>
+    {/* <TouchableOpacity   style={{ position: "absolute", right: 40 }} onPress={() => navigation.navigate(TABs.SETTINGS)}>
     <ACTION_ICONS.measure name='straighten'
       color={COLORS.white}
     />
@@ -64,7 +64,7 @@ const ProfileIconGroup = ({ navigation }) => {
       <ACTION_ICONS.setting name='settings'
         color={COLORS.white}
       />
-    </TouchableOpacity>
+    </TouchableOpacity> */}
     
   </View>
 }
@@ -101,12 +101,12 @@ const ButtonGroup = ({ navigation }) => {
         height: iconSize,
       }}
     >
-      <TouchableOpacity size={iconSize} style={{ position: "absolute", right: 50 }} onPress={() => navigation.navigate(TABs.SEARCH)}>
+      {/* <TouchableOpacity size={iconSize} style={{ position: "absolute", right: 50 }} onPress={() => navigation.navigate(TABs.SEARCH)}>
         <ACTION_ICONS.search
           color={iconColor}
           size={iconSize}
         />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       {/* Uncomment the following code once the icons should be displayed */}
       <TouchableOpacity style={{ position: "absolute", right: 10 }} onPress={() => navigation.navigate(TABs.CART)}>
         <ACTION_ICONS.shop

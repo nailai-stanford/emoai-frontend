@@ -28,8 +28,7 @@ export const GalleryCard = ({ item, style }) => {
   // remove after text in title after :
   const truncateTitle = (title) => {
     let titleList = title.split(':')
-    console.log(titleList[0])
-    return titleList[0]
+    return (titleList[0] ? titleList[0] : title)
   }
     
   return (
@@ -38,6 +37,7 @@ export const GalleryCard = ({ item, style }) => {
         ...style,
         minHeight: 220,
         minWidth: 140,
+        maxWidth: 185,
         backgroundColor: "transparent",
         flex: 1,
         borderRadius: 15,
@@ -80,7 +80,7 @@ export const GalleryCard = ({ item, style }) => {
       </View>
       <View style={{ flex: 1 }}>
         <P $alignLeft style={{ color: "white" }}>${item.price}</P>
-        <TouchableOpacity style={{ position: "absolute", right: 0, bottom: 8 }} 
+        <TouchableOpacity style={{ position: "absolute", right: 0, bottom: 10 }} 
         onPress={() => {
             let found = false;
             for (var i = 0; i < cart.length; i++) {
