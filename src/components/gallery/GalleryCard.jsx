@@ -1,14 +1,25 @@
 import { View, Text, ScrollView, Image, TouchableHighlight, TouchableOpacity } from "react-native";import { TABs } from "../../static/Constants";
 import { useNavigation } from '@react-navigation/native';
-import { getCart, setCart } from "../../utils/UserUtils";
-import { useEffect } from "react";
+// import { useAuthenticationContext } from "../providers/AuthenticationProvider";
+import { useAuthenticationContext } from "../../providers/AuthenticationProvider";
+import { useCartContext } from "../../providers/CartContextProvider";
+import { APIs, getHeader} from "../../utils/API";
+
+
 import { ACTION_ICONS } from "../../styles/icons";
 import { SubHeader,P } from "../../styles/texts";
+
+import axios from "axios";
 
 export const GalleryCard = ({ item, style }) => {
   const { user, image } = item;
   const showUser = user && Object.keys(user).length > 0;
-  const avatarSize = 16;
+
+  const avatarSize = 20;
+  const productId = item && item.id? item.id : ""
+  const { userInfo } = useAuthenticationContext();
+  const {setCart} = useCartContext();
+
   const productImageStyle = {
     minHeight: 100,
     minWidth: 100,
@@ -17,13 +28,6 @@ export const GalleryCard = ({ item, style }) => {
     marginBottom: 10,
   };
   const navigation = useNavigation();
-  let cart
-  useEffect(() => {
-      async function _getCart() {
-          cart = await getCart()
-      }
-      _getCart()
-  })
 
   // remove after text in title after :
   const truncateTitle = (title) => {
@@ -31,6 +35,21 @@ export const GalleryCard = ({ item, style }) => {
     return (titleList[0] ? titleList[0] : title)
   }
     
+
+  const add_to_cart = () => {
+    const headers = getHeader(userInfo.idToken);
+    if(productId) {
+      payload = {actions: [{id: String(productId), count: 1}]}
+      axios.post(APIs.ORDER_UPDATE, payload, { headers })
+      .then(resp => {
+        if (resp.status == 200) {
+          setCart(resp.data)
+        }
+      }).catch((e) => {
+        handleError(e);
+      });
+    }
+  }
   return (
     <View
       style={{
@@ -81,28 +100,15 @@ export const GalleryCard = ({ item, style }) => {
       <View style={{ flex: 1 }}>
         <P $alignLeft style={{ color: "white" }}>${item.price}</P>
         <TouchableOpacity style={{ position: "absolute", right: 0, bottom: 10 }} 
-        onPress={() => {
-            let found = false;
-            for (var i = 0; i < cart.length; i++) {
-              if (cart[i].id == item.id) {
-                found = true;
-                setCart(item.id, cart[i].quantity+1)
-              }
-            }
-            if (!found) {
-              setCart(item.id, 1)
-            }
-          }}>
+        onPress={add_to_cart}>
+
         <ACTION_ICONS.addSmall
           name="plus-circle" color="white"
           height={25}
           width={25}
-          
         />
         </TouchableOpacity>
       </View>
     </View>
-    
-
   );
 };

@@ -9,10 +9,11 @@ export const APIs = {
   LIKE_COLLECT: `${BASE_URL}/api/like_collect/`,
   DELETE_LIKE_COLLECT: `${BASE_URL}/api/like_collect/delete/`,
   GET_COLLECTIONS: `${BASE_URL}/api/like_collect/collections/`,
-  MESSAGE: `${BASE_URL}/api/message/`,
   DESIGN_SETS: `${BASE_URL}/api/design_sets/`,
   PAYMENT: `${BASE_URL}/api/payment/`,
   ORDER: `${BASE_URL}/api/carts/`,
+  ORDER_UPDATE:  `${BASE_URL}/api/carts/update`,
+  ORDER_FETCH: `${BASE_URL}/api/carts/`,
 };
 
 export const getHeader = (idToken = '') => {

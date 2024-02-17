@@ -7,11 +7,11 @@ import { useState, useEffect } from "react";
 import { APIs, getHeader } from "../utils/API";
 import { handleError } from "../utils/Common";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
+import { CartContextProvider, useCartContext } from "../providers/CartContextProvider";
 import { Image, Button, Text } from '@rneui/themed';
 import { MenuHeader,ButtonH, ButtonP, TitleHeader,P, SubHeader } from "../styles/texts";
 import { ButtonAction,ButtonSelection, GradientButtonSelection } from "../styles/buttons";
 import { BORDERS, COLORS, PADDINGS } from "../styles/theme";
-import { getCart, setCart } from "../utils/UserUtils";
 import { ACTION_ICONS } from "../styles/icons";
 
 const size = 50;
@@ -78,7 +78,7 @@ const ButtonGroup = ({ productID }) => {
   const { userInfo } = useAuthenticationContext();
   const headers = getHeader(userInfo.idToken);
   const [collected, setCollected] = useState(false)
-
+  const {setCart} = useCartContext()
   useEffect(() => {
     async function _getCollect() {
       axios.get(
@@ -92,12 +92,7 @@ const ButtonGroup = ({ productID }) => {
   },[productID]);
 
   let cart
-  useEffect(() => {
-      async function _getCart() {
-          cart = await getCart()
-      }
-      _getCart()
-  })
+ 
   return <View style={{ 
       flexDirection: "row", alignSelf: "center", postion: "absolute", bottom: 0, width: screenWidth, height: 50,
     }}>
@@ -125,16 +120,15 @@ const ButtonGroup = ({ productID }) => {
            
       <ButtonAction style={{ display: "inline-flex", flexDirection: "row", alignItems: "center"}}
         onPress={() => {
-          let found = false;
-          for (var i = 0; i < cart.length; i++) {
-            if (cart[i].id == productID) {
-              found = true;
-              setCart(productID, cart[i].quantity+1)
+          payload = {actions: [{id: String(productID), count: 1}]}
+          axios.post(APIs.ORDER_UPDATE, payload, { headers })
+          .then(resp => {
+            if (resp.status === 200) {
+              setCart(resp.data)
             }
-          }
-          if (!found) {
-            setCart(productID, 1)
-          }
+          }).catch((e) => {
+            handleError(e);
+          });
         }}>
        
             <ButtonH>Add to Cart</ButtonH>
