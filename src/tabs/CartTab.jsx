@@ -31,6 +31,7 @@ const CheckoutItem = ({userInfo, item, setCart, updateTotal}) => {
 
   const [quantity, setQuantity] = useState(item.quantity);
   const id = item.product_id
+  
 
   const update_quantity = (value) => {
     const headers = getHeader(userInfo.idToken);
@@ -107,6 +108,7 @@ export const CartTab = ({navigation}) => {
   const {cart, setCart} = useCartContext();
   const [total, setTotal] = useState(0)
 
+
   useEffect(() => {
     const headers = getHeader(userInfo.idToken);
     async function _fetchCart() {
@@ -140,7 +142,7 @@ export const CartTab = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      {cart && cart.products && cart.products.length > 0 && (
+      {cart && cart.products && cart.products.length > 0 ? (
         <View style={styles.container}>
           <SafeAreaView style={{flex: 7}}>
             <FlatList
@@ -182,8 +184,7 @@ export const CartTab = ({navigation}) => {
             <ButtonP>Check Out</ButtonP>
           </GradientButtonAction>
         </View>
-      )}
-      {!cart || !cart.products || cart.products.length === 0 && (
+      ) : (
         <View>
           <TitleHeader>Oops, your cart is empty</TitleHeader>
           <P>Go and discover something new!</P>
