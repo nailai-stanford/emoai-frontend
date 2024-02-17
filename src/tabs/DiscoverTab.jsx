@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     alignItems: 'flex-start',
-    paddingBottom: 200,
+    paddingBottom: 80,
   },
   container: {
     flex: 1,
