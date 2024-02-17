@@ -24,6 +24,7 @@ import Setting from "../../assets/icons/setting.svg";
 import Like from "../../assets/icons/like.svg";
 import Plus from "../../assets/icons/plus.svg";
 import Minus from "../../assets/icons/minus.svg";
+import CartCountBg from '../../assets/icons/cart_count_bg.svg'
 
 // other icons
 import Google from "../../assets/icons/google_logo.svg";
@@ -60,5 +61,6 @@ export const ACTION_ICONS = {
 
 
 export const OTHER_ICONS = {
-    google: Google
+    google: Google,
+    cartCountBg: CartCountBg
 }

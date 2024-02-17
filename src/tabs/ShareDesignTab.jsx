@@ -4,7 +4,6 @@ import {TouchableOpacity, View, Image, TextInput, Button, StyleSheet, Share, Tex
 import axios from 'axios';
 import { APIs, getHeader } from "../utils/API";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
-import { getCart, setCart } from "../utils/UserUtils";
 import { ButtonAction, ButtonSelection } from "../styles/buttons";
 import { P, ButtonP, ButtonH, MenuHeader, TitleHeader, SubHeader} from "../styles/texts";
 import { COLORS, PADDINGS } from "../styles/theme";

@@ -3,10 +3,16 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 
 import { TAB_TITLES, TABs } from "../static/Constants";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
+import { useCartContext } from "../providers/CartContextProvider";
 import { Input, Icon, Button } from '@rneui/themed';
 import { COLORS, PADDINGS } from "../styles/theme";
 import { MenuHeader } from "../styles/texts";
 import { ACTION_ICONS } from "../styles/icons";
+import { useEffect, useState } from "react";
+import { getHeader, APIs } from "../utils/API";
+import axios from "axios";
+import { handleError } from "../utils/Common";
+
 
 const iconSize = 20;
 const GoBackScreens = [TABs.THEME, TABs.COLLECTION, TABs.CART, TABs.SETTINGS, TABs.ADDRESS]
@@ -90,7 +96,38 @@ const Title = (props) => {
 };
 
 const ButtonGroup = ({ navigation }) => {
-  // TODO Different icons for the tabs
+  const {cart, setCart} = useCartContext();
+  const { userInfo } = useAuthenticationContext();
+  const [productCount, setProductCount] = useState(0)
+  
+  useEffect(() => {
+    if(userInfo && userInfo.idToken) {
+      const headers = getHeader(userInfo.idToken);
+      async function _fetchCart() {
+        axios.get(
+          `${APIs.ORDER_FETCH}`,
+          { headers }
+        ).then(
+          res => {
+            const cart = JSON.parse(JSON.stringify(res.data))
+            setCart(cart)
+          }
+        ).catch(e => {
+          handleError(e)
+        })
+      }
+      _fetchCart()
+    }
+  }, [userInfo])
+
+  useEffect(()=> {
+    if (cart && cart.products && cart.products.length > 0) {
+      setProductCount(cart.products.length)
+    } else {
+      setProductCount(0)
+    }
+  }, [cart])
+
   const iconColor = COLORS.white;
   return (
     <View
@@ -109,10 +146,28 @@ const ButtonGroup = ({ navigation }) => {
       </TouchableOpacity> */}
       {/* Uncomment the following code once the icons should be displayed */}
       <TouchableOpacity style={{ position: "absolute", right: 10 }} onPress={() => navigation.navigate(TABs.CART)}>
-        <ACTION_ICONS.shop
-          color={iconColor}
-          size={iconSize}
-        />
+        <View>
+          <ACTION_ICONS.shop
+            color={iconColor}
+            size={iconSize}/>
+            {productCount > 0 && (
+              <View style={{
+                position: 'absolute',
+                right: 0,
+                top: -5,
+                backgroundColor: '#7488eb',
+                borderRadius: 10,
+                width: 20,
+                height: 20,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+                <Text style={{ color: 'white', fontSize: 12 }}>
+                  {productCount > 99 ? '99+' : productCount.toString()}
+                </Text>
+              </View>
+            )}
+        </View>
       </TouchableOpacity>
     </View>
   );

@@ -8,10 +8,10 @@ import {
   SafeAreaView,
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {getCart, setCart} from '../utils/UserUtils';
 import {getHeader, APIs} from '../utils/API';
 import {handleError} from '../utils/Common';
 import {useAuthenticationContext} from '../providers/AuthenticationProvider';
+import { useCartContext } from '../providers/CartContextProvider';
 import axios from 'axios';
 import {Image, Button} from '@rneui/themed';
 import {useIsFocused} from '@react-navigation/native';
@@ -27,24 +27,32 @@ const pictureHeight = 60;
 const pictureWidth = 60;
 const pictureRadius = 10;
 
-const CheckoutItem = ({item, total, setTotal, cartItems, setCartItems}) => {
-  maybeItem = cartItems.filter(e => e.id == item.id);
-  if (maybeItem.length == 0) {
-    return;
-  }
-  let num = maybeItem[0].quantity;
-  const [quantity, setQuantity] = useState(num);
+const CheckoutItem = ({userInfo, item, setCart, updateTotal}) => {
 
-  useEffect(() => {
-    setTotal(prevTotal => prevTotal + item.price * quantity);
-  }, []);
+  const [quantity, setQuantity] = useState(item.quantity);
+  const id = item.product_id
+
+  const update_quantity = (value) => {
+    const headers = getHeader(userInfo.idToken);
+    if(id) {
+      payload = {actions: [{id: String(id), count: value}]}
+      axios.post(APIs.ORDER_UPDATE, payload, { headers })
+      .then(resp => {
+        if (resp.status === 200) {
+          setCart(resp.data)
+        }
+      }).catch((e) => {
+        handleError(e);
+      });
+    }
+  }
 
   return (
     <View>
       {quantity > 0 && (
         <View style={{flexDirection: 'row', margin: 10, alignItems: 'center'}}>
           <Image
-            source={{uri: item.image.src}}
+            source={{uri: item.img_url}}
             containerStyle={{
               flex: 1,
               backgroundColor: 'gray',
@@ -56,48 +64,32 @@ const CheckoutItem = ({item, total, setTotal, cartItems, setCartItems}) => {
           />
           <View style={{flexDirection: 'column', flex: 2}}>
             <P $alignLeft={true}>{item.title}</P>
-            <P $alignLeft={true}>{item.price}</P>
+            <P $alignLeft={true}>{item.you_pay_price}</P>
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <TouchableOpacity 
                 style={{paddingHorizontal: 3, height:iconSize, width:iconSize, justifyContent:'center'}}
                 onPress={() => {
-                  let copy = JSON.parse(JSON.stringify(cartItems));
+                  // let copy = JSON.parse(JSON.stringify(cartItems));
                   if (quantity > 0) {
-                    setTotal(
-                      prevTotal =>
-                        prevTotal - (quantity === 0 ? 0 : item.price),
-                    );
-                    copy.forEach(element => {
-                      if (element.id == item.id) {
-                        element.quantity = quantity - 1;
-                        setCart(element.id, element.quantity);
-                      }
-                    });
                     setQuantity(quantity - 1);
+                    update_quantity(-1)
+                    updateTotal(-Number(item.you_pay_price).toFixed(2))
                   }
-                  setCartItems(copy);
                 }}>
-              <ACTION_ICONS.minus
-                color={COLORS.white}
-              />
+                <ACTION_ICONS.minus
+                  color={COLORS.white}
+                />
               </TouchableOpacity>
               <P>{quantity}</P>
               <TouchableOpacity 
-                style={{paddingHorizontal: 10, height:iconSize, width:iconSize, justifyContent:'center'}}
-                onPress={() => {
-                  let copy = JSON.parse(JSON.stringify(cartItems));
-                  setTotal(prevTotal => prevTotal + item.price);
-                  copy.forEach(element => {
-                    if (element.id == item.id) {
-                      element.quantity = quantity + 1;
-                      setCart(element.id, element.quantity);
-                    }
-                  });
-                  setQuantity(quantity + 1);
-                  setCartItems(copy);
-                }}>
-                <ACTION_ICONS.plus
-                />
+                  style={{paddingHorizontal: 10, height:iconSize, width:iconSize, justifyContent:'center'}}
+                  onPress={() => {
+                    setQuantity(quantity + 1);
+                    update_quantity(1)
+                    updateTotal(Number(item.you_pay_price).toFixed(2))
+                  }}>
+                  <ACTION_ICONS.plus
+                  />
               </TouchableOpacity>
             </View>
           </View>
@@ -108,66 +100,64 @@ const CheckoutItem = ({item, total, setTotal, cartItems, setCartItems}) => {
 };
 
 export const CartTab = ({navigation}) => {
-  const [total, setTotal] = useState(0);
-  const [cartItems, setCartItems] = useState([]);
   const {userInfo} = useAuthenticationContext();
 
   const headers = getHeader(userInfo.idToken);
-  const [products, setProducts] = useState([]);
   const isFocused = useIsFocused();
+  const {cart, setCart} = useCartContext();
+  const [total, setTotal] = useState(0)
 
   useEffect(() => {
+    const headers = getHeader(userInfo.idToken);
     async function _fetchCart() {
-      const res = await getCart();
-      setCartItems(JSON.parse(JSON.stringify(res)));
-    }
-    _fetchCart();
+      axios.get(
+        `${APIs.ORDER_FETCH}`,
+        { headers }
+    ).then(
+      res => {
+        const cart = JSON.parse(JSON.stringify(res.data))
+        setCart(cart)
+      }
+    ).catch(e => handleError(e))
+  }
+    _fetchCart()
   }, [isFocused]);
 
-  useEffect(() => {
-    let ids = Array();
-    cartItems.forEach(e => {
-      if (e.quantity > 0) {
-        ids.push(String(e.id));
-      }
-    });
-    async function _loadProducts() {
-      cartItems.length > 0 &&
-        axios
-          .get(`${APIs.GET_PRODUCTS}by_ids?ids=${encodeURIComponent(ids)}`, {
-            headers,
-          })
-          .then(res => {
-            setProducts(JSON.parse(JSON.stringify(res.data.products)));
-          })
-          .catch(e => {
-            handleError(e);
-          });
+  useEffect(()=> {
+    if(cart && cart.total_price) {
+      setTotal(Number(cart.total_price))
     }
-    _loadProducts();
-  }, [cartItems]);
+  }, [cart])
+
+  const updateTotal = (value) => {
+    const numericValue = Number(value);
+    if (!isNaN(numericValue) && !isNaN(total)) {
+        setTotal(previousTotal => previousTotal + numericValue);
+    } else {
+        console.error("Invalid number input:", value);
+    }
+  }
 
   return (
     <View style={styles.container}>
-      {products.length > 0 && (
+      {cart && cart.products && cart.products.length > 0 && (
         <View style={styles.container}>
           <SafeAreaView style={{flex: 7}}>
             <FlatList
-              data={products}
+              data={cart.products}
               renderItem={({item}) => (
                 <CheckoutItem
+                  userInfo = {userInfo}
                   item={item}
-                  total={total}
-                  setTotal={setTotal}
-                  cartItems={cartItems}
-                  setCartItems={setCartItems}
+                  setCart={setCart}
+                  updateTotal={updateTotal}
                 />
               )}
-              keyExtractor={item => item.id.toString()} // Updated key extractor
+              keyExtractor={item => item.product_id.toString()} // Updated key extractor
               numColumns={1}
             />
           </SafeAreaView>
-          <P style={{flex: 1}}>Total: {Number(total).toFixed(2)} </P>
+          <P style={{flex: 1}}>Total: $ {Number(total).toFixed(2)} </P>
 
           <GradientButtonAction
             onPress={() => {
@@ -193,7 +183,7 @@ export const CartTab = ({navigation}) => {
           </GradientButtonAction>
         </View>
       )}
-      {products.length === 0 && (
+      {!cart || !cart.products || cart.products.length === 0 && (
         <View>
           <TitleHeader>Oops, your cart is empty</TitleHeader>
           <P>Go and discover something new!</P>
