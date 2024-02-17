@@ -11,8 +11,8 @@ export const GalleryCard = ({ item, style }) => {
   const showUser = user && Object.keys(user).length > 0;
   const avatarSize = 20;
   const productImageStyle = {
-    minHeight: 120,
-    minWidth: 120,
+    minHeight: 100,
+    minWidth: 100,
     borderRadius: 15,
     backgroundColor: "white",
     marginBottom: 10,

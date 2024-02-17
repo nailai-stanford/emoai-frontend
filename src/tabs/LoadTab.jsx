@@ -34,6 +34,7 @@ export const LoadTab = ({ navigation }) => {
         task_id = data.task_id
         task_status = data.status
         console.log(task_id, task_status, 'progress:', data.progress)
+        setProgress(data.progress)
         if (task_status === 3) {
           // task_id = "506b07a3-84e2-4545-8840-ddb17da54193"
           navigation.navigate(TABs.WORKSHOP, {task_id: task_id})
@@ -55,24 +56,18 @@ export const LoadTab = ({ navigation }) => {
     return () => {
       clearInterval(intervalId);
     };
-  }, [userInfo]); // Dependencies array
+
+  }, [progress]); // Dependencies array
   
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal:PADDINGS.md}}>
       <GradientMenuHeader style={{textAlign:'center', paddingHorizontal:PADDINGS.md}}>Our Nail AI is creating your own nail design</GradientMenuHeader>
-      <ActivityIndicator size="large" color={COLORS.white} />
 
       <P style={{padding:PADDINGS.md, paddingBottom:10}}>Please check back soon. 
       Meanwhile, you can tour around the nail design by other creators!</P>
       <GradientButtonAction onPress={() => {navigation.navigate(TABs.DISCOVER)}}><ButtonP>Explore</ButtonP></GradientButtonAction>
-      {/* <Progress.Bar progress={progress} width={200} /> */}
-      {/* <LottieView
-      source={require("../../assets/lottie/progress_lottie.json")}
-      style={{width: "100%", height: 300, position: "absolute", top: 0, zIndex: -1}}
-      autoPlay
-      loop
-      /> */}
+      <Progress.Circle progress={progress/100} showsText={true} color={COLORS.white}/>
     </View>
   );
 };
