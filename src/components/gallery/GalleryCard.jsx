@@ -1,15 +1,14 @@
-import { View, Text, ScrollView, Image, TouchableHighlight, TouchableOpacity } from "react-native";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { TABs } from "../../static/Constants";
+import { View, Text, ScrollView, Image, TouchableHighlight, TouchableOpacity } from "react-native";import { TABs } from "../../static/Constants";
 import { useNavigation } from '@react-navigation/native';
 import { getCart, setCart } from "../../utils/UserUtils";
 import { useEffect } from "react";
 import { ACTION_ICONS } from "../../styles/icons";
+import { SubHeader,P } from "../../styles/texts";
 
 export const GalleryCard = ({ item, style }) => {
   const { user, image } = item;
   const showUser = user && Object.keys(user).length > 0;
-  const avatarSize = 20;
+  const avatarSize = 16;
   const productImageStyle = {
     minHeight: 100,
     minWidth: 100,
@@ -52,10 +51,9 @@ export const GalleryCard = ({ item, style }) => {
       {showUser && (
         <View
           style={{
-            flex: 1,
+            flex: 0.6,
             display: "flex",
             flexDirection: "row",
-            marginBottom: 10,
           }}
         >
           <Image
@@ -66,15 +64,15 @@ export const GalleryCard = ({ item, style }) => {
             }}
             source={{ uri: user.avatar }}
           />
-          <Text style={{ marginLeft: 8, color: "white" }}>{user.fullName}</Text>
+          <P style={{ marginLeft: 8, color: "white", fontSize:12 }}>{user.fullName}</P>
         </View>
       )}
-      <View style={{ flex: 1 }}>
-        <Text style={{ color: "white" }}>{item.title}</Text>
+      <View style={{ flex: 0.8 }}>
+        <P $alignLeft style={{ color: "white", fontSize: 14}}>{item.title}</P>
       </View>
       <View style={{ flex: 1 }}>
-        <Text style={{ color: "white" }}>${item.price}</Text>
-        <TouchableOpacity style={{ position: "absolute", right: 0, bottom: 1 }} 
+        <P $alignLeft style={{ color: "white" }}>${item.price}</P>
+        <TouchableOpacity style={{ position: "absolute", right: 0, bottom: 8 }} 
         onPress={() => {
             let found = false;
             for (var i = 0; i < cart.length; i++) {
