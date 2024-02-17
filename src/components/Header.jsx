@@ -13,6 +13,7 @@ import { getHeader, APIs } from "../utils/API";
 import axios from "axios";
 import { handleError } from "../utils/Common";
 
+
 const iconSize = 20;
 const GoBackScreens = [TABs.THEME, TABs.COLLECTION, TABs.CART, TABs.SETTINGS, TABs.ADDRESS]
 export const Header = (props) => {
@@ -154,7 +155,7 @@ const ButtonGroup = ({ navigation }) => {
                 position: 'absolute',
                 right: 0,
                 top: -5,
-                backgroundColor: 'blue',
+                backgroundColor: '#7488eb',
                 borderRadius: 10,
                 width: 20,
                 height: 20,

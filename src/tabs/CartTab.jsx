@@ -8,7 +8,6 @@ import {
   SafeAreaView,
 } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-// import {getCart, setCart} from '../utils/UserUtils';
 import {getHeader, APIs} from '../utils/API';
 import {handleError} from '../utils/Common';
 import {useAuthenticationContext} from '../providers/AuthenticationProvider';
@@ -121,8 +120,6 @@ export const CartTab = ({navigation}) => {
       }
     ).catch(e => handleError(e))
   }
-      // setCartItems(JSON.parse(JSON.stringify(res)));
-    // }
     _fetchCart()
   }, [isFocused]);
 

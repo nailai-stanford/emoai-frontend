@@ -81,37 +81,3 @@ export const onPressSignIn = () => {
       });
   });
 };
-
-export const getCart = async () => {
-  try {
-    let cart = await AsyncStorage.getItem(SecureStoreKeys.Cart);
-    cart = JSON.parse(cart);
-    if (cart) {
-      return cart;
-    }
-    await AsyncStorage.setItem(SecureStoreKeys.Cart, JSON.stringify([]));
-  } catch (err) {
-    await AsyncStorage.setItem(SecureStoreKeys.Cart, JSON.stringify([]));
-  }
-};
-
-export const setCart = async (item, quantity) => {
-  let cart = await AsyncStorage.getItem(SecureStoreKeys.Cart);
-  cart = JSON.parse(cart);
-  let found = false;
-  for (var i = 0; i < cart.length; i++) {
-    if (cart[i].id === item) {
-      cart[i].quantity = quantity;
-      found = true;
-      break;
-    }
-  }
-  if (!found) {
-    cart.push({id: item, quantity: quantity});
-  }
-  await AsyncStorage.setItem(SecureStoreKeys.Cart, JSON.stringify(cart));
-};
-
-export const clearCart = async () => {
-  await AsyncStorage.removeItem(SecureStoreKeys.Cart);
-};

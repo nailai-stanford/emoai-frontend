@@ -1,6 +1,5 @@
 import { View, Text, ScrollView, Image, TouchableHighlight, TouchableOpacity } from "react-native";import { TABs } from "../../static/Constants";
 import { useNavigation } from '@react-navigation/native';
-// import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { useAuthenticationContext } from "../../providers/AuthenticationProvider";
 import { useCartContext } from "../../providers/CartContextProvider";
 import { APIs, getHeader} from "../../utils/API";
@@ -15,7 +14,7 @@ export const GalleryCard = ({ item, style }) => {
   const { user, image } = item;
   const showUser = user && Object.keys(user).length > 0;
 
-  const avatarSize = 20;
+  const avatarSize = 16;
   const productId = item && item.id? item.id : ""
   const { userInfo } = useAuthenticationContext();
   const {setCart} = useCartContext();
