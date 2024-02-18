@@ -215,7 +215,9 @@ export const AppContent = () => {
             }} />
           <Tab.Screen
             name={TABs.WORKSHOP_IDLE}
-            component={WorkshopIdleTab}/>
+            component={WorkshopIdleTab}
+            options={{ tabBarLabel: 'WORKSHOP' }}
+          />
           <Tab.Screen
             name={TABs.CART}
             component={CartTab}

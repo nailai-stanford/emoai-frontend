@@ -44,8 +44,8 @@ export const LoadTab = ({ navigation }) => {
           // navigation.navigate(TABs.WORKSHOP, {task_id: task_id})
           clearInterval(intervalId);
           setProgress(0);
-          setTaskGlobalID(task_id);
           setTaskStatus("WORKSHOP_INIT");
+          setTaskGlobalID(task_id);
         } else if (task_status === 4 || task_status === 5) {
           clearInterval(intervalId);
           setProgress(0);
@@ -59,7 +59,7 @@ export const LoadTab = ({ navigation }) => {
     };
   
     intervalId = setInterval(() => {
-      get_last_task_status();
+      taskStatus !== "NO_TASK" && get_last_task_status();
     }, 5000); // 5000 milliseconds = 5 seconds
   
     return () => {
