@@ -14,7 +14,6 @@ import {useAuthenticationContext} from '../providers/AuthenticationProvider';
 import { useCartContext } from '../providers/CartContextProvider';
 import axios from 'axios';
 import {Image, Button} from '@rneui/themed';
-import {useIsFocused} from '@react-navigation/native';
 
 import {ButtonAction, ButtonSelection, GradientButtonAction} from '../styles/buttons';
 import {P, ButtonP, MenuHeader, TitleHeader, SubHeader} from '../styles/texts';
@@ -43,6 +42,7 @@ const CheckoutItem = ({userInfo, item, setCart, updateTotal}) => {
           setCart(resp.data)
         }
       }).catch((e) => {
+        console.log("update_quantity error")
         handleError(e);
       });
     }
@@ -104,7 +104,6 @@ export const CartTab = ({navigation}) => {
   const {userInfo} = useAuthenticationContext();
 
   const headers = getHeader(userInfo.idToken);
-  const isFocused = useIsFocused();
   const {cart, setCart} = useCartContext();
   const [total, setTotal] = useState(0)
 
@@ -117,19 +116,24 @@ export const CartTab = ({navigation}) => {
         { headers }
     ).then(
       res => {
-        if (res.status === 200) {
+        if (res.status == 200 && res.data) {
+          console.log('_fetchCart res:', res)
           const cart = JSON.parse(JSON.stringify(res.data))
           setCart(cart)
+          console.log('_fetchCart cart:', cart)
         } else {
           console.log(res.status, res)
         }
       }
     ).catch(e => {
+      console.log("_fetchCart error")
       console.log(e)
     })
   }
-    _fetchCart()
-  }, [isFocused]);
+    if (userInfo) {
+      _fetchCart()
+    }
+  }, [userInfo]);
 
   useEffect(()=> {
     if(cart && cart.total_price) {
