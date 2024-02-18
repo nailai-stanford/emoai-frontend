@@ -55,7 +55,6 @@ export const GalleryCard = ({ item, style }) => {
         ...style,
         minHeight: 220,
         minWidth: 140,
-        maxWidth: 185,
         backgroundColor: "transparent",
         flex: 1,
         borderRadius: 15,

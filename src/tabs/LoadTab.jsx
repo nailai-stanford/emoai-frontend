@@ -66,7 +66,7 @@ export const LoadTab = ({ navigation }) => {
       clearInterval(intervalId);
     };
 
-  }, []); // Dependencies array
+  }, [taskGlobalID]); // Dependencies array
   
 
   return (

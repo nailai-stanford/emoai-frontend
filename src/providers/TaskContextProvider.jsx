@@ -9,8 +9,7 @@ export const TaskStatusProvider = ({ children }) => {
         NO_TASK: 'NO_TASK',
         PROCESSING: 'PROCESSING',
         WORKSHOP_INIT: 'WORKSHOP_INIT',
-        WORKSHOP_PREVIEW: 'WORKSHOP_PREVIEW',
-      };
+    };
     
     
     const [taskStatus, setTaskStatus] = useState("NO_TASK");
