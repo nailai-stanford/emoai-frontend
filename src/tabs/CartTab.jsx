@@ -117,10 +117,16 @@ export const CartTab = ({navigation}) => {
         { headers }
     ).then(
       res => {
-        const cart = JSON.parse(JSON.stringify(res.data))
-        setCart(cart)
+        if (res.status === 200) {
+          const cart = JSON.parse(JSON.stringify(res.data))
+          setCart(cart)
+        } else {
+          console.log(res.status, res)
+        }
       }
-    ).catch(e => handleError(e))
+    ).catch(e => {
+      console.log(e)
+    })
   }
     _fetchCart()
   }, [isFocused]);
@@ -163,23 +169,7 @@ export const CartTab = ({navigation}) => {
 
           <GradientButtonAction
             onPress={() => {
-              const confirmedItems = products.map(e => {
-                maybeItem = cartItems.filter(item => e.id == item.id);
-                if (maybeItem.length == 0) {
-                  return;
-                }
-                return {
-                  image: e.image.src,
-                  title: e.title,
-                  price: e.price,
-                  quantity: maybeItem[0].quantity,
-                  id: e.id,
-                };
-              });
-              navigation.navigate(TABs.PAYMENT, {
-                products: confirmedItems,
-                total: total,
-              });
+              navigation.navigate(TABs.PAYMENT);
             }}>
             <ButtonP>Check Out</ButtonP>
           </GradientButtonAction>

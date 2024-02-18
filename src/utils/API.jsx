@@ -14,6 +14,7 @@ export const APIs = {
   ORDER: `${BASE_URL}/api/carts/`,
   ORDER_UPDATE:  `${BASE_URL}/api/carts/update`,
   ORDER_FETCH: `${BASE_URL}/api/carts/`,
+  ADDRESS: `${BASE_URL}/api/address/`,
 };
 
 export const getHeader = (idToken = '') => {
