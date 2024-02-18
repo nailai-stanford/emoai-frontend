@@ -42,7 +42,6 @@ const CheckoutItem = ({userInfo, item, setCart, updateTotal}) => {
           setCart(resp.data)
         }
       }).catch((e) => {
-        console.log("update_quantity error")
         handleError(e);
       });
     }
@@ -117,12 +116,10 @@ export const CartTab = ({navigation}) => {
     ).then(
       res => {
         if (res.status == 200 && res.data) {
-          console.log('_fetchCart res:', res)
           const cart = JSON.parse(JSON.stringify(res.data))
           setCart(cart)
-          console.log('_fetchCart cart:', cart)
         } else {
-          console.log(res.status, res)
+          console.log('_fetchCart empty resp: ', res.status, res)
         }
       }
     ).catch(e => {
