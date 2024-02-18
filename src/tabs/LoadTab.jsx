@@ -59,8 +59,8 @@ export const LoadTab = ({ navigation }) => {
     };
   
     intervalId = setInterval(() => {
-      taskStatus !== "NO_TASK" && get_last_task_status();
-    }, 5000); // 5000 milliseconds = 5 seconds
+      taskStatus === "PROCESSING" && get_last_task_status();
+    }, 8000); // 8000 milliseconds = 8 seconds
   
     return () => {
       clearInterval(intervalId);
