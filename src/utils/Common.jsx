@@ -5,7 +5,7 @@ export const SecureStoreKeys = {
 };
 
 export const handleError = (e) => {
-  console.log("ERROR IS: " + JSON.stringify(e));
+  console.log("ERROR IS: ", e);
 };
 
 export const handleResponse = (response, additionalInfo) => {

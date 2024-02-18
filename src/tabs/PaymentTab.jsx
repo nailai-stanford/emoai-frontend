@@ -1,7 +1,9 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useStripe, AddressSheet} from '@stripe/stripe-react-native';
 import {getHeader, APIs} from '../utils/API';
 import {useAuthenticationContext} from '../providers/AuthenticationProvider';
+import { useCartContext } from '../providers/CartContextProvider';
+
 import {Image} from '@rneui/themed';
 import axios from 'axios';
 
@@ -14,13 +16,12 @@ import {
 } from '../styles/buttons';
 import {handleError} from '../utils/Common';
 import {TABs} from '../static/Constants';
-import {clearCart} from '../utils/UserUtils';
 import {isAwaitKeyword} from 'typescript';
 
 export const PaymentTab = ({route, navigation}) => {
   const [addrVisible, setAddrVisible] = useState(false);
   const {userInfo} = useAuthenticationContext();
-
+  const {cart} = useCartContext();
   const headers = getHeader(userInfo.idToken);
   const [name, setName] = useState('');
   const [country, setCountry] = useState('');
@@ -34,18 +35,67 @@ export const PaymentTab = ({route, navigation}) => {
   let display = `${name}, ${phone}
   ${line1} ${line2} \n ${city}, ${state}, ${zip}, \n ${country} `;
   const [loading, setLoading] = useState(false);
+  const [total, setTotal] = useState("0")
+  const [products, setProducts] = useState([])
+  const [orderId, setOrderId] = useState("")
 
+  
   const {initPaymentSheet, presentPaymentSheet} = useStripe();
   const size = 50;
 
-  const OrderSummary = ({products, total}) => {
+  useEffect(() => {
+    if (cart && cart.products && cart.products.length > 0){
+      setTotal(cart.total_price)
+      setProducts(cart.products)
+      setOrderId(cart.order_id)
+    }
+  }, [cart])
+
+
+
+  useEffect(()=> {
+    const fetch_address = async () => {
+      axios
+      .get(
+        APIs.ADDRESS,
+        {headers},
+      )
+      .then(res => {
+        if (res.status == 200) {
+          console.log('address:', res.data)
+          address = res.data
+          setAddrVisible(false);
+          setName(address.name);
+          setCountry(address.country);
+          setState(address.province);
+          setCity(address.city);
+          setZip(address.zip);
+          setPhone(address.phone);
+          setLine1(address.address1);
+          setLine2(address.address2);
+        } else {
+          console.log('get address failed')
+        }
+      })
+      .catch(e => {
+        handleError(e);
+      });
+    }
+    console.log('fetch_address')
+    if (userInfo && !(line1 && city && name && country && phone && state && zip)) {
+      fetch_address()
+    }
+
+  }, [userInfo])
+
+  const OrderSummary = () => {
     return (
       <View>
         {products &&
           products.map((e, idx) => (
             <View key={idx} style={{flexDirection: 'row'}}>
               <Image
-                source={{uri: e.image}}
+                source={{uri: e.img_url}}
                 containerStyle={{
                   width: size,
                   height: size,
@@ -56,7 +106,7 @@ export const PaymentTab = ({route, navigation}) => {
               />
               <View style={{flexDirection: 'column'}}>
                 <P>{e.title}</P>
-                <P>{e.price}</P>
+                <P>{e.you_pay_price}</P>
                 <P>{e.quantity}</P>
               </View>
             </View>
@@ -77,13 +127,12 @@ export const PaymentTab = ({route, navigation}) => {
       Alert.alert('Success', 'Your order is confirmed!');
       route.params.products.forEach(e => {
         if (e.id && e.quantity > 0) {
-          clearCart();
           navigation.navigate(TABs.CONFIRMATION, {name: name});
           axios
             .post(
               APIs.ORDER,
               {
-                design_set_id: e.id,
+                design_set_id: e.product_id,
                 quantity: e.quantity,
                 shipping: sanitizedAddr,
               },
@@ -98,7 +147,40 @@ export const PaymentTab = ({route, navigation}) => {
     }
   };
 
-  const getPaymentSheet = async total => {
+  const saveAddress = async(address1, address2, city, name, country, phone, province, zip) => {
+    console.log('save address:', address1, address2, city, name, country, phone, province, zip)
+    if (!(address1 && city && name && country && phone && province && zip)) {
+      console.log('missing address info, could not save')
+      return
+    }
+    axios
+      .post(
+        APIs.ADDRESS,
+        {
+          address1: address1,
+          address2: address2,
+          city: city,
+          name: name,
+          country: country,
+          phone: phone,
+          province: province,
+          zip: zip,
+        },
+        {headers},
+      )
+      .then(res => {
+        if (res.status == 200) {
+          console.log('address saved')
+        } else {
+          console.log('save address failed')
+        }
+      })
+      .catch(e => {
+        handleError(e);
+      });
+  }
+
+  const getPaymentSheet = async orderId => {
     const sanitizedAddr = {...addrDetails};
     delete sanitizedAddr['target'];
     delete sanitizedAddr['isCheckboxSelected'];
@@ -110,9 +192,13 @@ export const PaymentTab = ({route, navigation}) => {
     sanitizedAddr['address'] = addressClean;
     const res = await axios.post(
       `${APIs.PAYMENT}payment-sheet`,
-      {amount: total, name: name, shipping: sanitizedAddr, phone: phone},
+      {orderId: orderId, name: name, shipping: sanitizedAddr, phone: phone},
       {headers},
     );
+    if (res.status != 200) {
+      console.log('getPaymentSheet failed')
+      return
+    }
     const {paymentIntent, ephemeralKey, customer} = res.data;
     let {error} = await initPaymentSheet({
       merchantDisplayName: 'EMOAI, Inc.',
@@ -140,8 +226,8 @@ export const PaymentTab = ({route, navigation}) => {
     <View style={styles.container}>
       <ScrollView>
         <OrderSummary
-          products={route.params.products}
-          total={route.params.total}
+          products={products}
+          total={total}
         />
         <View style={{margin: 10}}>
           <SubHeader>Shipping Address</SubHeader>
@@ -181,6 +267,11 @@ export const PaymentTab = ({route, navigation}) => {
             setLine1(addressDetails.address.line1);
             setLine2(addressDetails.address.line2);
             setAddrDetails(addressDetails);
+            saveAddress(addressDetails.address.line1, 
+              addressDetails.address.line2, addressDetails.address.city, 
+              addressDetails.name, addressDetails.address.country, 
+              addressDetails.phone, addressDetails.address.state, 
+              addressDetails.address.postalCode)
           }}
           onError={error => {
             setAddressSheetVisible(false);
@@ -188,8 +279,8 @@ export const PaymentTab = ({route, navigation}) => {
         />
         <GradientButtonAction
           onPress={() => {
-            if (name && country && state && city && zip && phone && line1) {
-              getPaymentSheet(route.params.total);
+            if (name && country && state && city && zip && phone && line1 && orderId) {
+              getPaymentSheet(orderId);
             } else {
               Alert.alert(
                 'Make sure you have complete shipping address filled out!',
