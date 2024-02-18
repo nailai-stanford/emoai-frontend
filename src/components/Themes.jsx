@@ -21,9 +21,11 @@ import { ButtonSelection } from "../styles/buttons";
 import { P, ButtonP, MenuHeader, TitleHeader, SubHeader, GradientMenuHeader} from "../styles/texts";
 import { COLORS, PADDINGS } from "../styles/theme";
 import { ACTION_ICONS } from '../styles/icons';
+import {Dimensions} from 'react-native';
 
 
 const iconSize = 20;
+const windowWidth = Dimensions.get('window').width;
 
 export const Themes = props => {
   const [themes, setThemes] = useState([]);
@@ -53,8 +55,8 @@ export const Themes = props => {
       }}>
       <Title />
 
-      <SafeAreaView style={{display: 'flex', flexDirection: 'row'}}>
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+      <SafeAreaView style={{display: 'flex', flexDirection: 'row', width:windowWidth}}>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} >
           {!!themes &&
             themes.map((item, idx) => (
               <ThemeCard key={idx} item={item} {...props} />
@@ -69,7 +71,7 @@ const Title = () => {
   const navigation = useNavigation();
   return (
 
-    <View style={{flexDirection: "row", alignItems: "center",paddingBottom: 10}}>
+    <View style={{flexDirection: "row", alignItems: "center",paddingBottom: 10, paddingHorizontal: 20}}>
       <GradientMenuHeader style={{ flex:2 }} >Themes</GradientMenuHeader>
       <TouchableOpacity style={{flex:4, justifyContent:"flex-end", flexDirection: "row", alignItems: "center", }}
         onPress={() => {navigation.navigate(TABs.THEME)}}>
@@ -95,7 +97,7 @@ const ThemeCard = ({item}) => {
         borderColor: COLORS.white,
         borderWidth: 0.5,
         flex: 1,
-        marginRight: 20,
+        marginLeft: 20,
         borderRadius: 15,
         padding: 20,
       }}>
