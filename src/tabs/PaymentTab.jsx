@@ -21,7 +21,7 @@ import {isAwaitKeyword} from 'typescript';
 export const PaymentTab = ({route, navigation}) => {
   const [addrVisible, setAddrVisible] = useState(false);
   const {userInfo} = useAuthenticationContext();
-  const {cart} = useCartContext();
+  const {cart, clearCart} = useCartContext();
   const headers = getHeader(userInfo.idToken);
   const [name, setName] = useState('');
   const [country, setCountry] = useState('');
@@ -73,6 +73,20 @@ export const PaymentTab = ({route, navigation}) => {
           setPhone(address.phone);
           setLine1(address.address1);
           setLine2(address.address2);
+
+          newAddressDetails = {
+            name: address.name,
+            phone: address.phone, 
+            address: {
+              country: address.country,
+              state: address.province,
+              city: address.city,
+              postalCode: address.zip,
+              line1: address.address1,
+              line2: address.address2
+            }
+          }
+          setAddrDetails(newAddressDetails);
         } else {
           console.log('get address failed')
         }
@@ -116,34 +130,31 @@ export const PaymentTab = ({route, navigation}) => {
     );
   };
 
-  const showPaymentSheet = async () => {
+  const showPaymentSheet = async (orderPaymentId) => {
     const {error} = await presentPaymentSheet();
     const sanitizedAddr = {...addrDetails};
     delete sanitizedAddr['target'];
     delete sanitizedAddr['isCheckboxSelected'];
+    console.log('presentPaymentSheet result:', error)
     if (error) {
       Alert.alert(`Error code: ${error.code}`, error.message);
     } else {
-      Alert.alert('Success', 'Your order is confirmed!');
-      route.params.products.forEach(e => {
-        if (e.id && e.quantity > 0) {
+      payload = {
+        payment_order_id: orderPaymentId,
+        shipping: sanitizedAddr
+      }
+      axios.post(
+        APIs.ORDER, payload, {headers}
+      ).then(res=> {
+        if (res.status == 200) {
+          Alert.alert('Success', 'Your order is confirmed!');
+          clearCart()
           navigation.navigate(TABs.CONFIRMATION, {name: name});
-          axios
-            .post(
-              APIs.ORDER,
-              {
-                design_set_id: e.product_id,
-                quantity: e.quantity,
-                shipping: sanitizedAddr,
-              },
-              {headers},
-            )
-            .then()
-            .catch(e => {
-              handleError(e);
-            });
         }
-      });
+      }).catch(err => {
+        handleError(err)
+      })
+     
     }
   };
 
@@ -199,7 +210,7 @@ export const PaymentTab = ({route, navigation}) => {
       console.log('getPaymentSheet failed')
       return
     }
-    const {paymentIntent, ephemeralKey, customer} = res.data;
+    const {paymentIntent, ephemeralKey, customer, orderPaymentId} = res.data;
     let {error} = await initPaymentSheet({
       merchantDisplayName: 'EMOAI, Inc.',
       customerId: customer,
@@ -217,7 +228,7 @@ export const PaymentTab = ({route, navigation}) => {
     if (!error) {
       setLoading(true);
     }
-    showPaymentSheet();
+    showPaymentSheet(orderPaymentId);
   };
 
   //  Stripe UI guide:
