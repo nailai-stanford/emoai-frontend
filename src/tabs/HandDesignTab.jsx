@@ -156,7 +156,7 @@ export const HandDesignTab = ({ route, navigation }) => {
             {currentHand === 'left' ? leftHandMasks[index] : rightHandMasks[index]}
             </View>
         }>
-        <TouchableOpacity
+        {/* <TouchableOpacity
             onPress={() => {
             const selectedNailData = nailListRender[index];
             navigation.navigate(TABs.NAIL_DESIGN, { 
@@ -168,12 +168,12 @@ export const HandDesignTab = ({ route, navigation }) => {
             });
             }}
             activeOpacity={1}
-        >
+        > */}
             {nailListRender[index] ? 
             <Image source={{ uri: nailListRender[index].url }} style={styles.nailImage} />
             : <View style={[styles.nailImage, { backgroundColor: COLORS.dark }]} />
             }
-        </TouchableOpacity>
+        {/* </TouchableOpacity> */}
         </MaskedView>
     ));
 };

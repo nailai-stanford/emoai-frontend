@@ -11,6 +11,9 @@ import { P, ButtonP, MenuHeader, TitleHeader, SubHeader, ButtonH} from "../style
 import { COLORS, PADDINGS, FONTS } from "../styles/theme";
 import { ACTION_ICONS } from '../styles/icons';
 import { useFocusEffect } from '@react-navigation/native';
+import { useToast } from "react-native-toast-notifications";
+import { handleError } from "../utils/Common";
+import { useCartContext } from '../providers/CartContextProvider';
 
 
 export const DesignPreviewTab = ({ navigation, route }) => {
@@ -25,9 +28,13 @@ export const DesignPreviewTab = ({ navigation, route }) => {
     const [designSetId, setDesignSetId] = useState(null)
     const [productImageList, setProductImageList] = useState('');
     const { leftHandNails, rightHandNails, handProducts, taskId} = route.params;
+    const toast = useToast();
+    const {setCart} = useCartContext()
+
 
     const onBack = () => {
-      navigation.goBack();
+      // navigation.goBack();
+      navigation.navigate(TABs.AI)
     };
     useFocusEffect(
       React.useCallback(() => {
@@ -43,42 +50,64 @@ export const DesignPreviewTab = ({ navigation, route }) => {
     );
 
   
-    useEffect(() => {
-        nails = leftHandNails.concat(rightHandNails)
-        const save_design_set = async() => {
-          try {
-            const { idToken } = userInfo;
-            const headers = getHeader(idToken);
-            console.log('headers:', headers)
-            body = JSON.stringify({
-                  task_id: taskId,
-                  nail_designs: nails,
-                  hand_designs: handProducts
-                }),
-            console.log(body)
-            const response = await fetch(`${BASE_URL}/api/design_sets/`, {
-              method: 'POST',
-              headers: headers,
-              body: body,
-            });
-            if (!response.ok){
-              alert('save designset failed, please try again')
-              return
-            }
-            const data = await response.json();
-            design_set = data.design_set
-            setTitle(design_set.title); 
-            setDescription(design_set.description)
-            setProductImage(design_set.image_url)
-            setPrice(design_set.price)
-            setDesignSetId(design_set.shopify_product_id)
-            setEnableAddToCart(true)
-          } catch (error) {
-            alert('save designset failed, please try again')
+    const add_to_cart = () => {
+      const headers = getHeader(userInfo.idToken);
+      if(designSetId) {
+        payload = {actions: [{id: String(designSetId), count: 1}]}
+        axios.post(APIs.ORDER_UPDATE, payload, { headers })
+        .then(resp => {
+          if (resp.status == 200) {
+            setCart(resp.data)
+            toast.show("Added to cart", {
+              type: "normal",
+              placement: "bottom",
+              duration: 1000,
+              animationType: "zoom-in",
+              style : {
+                marginBottom: 150
+              }
+            })
           }
+        }).catch((e) => {
+          handleError(e);
+        });
+      }
+    }
+    useEffect(() => {
+      nails = leftHandNails.concat(rightHandNails)
+      const save_design_set = async() => {
+        try {
+          const { idToken } = userInfo;
+          const headers = getHeader(idToken);
+          console.log('headers:', headers)
+          body = JSON.stringify({
+                task_id: taskId,
+                nail_designs: nails,
+                hand_designs: handProducts
+              }),
+          console.log(body)
+          const response = await fetch(`${BASE_URL}/api/design_sets/`, {
+            method: 'POST',
+            headers: headers,
+            body: body,
+          });
+          if (!response.ok){
+            alert('save designset failed, please try again')
+            return
+          }
+          const data = await response.json();
+          design_set = data.design_set
+          setTitle(design_set.title); 
+          setDescription(design_set.description)
+          setProductImage(design_set.image_url)
+          setPrice(design_set.price)
+          setDesignSetId(design_set.shopify_product_id)
+          setEnableAddToCart(true)
+        } catch (error) {
+          alert('save designset failed, please try again')
         }
-        save_design_set()
-      
+      }
+      save_design_set() 
     }, [leftHandNails, rightHandNails, handProducts, userInfo])
 
 
@@ -134,7 +163,7 @@ export const DesignPreviewTab = ({ navigation, route }) => {
         </View>
         {enableAddToCart &&
           <View style={{ marginVertical: 10, flexDirection:'row' }}>
-            <GradientButtonAction >
+            <GradientButtonAction onPress={add_to_cart}>
               <ButtonP>Add to Cart</ButtonP>
             </GradientButtonAction> 
           </View>
