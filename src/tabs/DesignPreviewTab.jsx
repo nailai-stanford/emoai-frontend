@@ -52,8 +52,8 @@ export const DesignPreviewTab = ({ navigation, route }) => {
   
     const add_to_cart = () => {
       const headers = getHeader(userInfo.idToken);
-      if(designSetId) {
-        payload = {actions: [{id: String(designSetId), count: 1}]}
+      if(designSetId && quantity > 0) {
+        payload = {actions: [{id: String(designSetId), count: quantity}]}
         axios.post(APIs.ORDER_UPDATE, payload, { headers })
         .then(resp => {
           if (resp.status == 200) {
