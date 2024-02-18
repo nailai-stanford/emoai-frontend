@@ -11,7 +11,7 @@ import { useEffect } from "react";
 
 export const WorkshopIdleTab = ({navigation, route}) => {
 
-    const {taskStatus, setTaskStatus} = useTaskStatus();
+    const {taskStatus, setTaskStatus, taskGlobalID, setTaskGlobalID} = useTaskStatus();
 
     const navigate_to_AI = () => {
         if (taskStatus === "WORKSHOP_INIT") {
@@ -23,7 +23,7 @@ export const WorkshopIdleTab = ({navigation, route}) => {
 
     const TASK_TEXT_MAPPING = {
         "WORKSHOP_INIT": {
-            "action": () => navigation.navigate(TABs.WORKSHOP),
+            "action": () => {navigation.navigate(TABs.WORKSHOP, {task_id: taskGlobalID})},
             "text": "Go To Workshop",
         },
         "PROCESSING": {
@@ -50,8 +50,8 @@ export const WorkshopIdleTab = ({navigation, route}) => {
             <P style={{width:'75%'}}>Upload your own photos in the workshop and create nail 
                 designs that are uniquely yours – experience personalized 
                 nail art like never before!</P>
-            <GradientButtonAction onPress={TASK_TEXT_MAPPING[taskStatus]?.action || (() => {})} > 
-                <ButtonH>{TASK_TEXT_MAPPING[taskStatus]?.text}</ButtonH>
+            <GradientButtonAction onPress={TASK_TEXT_MAPPING[taskStatus]?.action || (() => {navigation.navigate(TABs.HOME)})} > 
+                <ButtonH>{TASK_TEXT_MAPPING[taskStatus]?.text || "GO BACK HOME"}</ButtonH>
             </GradientButtonAction>
         </View>
     );

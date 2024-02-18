@@ -11,10 +11,13 @@ export const TaskStatusProvider = ({ children }) => {
         WORKSHOP_INIT: 'WORKSHOP_INIT',
         WORKSHOP_PREVIEW: 'WORKSHOP_PREVIEW',
       };
+    
+    
     const [taskStatus, setTaskStatus] = useState("NO_TASK");
+    const [taskGlobalID, setTaskGlobalID] = useState("");
 
     return (
-    <TaskStatusContext.Provider value={{ taskStatus, setTaskStatus }}>
+    <TaskStatusContext.Provider value={{ taskStatus, setTaskStatus, taskGlobalID, setTaskGlobalID }}>
         {children}
     </TaskStatusContext.Provider>
     );

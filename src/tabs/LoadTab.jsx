@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, ActivityIndicator } from 'react-native';
 import * as Progress from 'react-native-progress';
 import { TABs } from '../static/Constants';
-import { useAuthenticationContext } from "../providers/AuthenticationProvider";
+import { useAuthenticationContext } from "../providers/AuthenticationProvider"
+import { useTaskStatus } from '../providers/TaskContextProvider.jsx';
 import { BASE_URL, APIs, getHeader } from "../utils/API";
 import LottieView from "lottie-react-native";
 
@@ -12,6 +13,7 @@ import { GradientButtonAction } from '../styles/buttons.tsx';
 
 export const LoadTab = ({ navigation }) => {
   const [progress, setProgress] = useState(0);
+  const {taskStatus, setTaskStatus, taskGlobalID, setTaskGlobalID} = useTaskStatus();
   const { userInfo} = useAuthenticationContext();
   // const { userTags } = route.params;
 
@@ -19,6 +21,8 @@ export const LoadTab = ({ navigation }) => {
   useEffect(() => {
     const { idToken } = userInfo;
     const headers = getHeader(idToken);
+
+    let intervalId;
   
     const get_last_task_status = async () => {
       try {
@@ -33,17 +37,20 @@ export const LoadTab = ({ navigation }) => {
         const data = await response.json();
         task_id = data.task_id
         task_status = data.status
-        console.log(task_id, task_status, 'progress:', data.progress)
+        console.log(task_id, task_status, taskStatus, 'progress:', data.progress)
         setProgress(data.progress)
         if (task_status === 3) {
           // task_id = "506b07a3-84e2-4545-8840-ddb17da54193"
-          navigation.navigate(TABs.WORKSHOP, {task_id: task_id})
+          // navigation.navigate(TABs.WORKSHOP, {task_id: task_id})
           clearInterval(intervalId);
           setProgress(0);
+          setTaskGlobalID(task_id);
+          setTaskStatus("WORKSHOP_INIT");
         } else if (task_status === 4 || task_status === 5) {
           clearInterval(intervalId);
           setProgress(0);
           // how to deal with failed?  need talk with PM
+          setTaskStatus("NO_TASK");
           navigation.navigate(TABs.AICHAT)
         }
       } catch (error) {
@@ -51,7 +58,7 @@ export const LoadTab = ({ navigation }) => {
       }
     };
   
-    const intervalId = setInterval(() => {
+    intervalId = setInterval(() => {
       get_last_task_status();
     }, 5000); // 5000 milliseconds = 5 seconds
   
@@ -59,7 +66,7 @@ export const LoadTab = ({ navigation }) => {
       clearInterval(intervalId);
     };
 
-  }, [progress]); // Dependencies array
+  }, []); // Dependencies array
   
 
   return (

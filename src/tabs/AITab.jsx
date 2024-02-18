@@ -14,7 +14,7 @@ import { BASE_URL, APIs, getHeader } from "../utils/API";
 export const AITab = ({ navigation }) => {
 
   const { userInfo} = useAuthenticationContext();
-  const {taskStatus, setTaskStatus} = useTaskStatus();
+  const {taskStatus, setTaskStatus, taskGlobalID, setTaskGlobalID} = useTaskStatus();
 
   const { idToken } = userInfo;
   const headers = getHeader(idToken);
@@ -35,11 +35,13 @@ export const AITab = ({ navigation }) => {
       console.log(task_id, task_status)
       if (task_status === 1 || task_status === 2) {
         setTaskStatus("PROCESSING");
+        setTaskGlobalID(task_id);
         navigation.navigate(TABs.LOAD)
       }
       if (task_status === 3) {
         console.log('task_status is 3', task_id)
         setTaskStatus("WORKSHOP_INIT");
+        setTaskGlobalID(task_id);
         navigation.navigate(TABs.WORKSHOP, {task_id: task_id})
       } else if (task_status === 4 || task_status === 5) {
         console.log('task_status is 4/5', task_id)
