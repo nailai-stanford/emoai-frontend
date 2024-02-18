@@ -13,6 +13,8 @@ import { MenuHeader,ButtonH, ButtonP, TitleHeader,P, SubHeader } from "../styles
 import { ButtonAction,ButtonSelection, GradientButtonSelection } from "../styles/buttons";
 import { BORDERS, COLORS, PADDINGS } from "../styles/theme";
 import { ACTION_ICONS } from "../styles/icons";
+import { useToast } from "react-native-toast-notifications";
+
 
 const size = 50;
 const iconSize = 20;
@@ -79,6 +81,7 @@ const ButtonGroup = ({ productID }) => {
   const headers = getHeader(userInfo.idToken);
   const [collected, setCollected] = useState(false)
   const {setCart} = useCartContext()
+  const toast = useToast();
   useEffect(() => {
     async function _getCollect() {
       axios.get(
@@ -125,6 +128,15 @@ const ButtonGroup = ({ productID }) => {
           .then(resp => {
             if (resp.status === 200) {
               setCart(resp.data)
+              toast.show("Added to cart", {
+                type: "normal",
+                placement: "bottom",
+                duration: 1000,
+                animationType: "zoom-in",
+                style : {
+                  marginBottom: 150
+                }
+              })
             }
           }).catch((e) => {
             handleError(e);
