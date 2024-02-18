@@ -39,8 +39,10 @@ export const LoadTab = ({ navigation }) => {
           // task_id = "506b07a3-84e2-4545-8840-ddb17da54193"
           navigation.navigate(TABs.WORKSHOP, {task_id: task_id})
           clearInterval(intervalId);
+          setProgress(0);
         } else if (task_status === 4 || task_status === 5) {
           clearInterval(intervalId);
+          setProgress(0);
           // how to deal with failed?  need talk with PM
           navigation.navigate(TABs.AICHAT)
         }
@@ -66,7 +68,10 @@ export const LoadTab = ({ navigation }) => {
       <Progress.Circle progress={progress/100} size={120} showsText={true} color={COLORS.white}/>
       <P style={{padding:PADDINGS.md, width:290, marginBottom:50}}>Please check back soon. 
       Meanwhile, you can tour around the nail design by other creators!</P>
+      <View style={{flexDirection:'row'}}>
       <GradientButtonAction onPress={() => {navigation.navigate(TABs.DISCOVER)}}><ButtonP>Explore</ButtonP></GradientButtonAction>
+      <GradientButtonAction onPress={() => {navigation.navigate(TABs.HOME)}}><ButtonP>Home</ButtonP></GradientButtonAction>
+      </View>
     </View>
   );
 };

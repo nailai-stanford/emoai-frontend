@@ -197,7 +197,7 @@ useEffect(() => {
   }
 
   return (
-    <View style={{    paddingBottom: 80}}>
+    <View >
     <ScrollView testID="safe-area-view" contentContainerStyle={{flexDirection: 'column', padding:PADDINGS.sm}}>
       
         <ScrollView
@@ -228,13 +228,13 @@ useEffect(() => {
             return(
               <View key={index} style={[styles.center, { width}]}>
                 <Image source={{ uri: data.handDesignImageUrl }} style={styles.imageStyle} />
-                <View style={{ flexDirection: 'row', flexGrow: 1, alignSelf: "center", flexWrap: 'wrap'}}>
+                <ScrollView horizontal style={{ flexDirection: 'row', flexGrow: 2, alignSelf: "center", flexWrap: 'wrap'}}>
                   {data.nails.map((nail, nIndex) => (
                     <Pressable key={nIndex} onPress={() => handleNailSelect(nail)}>
                       <Image source={{ uri: nail.nailDesignImageUrl }} style={styles.nailStyle} />
                     </Pressable>
                   ))}
-                </View>
+                </ScrollView>
               </View>
             )
           })}
@@ -325,7 +325,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flexDirection: 'row',
-    backgroundColor: '#63a4ff',
   },
   progressContainer: { flex: 0.1, backgroundColor: '#63a4ff' },
   center: {

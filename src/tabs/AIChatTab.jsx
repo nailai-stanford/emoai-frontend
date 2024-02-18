@@ -5,6 +5,7 @@ import {
   Platform, TouchableOpacity, Animated, Dimensions
 } from 'react-native';
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
+import { useTaskStatus } from "../providers/TaskContextProvider";
 import { TABs } from '../static/Constants';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { Modal } from "react-native-modals"
@@ -118,6 +119,7 @@ export const AIChatTab = ({ navigation }) => {
   const [userInput, setUserInput] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
   const [conversationStage, setConversationStage] = useState('THEME');
+  const { taskStatus, setTaskStatus } = useTaskStatus(); 
   const { userInfo, signout } = useAuthenticationContext();
 
   const [userPreferences, setUserPreferences] = useState({
@@ -331,6 +333,7 @@ export const AIChatTab = ({ navigation }) => {
           setFetchHistory(false)
           data = await response.json()
           console.log('AI design task submitted, resp:', data)
+          setTaskStatus("PROCESSING");
           navigation.navigate(TABs.LOAD)
         } catch(error) {
           console.error('submit ai design task failed', error)
@@ -377,7 +380,7 @@ export const AIChatTab = ({ navigation }) => {
   return (
     <KeyboardAvoidingView 
     behavior={"padding"}
-    style={{ flex: 1, paddingHorizontal: PADDINGS.sm, marginTop: 60,  marginBottom: 80}}
+    style={{ flex: 1, paddingHorizontal: PADDINGS.sm, marginTop: 60}}
     >
       <View style={{flexDirection: "row", flex: 0.1, alignItems: "center"}}>
         <TouchableOpacity style={{ alignItems: "center", flex: 1 }} onPress={()=>{setModalVisible(true)}}>
@@ -393,7 +396,7 @@ export const AIChatTab = ({ navigation }) => {
         <MenuHeader> EMO.AI</MenuHeader>
         </View>
         <TouchableOpacity style={{ alignItems: "center", flex: 1 }}
-          onPress={() => { () => { navigation.navigate(TABs.HOME) } }}>
+          onPress={() => { navigation.navigate(TABs.HOME)} }>
         <ACTION_ICONS.home
                 size={iconSize}
                 stroke={COLORS.white}

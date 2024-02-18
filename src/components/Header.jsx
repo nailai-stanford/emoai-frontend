@@ -19,7 +19,7 @@ const GoBackScreens = [TABs.THEME, TABs.COLLECTION, TABs.CART, TABs.SETTINGS, TA
 export const Header = (props) => {
   // TODO Refactor CSS styles
   const route = props.route;
-  const showButtons = Boolean(route.name !== TABs.AICHAT && route.name != TABs.PROFILE && (route.name != TABs.SETTINGS) && route.name != TABs.ADDRESS) ;
+  const showButtons = Boolean(route.name !== TABs.AICHAT && route.name != TABs.PROFILE && (route.name != TABs.SETTINGS) && route.name != TABs.ADDRESS ) ;
   const goBack = (route.name == TABs.THEME) || (route.name == TABs.COLLECTION) || (route.name == TABs.CART)
     || (route.name == TABs.SETTINGS) || (route.name == TABs.ADDRESS) || (route.name == TABs.NAME)
   const profileIcon = (route.name == TABs.PROFILE)
@@ -40,6 +40,7 @@ export const Header = (props) => {
       <Title {...props} />
       {!!showButtons && <ButtonGroup {...props} />}
       {!!profileIcon && <ProfileIconGroup {...props} />}
+
     </View>
   );
 };
@@ -75,6 +76,7 @@ const ProfileIconGroup = ({ navigation }) => {
   </View>
 }
 
+
 const Title = (props) => {
   const tabName = props.route.name;
   const { userInfo } = useAuthenticationContext();
@@ -95,10 +97,16 @@ const Title = (props) => {
   );
 };
 
-const ButtonGroup = ({ navigation }) => {
+const ButtonGroup = (props ) => {
   const {cart, setCart} = useCartContext();
   const { userInfo } = useAuthenticationContext();
   const [productCount, setProductCount] = useState(0)
+  const navigation = props.navigation;
+  const route = props.route;
+
+  useEffect(() => {
+    console.log(route.name)
+  }, [route])
   
   useEffect(() => {
     if(userInfo && userInfo.idToken) {
@@ -138,14 +146,15 @@ const ButtonGroup = ({ navigation }) => {
         height: iconSize,
       }}
     >
-      {/* <TouchableOpacity size={iconSize} style={{ position: "absolute", right: 50 }} onPress={() => navigation.navigate(TABs.SEARCH)}>
-        <ACTION_ICONS.search
-          color={iconColor}
+      {route.name !== TABs.Home && 
+      <TouchableOpacity size={iconSize} style={{ position: "absolute", right: 30 }} onPress={() => navigation.navigate(TABs.HOME)}>
+        <ACTION_ICONS.home
+          stroke={COLORS.white}
           size={iconSize}
         />
-      </TouchableOpacity> */}
-      {/* Uncomment the following code once the icons should be displayed */}
-      <TouchableOpacity style={{ position: "absolute", right: 10 }} onPress={() => navigation.navigate(TABs.CART)}>
+      </TouchableOpacity>
+      }
+      <TouchableOpacity style={{ position: "absolute", right: 0 }} onPress={() => navigation.navigate(TABs.CART)}>
         <View>
           <ACTION_ICONS.shop
             color={iconColor}
@@ -153,8 +162,8 @@ const ButtonGroup = ({ navigation }) => {
             {productCount > 0 && (
               <View style={{
                 position: 'absolute',
-                right: 0,
-                top: -5,
+                right: -5,
+                bottom: -5,
                 backgroundColor: '#7488eb',
                 borderRadius: 10,
                 width: 20,
@@ -169,6 +178,7 @@ const ButtonGroup = ({ navigation }) => {
             )}
         </View>
       </TouchableOpacity>
+
     </View>
   );
 };

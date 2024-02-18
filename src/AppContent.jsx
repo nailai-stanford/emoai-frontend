@@ -23,6 +23,7 @@ import {DiscoverTab} from './tabs/DiscoverTab';
 import {AITab} from './tabs/AITab';
 import {AIChatTab} from './tabs/AIChatTab';
 import {WorkshopTab} from './tabs/WorkshopTab';
+import {WorkshopIdleTab} from './tabs/WorkshopIdleTab';
 import {HandDesignTab} from './tabs/HandDesignTab';
 
 import {NailDesignTab} from './tabs/NailDesignTab';
@@ -109,7 +110,7 @@ export const AppContent = () => {
 
                 return <TAB_BAR_ICONS.aiChat width={ICON_SIZES.standard} height={ICON_SIZES.standard} fill={currFill}  stroke={stroke}  />
 
-              case TABs.WORKSHOP:
+              case TABs.WORKSHOP_IDLE:
                 currFill = focused ? COLORS.white : COLORS.grey;
                 
                 return <TAB_BAR_ICONS.workshop width={ICON_SIZES.standard} height={ICON_SIZES.standard} fill={fill}  stroke={currFill}  />
@@ -170,7 +171,7 @@ export const AppContent = () => {
             component={AIChatTab}
             options={{
               tabBarButton: () => null,
-              tabBarVisible: false,
+              tabBarStyle: {display: 'none'}
             }}
           />
           <Tab.Screen
@@ -202,10 +203,19 @@ export const AppContent = () => {
             component={LoadTab}
             options={{
               tabBarButton: () => null,
-              tabBarVisible: false,
+              tabBarStyle: {display: 'none'}
             }}
           />
-          <Tab.Screen name={TABs.WORKSHOP} component={WorkshopTab} />
+          <Tab.Screen 
+            name={TABs.WORKSHOP} 
+            component={WorkshopTab}
+            options={{
+              tabBarButton: () => null,
+              tabBarStyle: {display: 'none'}
+            }} />
+          <Tab.Screen
+            name={TABs.WORKSHOP_IDLE}
+            component={WorkshopIdleTab}/>
           <Tab.Screen
             name={TABs.CART}
             component={CartTab}
@@ -235,7 +245,7 @@ export const AppContent = () => {
             component={HandDesignTab}
             options={{
               tabBarButton: () => null,
-              tabBarVisible: false,
+              tabBarStyle: {display: 'none'}
             }}
           />
           <Tab.Screen
@@ -243,7 +253,7 @@ export const AppContent = () => {
             component={NailDesignTab}
             options={{
               tabBarButton: () => null,
-              tabBarVisible: false,
+              tabBarStyle: {display: 'none'}
             }}
           />
           <Tab.Screen
@@ -251,7 +261,7 @@ export const AppContent = () => {
             component={DesignPreviewTab}
             options={{
               tabBarButton: () => null,
-              tabBarVisible: false,
+              tabBarStyle: {display: 'none'}
             }}
           />
           <Tab.Screen

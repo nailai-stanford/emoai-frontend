@@ -6,13 +6,15 @@ import { P, ButtonP, ButtonH, TitleHeader } from "../styles/texts";
 import { TABs } from "../static/Constants";
 import { BlurView } from "@react-native-community/blur";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
+import { useTaskStatus } from "../providers/TaskContextProvider";
 import { BASE_URL, APIs, getHeader } from "../utils/API";
+
 
 
 export const AITab = ({ navigation }) => {
 
   const { userInfo} = useAuthenticationContext();
-  const [ taskStatus, setTaskStatus ] = useState(0);
+  const {taskStatus, setTaskStatus} = useTaskStatus();
 
   const { idToken } = userInfo;
   const headers = getHeader(idToken);
@@ -30,19 +32,22 @@ export const AITab = ({ navigation }) => {
       const data = await response.json();
       task_id = data.task_id
       task_status = data.status
-      setTaskStatus(task_status);
       console.log(task_id, task_status)
       if (task_status === 1 || task_status === 2) {
+        setTaskStatus("PROCESSING");
         navigation.navigate(TABs.LOAD)
       }
       if (task_status === 3) {
         console.log('task_status is 3', task_id)
+        setTaskStatus("WORKSHOP_INIT");
         navigation.navigate(TABs.WORKSHOP, {task_id: task_id})
       } else if (task_status === 4 || task_status === 5) {
         console.log('task_status is 4/5', task_id)
+        setTaskStatus("NO_TASK");
         navigation.navigate(TABs.AICHAT)
       } else {
         // more status?
+        setTaskStatus("PROCESSING");
         navigation.navigate(TABs.LOAD)
       }
     } catch (error) {
@@ -71,7 +76,7 @@ export const AITab = ({ navigation }) => {
 
         }}
       >
-        { taskStatus === 0 || taskStatus >3  ? 
+        { taskStatus === "NO_TASK" ? 
         <>
         <TitleHeader >
           Start Generating Images Using EMO.AI
@@ -88,11 +93,11 @@ export const AITab = ({ navigation }) => {
         :  
         <>
         <TitleHeader >
-        {taskStatus>2 ? "Your Design is Here!" : "Welcome Back!"}
+        {taskStatus==="WORKSHOP_INIT" ? "Your Design is Here!" : "Welcome Back!"}
       </TitleHeader>
       <View>
       <GradientButtonAction onPress={() => check_last_task_status()}>
-        <ButtonH>{taskStatus>2 ? "Go To Workshop" : "Check Status"}</ButtonH>
+        <ButtonH>{taskStatus==="WORKSHOP_INIT" ? "Go To Workshop" : "Check Status"}</ButtonH>
       </GradientButtonAction>
     </View>
     </>
