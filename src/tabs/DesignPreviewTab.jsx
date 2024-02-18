@@ -115,18 +115,14 @@ export const DesignPreviewTab = ({ navigation, route }) => {
       /*                              render this page                              */
       /* -------------------------------------------------------------------------- */
       return (
-        <View style={{height: '90%'}}>
+        <View >
         <ScrollView style={{ paddingHorizontal: 20, display:'flex', flexDirection:'column' }}>
-          <View style={{
-        left: 10,
-        }}>
+          <View style={{left: 10}}>
             <TouchableOpacity onPress={onBack} style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 5 }}>
                 <ACTION_ICONS.back width={5} />
             <P style={{paddingLeft:PADDINGS.sm}}>Back to hand design</P>
-
             </TouchableOpacity>
-
-        </View>
+          </View>
 
         {productImage ==='' ? 
         <View>
@@ -162,7 +158,7 @@ export const DesignPreviewTab = ({ navigation, route }) => {
           }
         </View>
         {enableAddToCart &&
-          <View style={{ marginVertical: 10, flexDirection:'row' }}>
+          <View style={{ marginVertical: 10, flexDirection:'row', alignSelf:'center' }}>
             <GradientButtonAction onPress={add_to_cart}>
               <ButtonP>Add to Cart</ButtonP>
             </GradientButtonAction> 

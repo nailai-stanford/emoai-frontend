@@ -6,15 +6,18 @@ import { ImageBackground, PixelRatio } from 'react-native';
 import { Dimensions } from 'react-native';
 import { style } from 'deprecated-react-native-prop-types/DeprecatedViewPropTypes';
 // import Svg, { Path } from 'react-native-svg';
+
 import { ButtonAction, ButtonSelection, GradientButtonAction, GradientButtonSelection } from "../styles/buttons";
 import { P, ButtonP, MenuHeader, TitleHeader, SubHeader, ButtonH} from "../styles/texts";
 import { COLORS, PADDINGS, FONTS } from "../styles/theme";
+import { ACTION_ICONS } from '../styles/icons';
+
 import { LEFTHAND_NAILS } from '../styles/nails';
 import { BlurView } from "@react-native-community/blur";
 import { BASE_URL, APIs, getHeader } from "../utils/API";
 import { useFocusEffect } from '@react-navigation/native';
 
-
+import { useTaskStatus } from '../providers/TaskContextProvider';
 
 import MaskedView from "@react-native-masked-view/masked-view";
 import { width } from 'deprecated-react-native-prop-types/DeprecatedImagePropType';
@@ -49,6 +52,7 @@ export const HandDesignTab = ({ route, navigation }) => {
   const handProducts = route.params?.handProducts || [];
   const taskId = route.params?.task_id || "";
   const userInfo = route.params?.userInfo || null;
+  const {taskStatus, setTaskStatus} = useTaskStatus();
 
   const [currentHand, setCurrentHand] = useState('left');
   const [nailCategory, setNailCategory] = useState('selected');
@@ -156,17 +160,17 @@ export const HandDesignTab = ({ route, navigation }) => {
             {currentHand === 'left' ? leftHandMasks[index] : rightHandMasks[index]}
             </View>
         }>
-        {/* <TouchableOpacity
-            onPress={() => {
-            const selectedNailData = nailListRender[index];
-            navigation.navigate(TABs.NAIL_DESIGN, { 
-                currentHand: currentHand,
-                nailIndex: index,
-                nailImage: selectedNailData,
-                selectedNails: selectedNails,
-                updateNailImage: (newImage) => updateNailImage(currentHand, index, newImage),
-            });
-            }}
+        <TouchableOpacity
+            // onPress={() => {
+            // const selectedNailData = nailListRender[index];
+            // navigation.navigate(TABs.NAIL_DESIGN, { 
+            //     currentHand: currentHand,
+            //     nailIndex: index,
+            //     nailImage: selectedNailData,
+            //     selectedNails: selectedNails,
+            //     updateNailImage: (newImage) => updateNailImage(currentHand, index, newImage),
+            // });
+            // }}
             activeOpacity={1}
         > */}
             {nailListRender[index] ? 
@@ -250,10 +254,10 @@ const isDropZone = (gesture, index) => {
 
   const navigateToPreview = () => {
     if (checkIfAllNailsAreSelected() !== 0) {
-      alert(`Please ensure all nails for both hands are assigned. Currently, there are ${checkIfAllNailsAreSelected()} nails empty.`);
+      alert(`Please ensure all nails for both hands are assigned. Currently, there are ${checkIfAllNailsAreSelected()} nails empty. Make sure you checked the other hand too!`);
       return;
     }
-
+    setTaskStatus("NO_TASK");
     navigation.navigate(TABs.DESIGN_PREVIEW, { 
       leftHandNails: leftHandNails,
       rightHandNails: rightHandNails, 
@@ -278,7 +282,7 @@ const isDropZone = (gesture, index) => {
         <View style={{ backgroundColor: COLORS.dark, width: '100%', top: '100%' }} />
         {renderClickableZones()}
       </View>
-      <View style={{ flexDirection: "column", position: "absolute", bottom: 120, paddingHorizontal: PADDINGS.sm }}>
+      <View style={{ flexDirection: "column", position: "absolute", bottom: 60, paddingHorizontal: PADDINGS.sm }}>
         {/* Additional UI Elements */}
         <BlurView
           blurType="dark"
@@ -289,11 +293,21 @@ const isDropZone = (gesture, index) => {
         <P style={{ paddingHorizontal: PADDINGS.sm, paddingBottom: PADDINGS.md }}  $alignLeft>Assign nail styles to specific fingers. Mix and match as you like!</P>
         {renderNails()}
       </View>
-      <View style={{ position: "absolute", bottom: 75, width: "60%" }}>
+            
+      <View style={{ position: "absolute", bottom: 5, width: "100%",flexDirection:'row', justifyContent:'center' }}>
+      {/* <View style={{  width: "50%" }}>
+        <GradientButtonSelection $selected onPress={()=>{navigation.navigate(TABs.WORKSHOP)}} 
+          style={{ marginVertical: PADDINGS.sm, borderWidth: 0 }}>
+          <ButtonP>Back to Selections</ButtonP>
+        </GradientButtonSelection>
+      </View> */}
+
+      <View style={{ width: "60%" }}>
         <GradientButtonSelection $selected onPress={navigateToPreview} 
           style={{ marginVertical: PADDINGS.sm, borderWidth: 0 }}>
           <ButtonP>Next</ButtonP>
         </GradientButtonSelection>
+      </View>
       </View>
     </View>
   );
@@ -358,51 +372,6 @@ const styles = StyleSheet.create({
       resizeMode:'contain',
       marginHorizontal: 5,
       // Add any additional styles for the image if necessary
-    },
-    redBox_1: {
-      top: 105,
-      left: 55,
-      width: 60,
-      height:60,
-      position: 'absolute',
-      borderWidth: 2,
-      borderColor: 'red',
-    },
-    redBox_2: {
-      top: 35,
-      left: 90,
-      width: 60,
-      height:60,
-      position: 'absolute',
-      borderWidth: 2,
-      borderColor: 'red',
-    },
-    redBox_3: {
-      top: 5,
-      left: 155,
-      width: 60,
-      height:60,
-      position: 'absolute',
-      borderWidth: 2,
-      borderColor: 'red',
-    },
-    redBox_4: {
-      top: 10,
-      left: 220,
-      width: 60,
-      height:60,
-      position: 'absolute',
-      borderWidth: 2,
-      borderColor: 'red',
-    },
-    redBox_5: {
-      top: 140,
-      left: 280,
-      width: 60,
-      height:60,
-      position: 'absolute',
-      borderWidth: 2,
-      borderColor: 'red',
     }
   });  
 
