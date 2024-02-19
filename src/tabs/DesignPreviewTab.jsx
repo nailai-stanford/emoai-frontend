@@ -15,6 +15,7 @@ import { useToast } from "react-native-toast-notifications";
 import { handleError } from "../utils/Common";
 import { useCartContext } from '../providers/CartContextProvider';
 
+import { HeadImages } from '../components/ProductHeader';
 
 export const DesignPreviewTab = ({ navigation, route }) => {
     const [quantity, setQuantity] = React.useState(1);
@@ -26,7 +27,7 @@ export const DesignPreviewTab = ({ navigation, route }) => {
     const [productImage, setProductImage] = useState('');
     const [price, setPrice] = useState('')
     const [designSetId, setDesignSetId] = useState(null)
-    const [productImageList, setProductImageList] = useState('');
+    const [productImageList, setProductImageList] = useState(null);
     const { leftHandNails, rightHandNails, handProducts, taskId} = route.params;
     const toast = useToast();
     const {setCart} = useCartContext()
@@ -42,6 +43,7 @@ export const DesignPreviewTab = ({ navigation, route }) => {
           setTitle(''); 
           setDescription('')
           setProductImage('')
+          setProductImageList(null)
           setPrice('')
           setDesignSetId(null)
           setEnableAddToCart(false)
@@ -84,8 +86,7 @@ export const DesignPreviewTab = ({ navigation, route }) => {
                 task_id: taskId,
                 nail_designs: nails,
                 hand_designs: handProducts
-              }),
-          console.log(body)
+              })
           const response = await fetch(`${BASE_URL}/api/design_sets/`, {
             method: 'POST',
             headers: headers,
@@ -95,10 +96,12 @@ export const DesignPreviewTab = ({ navigation, route }) => {
             alert('save designset failed, please try again')
             return
           }
+        
           const data = await response.json();
-          design_set = data.design_set
+          let design_set = data.design_set
           setTitle(design_set.title); 
           setDescription(design_set.description)
+          setProductImageList(design_set.images)
           setProductImage(design_set.image_url)
           setPrice(design_set.price)
           setDesignSetId(design_set.shopify_product_id)
@@ -124,7 +127,7 @@ export const DesignPreviewTab = ({ navigation, route }) => {
             </TouchableOpacity>
           </View>
 
-        {productImage ==='' ? 
+        {productImageList == null? 
         <View>
           <SubHeader>
             Generating Your Final Product Image, Please Don't Leave This Page
@@ -132,7 +135,9 @@ export const DesignPreviewTab = ({ navigation, route }) => {
           <ActivityIndicator size="large" color={COLORS.white} />
         </View> :
         <View>
-        <Image source={{ uri: productImage }} style={{ width: '100%', height: 350 }} />
+        <HeadImages images={productImageList}></HeadImages>
+
+        {/* <Image source={{ uri: productImage }} style={{ width: '100%', height: 350 }} /> */}
         <MenuHeader style={{ fontSize: 18, fontWeight: 'bold' }}>{title}</MenuHeader>
         <P $alignLeft={true} style={{ marginVertical: 10 }}> {description}</P>
        
