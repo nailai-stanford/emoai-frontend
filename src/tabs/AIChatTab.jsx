@@ -7,7 +7,6 @@ import {
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { useTaskStatus } from "../providers/TaskContextProvider";
 import { TABs } from '../static/Constants';
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { Modal } from "react-native-modals"
 
 import { ButtonAction, ButtonSelection, GradientButtonAction, GradientButtonChatSelection, GradientButtonSelection } from "../styles/buttons";
@@ -78,40 +77,7 @@ const ChatButton = ({ title, onPress, selection }) => {
   );
 };
 
-const HistoryModal = ({ navigation, modalVisible, setModalVisible }) => {
-  return <Modal visible={modalVisible} animationIn="slideInRight"
-    animationOut="slideOutRight" modalStyle={{ width: "120%", height: "100%"}} style={{ width: "70%" }}>
-    <View style={{marginLeft: 70, }}>
-       {/* <TouchableOpacity onPress={() => { navigation.navigate(TABs.AIChatTab) }}>
-          <MaterialCommunityIcons
-            name="square-edit-outline"
-            size={iconSize}
-          />
-        </TouchableOpacity> */}
-      <View style={{marginTop: 70, flexDirection: "row"}}>
-      <View style={{ flexDirection: "column" }}>
-        <View >
-        <Text style={{fontSize: 20}}> Nails In Progress</Text>
-          <Text> Art, Monet, Blue</Text>
-        </View>
-        <View>
-          <Text style={{fontSize: 20}}> Nails Design Completed</Text>
-        </View>
-       </View>
-        
-    
-        <TouchableOpacity  onPress={() => { setModalVisible(false)  }}>
-            <MaterialCommunityIcons
-              name="close"
-              size={iconSize}
-            />
-      </TouchableOpacity>
-      </View>
-      
-    </View>
-       
-  </Modal>
-}
+
 
 export const AIChatTab = ({ navigation }) => {
   // const { currentUser } = useAuthenticationContext();

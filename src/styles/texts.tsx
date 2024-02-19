@@ -32,6 +32,15 @@ export const SubHeader = styled.Text<{ $colored?:boolean}>`
     font-weight: 700;
 `;
 
+export const TermTitle = styled.Text<{ $colored?:boolean}>`
+    color: ${props => props.$colored ? COLORS.gradientSub1 : COLORS.white};
+    font-size: ${FONTS.termTitle}px;
+    font-family:${FONT_FAMILYS.bold};
+    font-weight: 700;
+`;
+
+
+
 export const ButtonP = styled(P)`
     font-size: ${FONTS.buttonSelection}px;
 `
