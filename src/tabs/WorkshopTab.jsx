@@ -3,7 +3,6 @@ import { NailSelector } from "../components/NailSelector";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import axios from "axios";
 import { APIs, BASE_URL, getHeader } from "../utils/API";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialIcons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 // import generateMoreImage from '../../assets/generate_more.png';
 import React, { useRef,useState, useEffect, useCallback } from 'react';

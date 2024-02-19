@@ -52,6 +52,7 @@ export const FONTS = {
     // font here
     buttonSelection: 16,
     subHeader: 16,
+    termTitle: 13,
     sm: 12,
     md: 18,
     header: 20,
