@@ -53,7 +53,7 @@ export const GalleryCard = ({ item, style }) => {
     <View
       style={{
         ...style,
-        minHeight: 220,
+        minHeight: 200,
         minWidth: 140,
         backgroundColor: "transparent",
         flex: 1,
@@ -73,10 +73,15 @@ export const GalleryCard = ({ item, style }) => {
 
       </TouchableOpacity>
 
+      
+      <View style={{ flex: 0.8 }}>
+        <SubHeader $alignLeft style={{ color: "white", fontSize: 14}} numberOfLines={1}>{truncateTitle(item.title)}</SubHeader>
+      </View>
+
       {showUser && (
         <View
           style={{
-            flex: 0.6,
+            flex: 0.8,
             display: "flex",
             flexDirection: "row",
           }}
@@ -92,9 +97,7 @@ export const GalleryCard = ({ item, style }) => {
           <P style={{ marginLeft: 8, color: "white", fontSize:12 }}>{user.fullName}</P>
         </View>
       )}
-      <View style={{ flex: 0.8 }}>
-        <P $alignLeft style={{ color: "white", fontSize: 14}} numberOfLines={1}>{truncateTitle(item.title)}</P>
-      </View>
+
       <View style={{ flex: 1 }}>
         <P $alignLeft style={{ color: "white" }}>${item.price}</P>
         <TouchableOpacity style={{ position: "absolute", right: 0, bottom: 10 }} 

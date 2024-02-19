@@ -6,6 +6,7 @@ import { useAuthenticationContext } from "../providers/AuthenticationProvider"
 import { useTaskStatus } from '../providers/TaskContextProvider.jsx';
 import { BASE_URL, APIs, getHeader } from "../utils/API";
 import LottieView from "lottie-react-native";
+import { useIsFocused } from '@react-navigation/native';
 
 import {TitleHeader, P, GradientMenuHeader, ButtonP} from '../styles/texts.tsx'
 import { PADDINGS, COLORS } from '../styles/theme.jsx';
@@ -15,7 +16,9 @@ export const LoadTab = ({ navigation }) => {
   const [progress, setProgress] = useState(0);
   const {taskStatus, setTaskStatus, taskGlobalID, setTaskGlobalID} = useTaskStatus();
   const { userInfo} = useAuthenticationContext();
+  const isFocused = useIsFocused();
   // const { userTags } = route.params;
+
 
 
   useEffect(() => {
@@ -58,15 +61,15 @@ export const LoadTab = ({ navigation }) => {
       }
     };
   
-    intervalId = setInterval(() => {
-      taskStatus === "PROCESSING" && get_last_task_status();
-    }, 8000); // 8000 milliseconds = 8 seconds
+    if (isFocused && taskStatus === "PROCESSING") { // Check if the screen is focused and taskStatus is "PROCESSING"
+      intervalId = setInterval(get_last_task_status, 3000);
+    }
   
     return () => {
       clearInterval(intervalId);
     };
 
-  }, [taskGlobalID]); // Dependencies array
+  }, [isFocused]); // Dependencies array
   
 
   return (
