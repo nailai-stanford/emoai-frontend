@@ -12,7 +12,7 @@ import axios from 'axios';
 import {APIs, getHeader} from '../utils/API';
 import {Image} from '@rneui/themed';
 
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import {useState, useEffect} from 'react';
 import {handleError} from '../utils/Common';
 

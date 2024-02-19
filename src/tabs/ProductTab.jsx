@@ -3,40 +3,25 @@ import axios from "axios";
 import { TouchableOpacity, View, StyleSheet, SafeAreaView,   Dimensions, FlatList, ScrollView } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { GalleryCard } from "../components/gallery/GalleryCard";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef} from "react";
 import { APIs, getHeader } from "../utils/API";
 import { handleError } from "../utils/Common";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { CartContextProvider, useCartContext } from "../providers/CartContextProvider";
 import { Image, Button, Text } from '@rneui/themed';
-import { MenuHeader,ButtonH, ButtonP, TitleHeader,P, SubHeader } from "../styles/texts";
+import { MenuHeader,ButtonH, ButtonP, TitleHeader,P, SubHeader, TermTitle } from "../styles/texts";
 import { ButtonAction,ButtonSelection, GradientButtonSelection } from "../styles/buttons";
 import { BORDERS, COLORS, PADDINGS } from "../styles/theme";
 import { ACTION_ICONS } from "../styles/icons";
 import { useToast } from "react-native-toast-notifications";
+import Carousel, {Pagination} from 'react-native-snap-carousel';
+
 
 
 const size = 50;
 const iconSize = 20;
 const { width: screenWidth } = Dimensions.get("window");
 
-const Pictures = ({ url }) => {
-  const [activeIndex, setActiveIndex] = useState(0);
-    return(
-    <SafeAreaView style={{flex: 17, marginBottom:PADDINGS.sm }}>
-    <View>
-        <Image
-          containerStyle={{
-            borderRadius: 5,
-            padding: 80,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-            source={{uri: url}}
-          />
-    </View>
-  </SafeAreaView>)
-}
 
 const Explore = ({ }) => {
   const { userInfo } = useAuthenticationContext();
@@ -61,7 +46,7 @@ const Explore = ({ }) => {
   });
     return <View>
       <View>
-        <SubHeader >You Might Also Like </SubHeader>
+        <SubHeader style={{marginTop: 10}}>You Might Also Like </SubHeader>
       </View>
       <ScrollView horizontal >
         <View style={{ flexDirection: "row" }}>
@@ -74,6 +59,80 @@ const Explore = ({ }) => {
       
     </View>
 }
+
+export const HeadImages = ({ images }) => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const isCarousel = useRef(null);
+  console.log("images", images)
+  const _renderItem = ({ item, index }, parallaxProps) => {
+    console.log('_renderItem:', item)
+    return (
+      <View
+      
+        style={{
+          backgroundColor: "transparent",
+          borderRadius: BORDERS.boxRadius,
+      }}
+      >
+        <Image source={{ uri: item }} 
+        style={{
+            width: screenWidth / 5 * 3,
+            borderRadius: BORDERS.standartRadius, 
+            marginTop: 10, 
+            height: screenWidth / 5 * 3,
+        }}
+      />
+      </View>
+    );
+  };
+  
+  return (
+    <SafeAreaView
+      style={{ 
+        alignSelf: "center", postion: "absolute", bottom: 0, width: screenWidth, 
+        flex: 1, backgroundColor: "transparent",
+      }}
+    >
+        <Carousel
+          layout={"default"}
+          ref={isCarousel}
+          data={images}
+          sliderWidth={screenWidth}
+          itemWidth={screenWidth / 5 * 3}
+          renderItem={_renderItem}
+          onSnapToItem={(index) => setActiveIndex(index)}
+          hasParallaxImages={true}
+          style ={{   marginBottom:0, paddingBottom:0}}
+        />
+        <Pagination
+          dotsLength={images.length}
+          activeDotIndex={activeIndex}
+          carouselRef={isCarousel}
+          dotStyle={{
+            width: 20,
+            height: 4,
+            borderRadius: 2,
+            marginHorizontal: -5,
+            marginTop: 10,
+            backgroundColor: COLORS.gradientSub1,
+          }}
+          tappableDots={true}
+          inactiveDotStyle={{
+            backgroundColor: COLORS.white,
+            width: 6,
+            borderRadius: 3,
+            marginHorizontal: -10,
+            height: 6,
+            // Define styles for inactive dots here
+          }}
+          inactiveDotOpacity={1}
+          containerStyle ={{   marginTop:0, paddingTop:0}}
+
+      />
+    </SafeAreaView>
+  );
+};
+
 
 const ButtonGroup = ({ productID }) => {
   productID = String(productID)
@@ -232,6 +291,7 @@ export const ProductTab = ({ route, navigation }) => {
         { headers }
       ).then(res => {
         data = res.data
+        console.log("get_product_detail:", data)
         setTitle(data.title)
         setPrice(data.price)
         setDescription(data.description)
@@ -246,6 +306,21 @@ export const ProductTab = ({ route, navigation }) => {
     get_product_detail()
   }, [productId]) 
 
+ 
+  const ListItem = ({ title, content }) => {
+    const [expanded, setExpanded] = useState(false);
+  
+    return (
+      <View>
+        <TouchableOpacity onPress={() => setExpanded(!expanded)} style={styles.titleContainer}>
+          <TermTitle $alignLeft={true} style={{ flex: 1 ,paddingBottom: 10}} >{title}</TermTitle>
+          <MaterialCommunityIcons size={30} name={expanded ? 'chevron-down' : 'chevron-right'} style={{ color: '#FFFFFF', marginRight: -5}}  />
+        </TouchableOpacity>
+        {expanded && <P style={{ paddingBottom: 10 }} $alignLeft={true} >{content}</P>}
+      </View>
+    );
+  };
+
   return (
     <View style={{height:"88%"}}>
         <ScrollView>
@@ -258,20 +333,30 @@ export const ProductTab = ({ route, navigation }) => {
               style={{ color:COLORS.white, right: 0 }}
               />
           </TouchableOpacity>
-        <Image style={{height:200, borderRadius: BORDERS.standartRadius}} source={{uri: images[0]}}/> 
-        <View style={{height:item.body_html ? 100: 60, marginBottom:PADDINGS.sm}}>
+          <HeadImages images={images}></HeadImages>
+        <View style={{ flexGrow: 1, marginBottom: PADDINGS.sm }}>
             <View style={{flex: 0.8, flexDirection: "row", }}>
-              <SubHeader style={{flex: 2 }}>{title}</SubHeader>
+              <SubHeader style={{flex: 2}}>{title}</SubHeader>
               {/* some optional like when params go in */}
-              {item.user && item.user.fullName !== "emoai-original" && <Like productID={productId} />}
+              {/* {item.user && item.user.fullName !== "emoai-original" && <Like productID={productId} />} */}
             </View>
             <P style={{flex: 0.3}} $alignLeft={true}>${price}</P>
-            {!!description && <P style={{ flex: 1 }} $alignLeft={true}>{ description }</P>}
-        </View>
+            {!!description && <P style={{ flex: 1, paddingTop: 10, paddingBottom:10 }} $alignLeft={true}>{ description }</P>}
+            {terms && (
+              <View style={styles.termsContainer}>
+                <FlatList
+                  data={terms}
+                  renderItem={({ item }) => <ListItem title={item.title} content={item.content} />}
+                  keyExtractor={(item, index) => index.toString()}
+                />
+              </View>
+            )}
+            
+         </View>
         {item.user && item.user.fullName !== "emoai-original" &&  <SubHeader style={{alignSelf:"flex-start", paddingTop:0}}>Creator</SubHeader>}
             {/* some optional creator info */}
           {item.user && item.user.fullName !== "emoai-original" && <Creator user={item.user} />}
-          <Explore/>
+        <Explore  />
         </View>
         </ScrollView>
       <ButtonGroup productID={item.id} />
@@ -283,6 +368,15 @@ const styles = StyleSheet.create({
     container: {
       flex: 4,
       paddingHorizontal: 20,
-    flexDirection: "column",
+      flexDirection: "column",
     },
+
+    titleContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+
+    
+
   });
