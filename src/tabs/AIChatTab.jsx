@@ -346,7 +346,7 @@ export const AIChatTab = ({ navigation }) => {
   return (
     <KeyboardAvoidingView 
     behavior={"padding"}
-    style={{ flex: 1, paddingHorizontal: PADDINGS.sm, marginTop: 60}}
+    style={{ flex: 1, paddingHorizontal: PADDINGS.sm, marginTop: 60, marginBottom:30}}
     >
       <View style={{flexDirection: "row", flex: 0.1, alignItems: "center"}}>
         <TouchableOpacity style={{ alignItems: "center", flex: 1 }} onPress={()=>{setModalVisible(true)}}>

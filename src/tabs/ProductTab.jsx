@@ -9,8 +9,8 @@ import { handleError } from "../utils/Common";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { useCartContext } from "../providers/CartContextProvider";
 import { Image, Button, Text } from '@rneui/themed';
-import { ButtonH, ButtonP, P, SubHeader, TermTitle } from "../styles/texts";
-import { ButtonAction,ButtonSelection } from "../styles/buttons";
+import { MenuHeader,ButtonH, ButtonP, TitleHeader,P, SubHeader, TermTitle } from "../styles/texts";
+import { ButtonAction,ButtonSelection, GradientButtonAction } from "../styles/buttons";
 import { BORDERS, COLORS, PADDINGS } from "../styles/theme";
 import { ACTION_ICONS } from "../styles/icons";
 import { useToast } from "react-native-toast-notifications";
@@ -82,9 +82,9 @@ const ButtonGroup = ({ productID }) => {
   let cart
  
   return <View style={{ 
-      flexDirection: "row", alignSelf: "center", postion: "absolute", bottom: 0, width: screenWidth, height: 50,
+      flexDirection: "row", alignSelf: "center", justifyContent:'center', postion: "absolute", bottom: 0, width: screenWidth, height: 50,
     }}>
-        <ButtonAction style={{
+        <GradientButtonAction style={{
             display: "inline-flex",
             flexDirection: "row",
             alignSelf: "center",
@@ -104,9 +104,9 @@ const ButtonGroup = ({ productID }) => {
           setCollected(!collected);
       }}>
             <ButtonH>{collected ? "UnCollect" : "Add to Collection"}</ButtonH>
-        </ButtonAction>
+        </GradientButtonAction>
            
-      <ButtonAction style={{ display: "inline-flex", flexDirection: "row", alignItems: "center"}}
+      <GradientButtonAction style={{ display: "inline-flex", flexDirection: "row", alignItems: "center"}}
         onPress={() => {
           payload = {actions: [{id: String(productID), count: 1}]}
           axios.post(APIs.ORDER_UPDATE, payload, { headers })
@@ -133,7 +133,7 @@ const ButtonGroup = ({ productID }) => {
                 size={iconSize}
                 style={{color:COLORS.white, paddingLeft:PADDINGS.sm}}/>
             
-        </ButtonAction>
+        </GradientButtonAction>
     </View>
 }
 
