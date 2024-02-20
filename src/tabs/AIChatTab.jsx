@@ -350,10 +350,10 @@ export const AIChatTab = ({ navigation }) => {
     >
       <View style={{flexDirection: "row", flex: 0.1, alignItems: "center"}}>
         <TouchableOpacity style={{ alignItems: "center", flex: 1 }} onPress={()=>{setModalVisible(true)}}>
-        <ACTION_ICONS.menu
+        {/* <ACTION_ICONS.menu
           size={iconSize}
           color={COLORS.white}
-            />
+            /> */}
         </TouchableOpacity>
         {/* <HistoryModal navigation={navigation} 
           modalVisible={modalVisible}
