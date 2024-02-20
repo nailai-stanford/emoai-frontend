@@ -5,12 +5,11 @@ import { handleError } from "../utils/Common";
 import { GalleryCard } from "../components/gallery/GalleryCard";
 import { Banner } from "../components/Banner";
 import { Themes } from "../components/Themes";
-import { getHeader, APIs } from "../utils/API";
+import { APIs } from "../utils/API";
 
 
 import { GradientButtonSelection } from "../styles/buttons";
 import { ButtonP ,GradientMenuHeader } from "../styles/texts";
-import { PADDINGS } from "../styles/theme";
 
 
 export const HomeTab = (navigation) => {

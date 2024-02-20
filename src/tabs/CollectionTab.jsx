@@ -2,7 +2,7 @@ import React, {useState, useEffect} from "react";
 import {  View, Text, FlatList, Image, StyleSheet} from "react-native";
 import { GalleryCard } from "../components/gallery/GalleryCard";
 import axios from "axios";
-import { getHeader, APIs } from "../utils/API";
+import { APIs } from "../utils/API";
 import { TitleHeader } from "../styles/texts";
 import { COLORS,BORDERS } from "../styles/theme";
 import { BlurView } from "@react-native-community/blur";

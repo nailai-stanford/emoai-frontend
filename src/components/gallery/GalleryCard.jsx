@@ -13,6 +13,7 @@ import { COLORS } from "../../styles/theme";
 import axios from "axios";
 import { useEffect } from "react";
 import { GradientButtonAction } from "../../styles/buttons";
+import { handleError } from "../../utils/Common";
 
 export const GalleryCard = ({ item, style }) => {
   const { user, image } = item;
@@ -20,7 +21,7 @@ export const GalleryCard = ({ item, style }) => {
 
   const avatarSize = 16;
   const productId = item && item.id? item.id : ""
-  const { userInfo } = useAuthenticationContext();
+  const { userInfo, signout} = useAuthenticationContext();
   const {setCart} = useCartContext();
 
   const productImageStyle = {
@@ -40,8 +41,8 @@ export const GalleryCard = ({ item, style }) => {
     
 
   const add_to_cart = () => {
-    const headers = getHeader(userInfo.idToken);
-    if(productId) {
+    if(userInfo && productId) {
+      const headers = getHeader(userInfo.idToken);
       payload = {actions: [{id: String(productId), count: 1}]}
       axios.post(APIs.ORDER_UPDATE, payload, { headers })
       .then(resp => {
@@ -49,9 +50,10 @@ export const GalleryCard = ({ item, style }) => {
           setCart(resp.data)
         }
       }).catch((e) => {
-        handleError(e);
+        handleError(e, signout);
       });
     }
+
   }
 
 

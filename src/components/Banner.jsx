@@ -11,7 +11,7 @@ import {
 import axios from "axios";
 import Carousel, {Pagination} from 'react-native-snap-carousel';
 import { useNavigation } from '@react-navigation/native';
-import { APIs, getHeader } from "../utils/API";
+import { APIs } from "../utils/API";
 import { COLORS, PADDINGS, BORDERS } from "../styles/theme";
 import { TABs } from "../static/Constants";
 

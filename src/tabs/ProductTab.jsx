@@ -23,11 +23,11 @@ const { width: screenWidth } = Dimensions.get("window");
 
 
 const Explore = ({ }) => {
-  const { userInfo } = useAuthenticationContext();
-  const headers = getHeader(userInfo.idToken);
+  const { userInfo, signout } = useAuthenticationContext();
   const [productList, setProductList] = useState([]);
   useEffect(() => {
     async function _loadProducts() {
+      const headers = getHeader(userInfo.idToken);
       axios
         .get(
           `${APIs.GET_PRODUCTS}recommended/`,
@@ -37,10 +37,10 @@ const Explore = ({ }) => {
           setProductList(JSON.parse(JSON.stringify(res.data.products)));
         })
         .catch((e) => {
-          handleError(e);
+          handleError(e, signout);
         });
     }
-    if (productList.length == 0) { _loadProducts(); }
+    if (userInfo && productList.length == 0) { _loadProducts(); }
     
   });
     return <View>
@@ -60,23 +60,25 @@ const Explore = ({ }) => {
 }
 
 
-const ButtonGroup = ({ productID }) => {
+const ButtonGroup = ({ productID}) => {
   productID = String(productID)
-  const { userInfo } = useAuthenticationContext();
-  const headers = getHeader(userInfo.idToken);
+  const { userInfo, signout} = useAuthenticationContext();
   const [collected, setCollected] = useState(false)
   const {setCart} = useCartContext()
   const toast = useToast();
   useEffect(() => {
     async function _getCollect() {
+      const headers = getHeader(userInfo.idToken);
       axios.get(
         `${APIs.LIKE_COLLECT}collected_product?product_id=${String(productID)}`,
         { headers }
       ).then(res => {
         setCollected(res.data.exists)
-      }).catch(e => handleError(e))
+      }).catch(e => handleError(e, signout))
     }
-    _getCollect()
+    if (userInfo) {
+      _getCollect()
+    }
   },[productID]);
 
   let cart
@@ -91,6 +93,10 @@ const ButtonGroup = ({ productID }) => {
             alignItems: "center"
           }} 
         onPress={() => {
+          if (!userInfo) {
+            return
+          }
+          const headers = getHeader(userInfo.idToken);
           let URL = collected? APIs.DELETE_LIKE_COLLECT: APIs.LIKE_COLLECT
           axios.post(
             URL,
@@ -99,7 +105,7 @@ const ButtonGroup = ({ productID }) => {
               action: 2,
             }, { headers }
           ).then().catch((e) => {
-            handleError(e);
+            handleError(e, signout);
           });
           setCollected(!collected);
       }}>
@@ -108,6 +114,10 @@ const ButtonGroup = ({ productID }) => {
            
       <GradientButtonAction style={{ display: "inline-flex", flexDirection: "row", alignItems: "center"}}
         onPress={() => {
+          if (!userInfo) {
+            return
+          }
+          const headers = getHeader(userInfo.idToken);
           payload = {actions: [{id: String(productID), count: 1}]}
           axios.post(APIs.ORDER_UPDATE, payload, { headers })
           .then(resp => {
@@ -124,7 +134,7 @@ const ButtonGroup = ({ productID }) => {
               })
             }
           }).catch((e) => {
-            handleError(e);
+            handleError(e, signout);
           });
         }}>
        
@@ -138,20 +148,22 @@ const ButtonGroup = ({ productID }) => {
 }
 
 const Like = ({ productID }) => {
-  const { userInfo } = useAuthenticationContext();
-  const headers = getHeader(userInfo.idToken);
+  const { userInfo, signout } = useAuthenticationContext();
   const [liked, setLiked] = useState(false)
   
   useEffect(() => {
     async function _getLike() {
+      const headers = getHeader(userInfo.idToken);
       axios.get(
         `${APIs.LIKE_COLLECT}liked_product?product_id=${String(productID)}`,
         { headers }
       ).then(res => {
         setLiked(res.data.exists)
-      }).catch(e => handleError(e))
+      }).catch(e => handleError(e, signout))
     }
-    _getLike()
+    if (userInfo) {
+      _getLike()
+    }
   },[productID]);
 
   return <ButtonSelection $isWhite={true} style={{height:30, flex:0.5, paddingTop: 0}}
@@ -200,8 +212,7 @@ const Creator = ({ user }) => {
 }
 
 export const ProductTab = ({ route, navigation }) => {
-  const { userInfo } = useAuthenticationContext();
-  const headers = getHeader(userInfo.idToken);
+  const { userInfo, signout } = useAuthenticationContext();
   const item = route.params.product
   const productId = item.id
   const [title, setTitle] = useState(item.title ? item.title : "")
@@ -212,6 +223,7 @@ export const ProductTab = ({ route, navigation }) => {
   const [creator, setCreator] = useState()
   useEffect(() => {
     async function get_product_detail() {
+      const headers = getHeader(userInfo.idToken);
       axios.get(
         `${APIs.GET_PRODUCTS}${String(productId)}`,
         { headers }
@@ -224,9 +236,12 @@ export const ProductTab = ({ route, navigation }) => {
         setTerms(data.terms)
       }).catch(e => {
         console.log('error', e)
+        handleError(e, signout)
       })
     }
-    get_product_detail()
+    if (userInfo) {
+      get_product_detail()
+    }
   }, [productId]) 
 
  
@@ -279,10 +294,10 @@ export const ProductTab = ({ route, navigation }) => {
         {item.user && item.user.fullName !== "emoai-original" &&  <SubHeader style={{alignSelf:"flex-start", paddingTop:0}}>Creator</SubHeader>}
             {/* some optional creator info */}
           {item.user && item.user.fullName !== "emoai-original" && <Creator user={item.user} />}
-        <Explore  />
+        <Explore />
         </View>
         </ScrollView>
-      <ButtonGroup productID={item.id} />
+      <ButtonGroup productID={item.id}/>
       </View>
 
     ) 

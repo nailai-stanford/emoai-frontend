@@ -10,19 +10,14 @@ import { style } from 'deprecated-react-native-prop-types/DeprecatedViewPropType
 import { ButtonAction, ButtonSelection, GradientButtonAction, GradientButtonSelection } from "../styles/buttons";
 import { P, ButtonP, MenuHeader, TitleHeader, SubHeader, ButtonH} from "../styles/texts";
 import { COLORS, PADDINGS, FONTS } from "../styles/theme";
-import { ACTION_ICONS } from '../styles/icons';
 
 import { LEFTHAND_NAILS } from '../styles/nails';
 import { BlurView } from "@react-native-community/blur";
-import { BASE_URL, APIs, getHeader } from "../utils/API";
 import { useFocusEffect } from '@react-navigation/native';
 
 import { useTaskStatus } from '../providers/TaskContextProvider';
 
 import MaskedView from "@react-native-masked-view/masked-view";
-import { width } from 'deprecated-react-native-prop-types/DeprecatedImagePropType';
-import axios from 'axios';
-import { position } from 'html2canvas/dist/types/css/property-descriptors/position';
 
 const DROPZONE_WIDTH = 60;
 const DROPZONE_HEIGHT = 60;
