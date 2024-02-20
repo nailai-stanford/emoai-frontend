@@ -30,7 +30,7 @@ export const AITab = ({ navigation }) => {
         headers: headers,
       });
       if (!response.ok) {
-        console.error('Failed to fetch task status, logout');
+        console.error('Failed to fetch task status');
         if (response.status == 401) {
           signout()
         }
