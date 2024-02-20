@@ -13,8 +13,11 @@ export const handleError = (e, signout) => {
   if (e.message) {
     console.log(e.message)
   }
+  if (e.stack) {
+    console.log("CALL STACK: ", e.stack);
+  }
 
-  if (e.response.status == 401) {
+  if (e && e.response && e.response.status && e.response.status == 401) {
     console.log('logout')
     if (signout) {
       signout();

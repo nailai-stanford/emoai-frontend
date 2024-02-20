@@ -139,6 +139,13 @@ export const PaymentTab = ({route, navigation}) => {
     if (error) {
       Alert.alert(`Error code: ${error.code}`, error.message);
     } else {
+      idToken = ''
+      if (userInfo) {
+        idToken = userInfo.idToken
+      }
+
+      const headers = getHeader(idToken);
+
       payload = {
         payment_order_id: orderPaymentId,
         shipping: sanitizedAddr
@@ -164,6 +171,11 @@ export const PaymentTab = ({route, navigation}) => {
       console.log('missing address info, could not save')
       return
     }
+    idToken = ''
+    if (userInfo) {
+      idToken = userInfo.idToken
+    }
+    const headers = getHeader(idToken);
     axios
       .post(
         APIs.ADDRESS,
@@ -201,6 +213,11 @@ export const PaymentTab = ({route, navigation}) => {
     delete addressClean['postalCode'];
     addressClean['postal_code'] = zip_code;
     sanitizedAddr['address'] = addressClean;
+    idToken = ''
+    if (userInfo) {
+      idToken = userInfo.idToken
+    }
+    const headers = getHeader(idToken);
     const res = await axios.post(
       `${APIs.PAYMENT}payment-sheet`,
       {orderId: orderId, name: name, shipping: sanitizedAddr, phone: phone},

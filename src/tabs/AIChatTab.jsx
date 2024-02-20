@@ -149,7 +149,6 @@ export const AIChatTab = ({ navigation }) => {
 
   useEffect(() => {
     if (userInfo) {
-      console.log(fetchChatHistory)
       fetchChatHistory()
     }
   },[fetchHistory, userInfo]); 

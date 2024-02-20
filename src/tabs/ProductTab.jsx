@@ -93,6 +93,10 @@ const ButtonGroup = ({ productID}) => {
             alignItems: "center"
           }} 
         onPress={() => {
+          if (!userInfo) {
+            return
+          }
+          const headers = getHeader(userInfo.idToken);
           let URL = collected? APIs.DELETE_LIKE_COLLECT: APIs.LIKE_COLLECT
           axios.post(
             URL,
@@ -101,7 +105,7 @@ const ButtonGroup = ({ productID}) => {
               action: 2,
             }, { headers }
           ).then().catch((e) => {
-            handleError(e);
+            handleError(e, signout);
           });
           setCollected(!collected);
       }}>

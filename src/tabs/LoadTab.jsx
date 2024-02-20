@@ -37,6 +37,9 @@ export const LoadTab = ({ navigation }) => {
           headers: headers,
         });
         if (!response.ok) {
+          if (response.status == 401) {
+            signout()
+          }
           console.error('Failed to fetch task status');
           return;
         }
