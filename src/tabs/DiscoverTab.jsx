@@ -6,7 +6,7 @@ import {useAuthenticationContext} from '../providers/AuthenticationProvider';
 import {handleError} from '../utils/Common';
 import {GalleryCard} from '../components/gallery/GalleryCard';
 import {Tab} from '@rneui/themed';
-import {getHeader, APIs} from '../utils/API';
+import { APIs} from '../utils/API';
 
 import {GradientButtonSelection} from '../styles/buttons';
 import {P, ButtonP, MenuHeader, TitleHeader, GradientMenuHeader} from '../styles/texts';
@@ -14,14 +14,13 @@ import {COLORS, PADDINGS} from '../styles/theme';
 
 const ThemeHeader = ({index, setIndex}) => {
   const {userInfo} = useAuthenticationContext();
-  const headers = getHeader(userInfo.idToken);
   const [themeList, setThemeList] = useState([]);
   const [themeItems, setThemeItems] = useState([]);
 
   useEffect(() => {
     async function _getThemes() {
       axios
-        .get(`${APIs.GET_PRODUCTS}themes/`, {headers})
+        .get(`${APIs.GET_PRODUCTS}themes/`)
         .then(res => {
           let copy = JSON.parse(JSON.stringify(res.data));
           setThemeList(copy);
@@ -38,7 +37,6 @@ const ThemeHeader = ({index, setIndex}) => {
           `${APIs.GET_PRODUCTS}by_tags?tags=${encodeURIComponent(
             themeList[index],
           )}&original=true`,
-          {headers},
         )
         .then(res => {
           setThemeItems(JSON.parse(JSON.stringify(res.data)));
@@ -78,7 +76,6 @@ const ThemeHeader = ({index, setIndex}) => {
 export const DiscoverTab = ({ route }) => {
   const [productList, setProductList] = useState([]);
   const {userInfo} = useAuthenticationContext();
-  const headers = getHeader(userInfo.idToken);
   const [index, setIndex] = useState(0);
   const [tagIdx, setTagIdx] = useState(route.params?.tagIdx? route.params.tagIdx: 0);
 
@@ -91,7 +88,7 @@ export const DiscoverTab = ({ route }) => {
   useEffect(() => {
     async function _loadProducts() {
       axios
-        .get(`${APIs.GET_PRODUCTS}by_tags?community=true`, {headers})
+        .get(`${APIs.GET_PRODUCTS}by_tags?community=true`)
         .then(res => {
           setProductList(JSON.parse(JSON.stringify(res.data)));
         })
@@ -99,7 +96,7 @@ export const DiscoverTab = ({ route }) => {
           handleError(e);
         });
     }
-    if (productList && productList.length == 0) {
+    if (userInfo && productList && productList.length == 0) {
       _loadProducts();
     }
   });

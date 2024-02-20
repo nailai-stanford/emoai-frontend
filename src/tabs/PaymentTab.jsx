@@ -20,9 +20,8 @@ import {isAwaitKeyword} from 'typescript';
 
 export const PaymentTab = ({route, navigation}) => {
   const [addrVisible, setAddrVisible] = useState(false);
-  const {userInfo} = useAuthenticationContext();
+  const {userInfo, signout} = useAuthenticationContext();
   const {cart, clearCart} = useCartContext();
-  const headers = getHeader(userInfo.idToken);
   const [name, setName] = useState('');
   const [country, setCountry] = useState('');
   const [state, setState] = useState('');
@@ -55,6 +54,7 @@ export const PaymentTab = ({route, navigation}) => {
 
   useEffect(()=> {
     const fetch_address = async () => {
+      const headers = getHeader(userInfo.idToken);
       axios
       .get(
         APIs.ADDRESS,
@@ -92,7 +92,7 @@ export const PaymentTab = ({route, navigation}) => {
         }
       })
       .catch(e => {
-        handleError(e);
+        handleError(e, signout);
       });
     }
     console.log('fetch_address')

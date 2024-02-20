@@ -9,11 +9,12 @@ import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { handleError } from "../utils/Common";
 import { PADDINGS } from "../styles/theme";
 
+
 const Tab = ({ content, selected, setSelected, setSubList }) => {
-    const { userInfo } = useAuthenticationContext();
-    const headers = getHeader(userInfo.idToken);
+    const { userInfo, signout } = useAuthenticationContext();
     useEffect(() => {
         async function _getElements() {
+            const headers = getHeader(userInfo.idToken);
             axios.get(
                 `${APIs.GET_PRODUCTS}${selected}/categories/`,
                 {headers}
@@ -22,9 +23,11 @@ const Tab = ({ content, selected, setSelected, setSubList }) => {
                     let copy = JSON.parse(JSON.stringify(res.data));
                     setSubList(copy);
                 }
-            ).catch(e => console.log(e))
+            ).catch(e => handleError(e, signout))
         }
-        _getElements();
+        if (userInfo) {
+            _getElements();
+        }
     }, [selected])
     
     let currSelected = selected == content ? true : false
@@ -45,11 +48,11 @@ const ThemeHeader = () => {
     const [elementSelected, setElementSelected] = useState("")
     const [currSelected, setCurrSelected] = useState([themeSelected, elementSelected])
     const [subList, setSubList] = useState([])
-    const { userInfo } = useAuthenticationContext();
-    const headers = getHeader(userInfo.idToken);
+    const { userInfo, signout } = useAuthenticationContext();
     const [themeList, setThemeList] = useState([])
     useEffect(() => {
         async function _getThemes() {
+            const headers = getHeader(userInfo.idToken);
             axios.get(
                 `${APIs.GET_PRODUCTS}themes/`,
                 {headers}
@@ -58,9 +61,11 @@ const ThemeHeader = () => {
                     let copy = JSON.parse(JSON.stringify(res.data))
                     setThemeList(copy)
                 }
-            ).catch(e => console.log(e))
+            ).catch(e => handleError(e, signout))
         }
-        _getThemes()
+        if (userInfo) {
+            _getThemes()
+        }
     },[])
 
     useEffect(() => {
@@ -104,11 +109,11 @@ const ThemeHeader = () => {
 }
 
 const ThemeItems = ({ elementSelected }) => {
-    const { userInfo } = useAuthenticationContext();
-    const headers = getHeader(userInfo.idToken);
+    const { userInfo, signout } = useAuthenticationContext();
     const [themeItems, setThemeItems] = useState([])
     useEffect(() => {
         async function _loadProducts() {
+            const headers = getHeader(userInfo.idToken);
             axios.get(
                 `${APIs.GET_PRODUCTS}by_tags?tags=${encodeURIComponent(elementSelected)}&original=true`,
                 { headers }
@@ -116,9 +121,11 @@ const ThemeItems = ({ elementSelected }) => {
                 res => {
                     setThemeItems(res.data)
                 }
-            ).catch(e => handleError(e))
+            ).catch(e => handleError(e, signout))
         }
-        _loadProducts()
+        if (userInfo) {
+            _loadProducts()
+        }
     },[elementSelected]);
 
     return <View>

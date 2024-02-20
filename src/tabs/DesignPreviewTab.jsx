@@ -21,7 +21,7 @@ export const DesignPreviewTab = ({ navigation, route }) => {
     const [quantity, setQuantity] = React.useState(1);
     const [designIds, setDesignIds] = useState([]);
     const [enableAddToCart, setEnableAddToCart] = useState(false)
-    const { userInfo } = useAuthenticationContext();
+    const { userInfo, signout} = useAuthenticationContext();
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState("Embrace your exclusive nail design! Add it to your cart now for crafting and share your unique creation with the community by naming it. Let's get your one-of-a-kind nails in production pronto!");
     const [productImage, setProductImage] = useState('');
@@ -53,6 +53,10 @@ export const DesignPreviewTab = ({ navigation, route }) => {
 
   
     const add_to_cart = () => {
+      if (!userInfo) {
+        signout()
+        return
+      }
       const headers = getHeader(userInfo.idToken);
       if(designSetId && quantity > 0) {
         payload = {actions: [{id: String(designSetId), count: quantity}]}
@@ -71,7 +75,7 @@ export const DesignPreviewTab = ({ navigation, route }) => {
             })
           }
         }).catch((e) => {
-          handleError(e);
+          handleError(e, signout);
         });
       }
     }
@@ -110,7 +114,9 @@ export const DesignPreviewTab = ({ navigation, route }) => {
           alert('save designset failed, please try again')
         }
       }
-      save_design_set() 
+      if (userInfo) {
+        save_design_set() 
+      }
     }, [leftHandNails, rightHandNails, handProducts, userInfo])
 
 

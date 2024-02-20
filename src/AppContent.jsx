@@ -69,10 +69,12 @@ export const AppContent = () => {
       if (userInfo != null) {
         setIsLoggedInState(true);
         setUserInfo(userInfo);
+      } else {
+        setIsLoggedInState(false)
       }
     }
     _fetchUserInfo();
-  });
+  }, [isLoggedIn]);
 
 
   // https://reactnavigation.org/docs/tab-based-navigation/

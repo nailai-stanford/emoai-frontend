@@ -99,7 +99,7 @@ const Title = (props) => {
 
 const ButtonGroup = (props ) => {
   const {cart, setCart} = useCartContext();
-  const { userInfo } = useAuthenticationContext();
+  const { userInfo, signout } = useAuthenticationContext();
   const [productCount, setProductCount] = useState(0)
   const navigation = props.navigation;
   const route = props.route;
@@ -121,10 +121,12 @@ const ButtonGroup = (props ) => {
             setCart(cart)
           }
         ).catch(e => {
-          handleError(e)
+          handleError(e, signout)
         })
       }
-      _fetchCart()
+      if(userInfo) {
+        _fetchCart()
+      }
     }
   }, [userInfo])
 

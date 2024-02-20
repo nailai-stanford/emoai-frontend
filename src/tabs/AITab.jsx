@@ -8,18 +8,22 @@ import { BlurView } from "@react-native-community/blur";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { useTaskStatus } from "../providers/TaskContextProvider";
 import { BASE_URL, APIs, getHeader } from "../utils/API";
+import { err } from "react-native-svg";
 
 
 
 export const AITab = ({ navigation }) => {
 
-  const { userInfo} = useAuthenticationContext();
+  const { userInfo, signout} = useAuthenticationContext();
   const {taskStatus, setTaskStatus, taskGlobalID, setTaskGlobalID} = useTaskStatus();
 
-  const { idToken } = userInfo;
-  const headers = getHeader(idToken);
 
   const check_last_task_status = async () => {
+    if (!userInfo) {
+      signout()
+      return
+    }
+    const headers = getHeader(userInfo.idToken);
     try {
       const response = await fetch(`${BASE_URL}/api/task/last_status`, {
         method: 'GET',
@@ -27,6 +31,9 @@ export const AITab = ({ navigation }) => {
       });
       if (!response.ok) {
         console.error('Failed to fetch task status');
+        if (response.status == 401) {
+          signout()
+        }
         return;
       }
       const data = await response.json();

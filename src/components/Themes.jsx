@@ -9,7 +9,7 @@ import {
 import {TABs} from '../static/Constants';
 import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
-import {APIs, getHeader} from '../utils/API';
+import {APIs} from '../utils/API';
 import {Image} from '@rneui/themed';
 
 

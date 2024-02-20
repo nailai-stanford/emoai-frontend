@@ -7,7 +7,6 @@ import {
   FlatList,
   SafeAreaView,
 } from 'react-native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {getHeader, APIs} from '../utils/API';
 import {handleError} from '../utils/Common';
 import {useAuthenticationContext} from '../providers/AuthenticationProvider';
@@ -26,13 +25,16 @@ const pictureHeight = 60;
 const pictureWidth = 60;
 const pictureRadius = 10;
 
-const CheckoutItem = ({userInfo, item, setCart, updateTotal}) => {
+const CheckoutItem = ({userInfo, signout, item, setCart, updateTotal}) => {
 
   const [quantity, setQuantity] = useState(item.quantity);
   const id = item.product_id
   
 
   const update_quantity = (value) => {
+    if (!userInfo) {
+      return
+    }
     const headers = getHeader(userInfo.idToken);
     if(id) {
       payload = {actions: [{id: String(id), count: value}]}
@@ -42,7 +44,7 @@ const CheckoutItem = ({userInfo, item, setCart, updateTotal}) => {
           setCart(resp.data)
         }
       }).catch((e) => {
-        handleError(e);
+        handleError(e, signout);
       });
     }
   }
@@ -100,32 +102,28 @@ const CheckoutItem = ({userInfo, item, setCart, updateTotal}) => {
 };
 
 export const CartTab = ({navigation}) => {
-  const {userInfo} = useAuthenticationContext();
-
-  const headers = getHeader(userInfo.idToken);
+  const {userInfo, signout} = useAuthenticationContext();
   const {cart, setCart} = useCartContext();
   const [total, setTotal] = useState(0)
 
 
   useEffect(() => {
-    const headers = getHeader(userInfo.idToken);
     async function _fetchCart() {
+      const headers = getHeader(userInfo.idToken);
       axios.get(
         `${APIs.ORDER_FETCH}`,
         { headers }
-    ).then(
-      res => {
-        if (res.status == 200 && res.data) {
-          const cart = JSON.parse(JSON.stringify(res.data))
-          setCart(cart)
-        } else {
-          console.log('_fetchCart empty resp: ', res.status, res)
+      ).then(res => {
+          if (res.status == 200 && res.data) {
+            const cart = JSON.parse(JSON.stringify(res.data))
+            setCart(cart)
+          } else {
+            console.log('_fetchCart empty resp: ', res.status, res)
+          }
         }
-      }
-    ).catch(e => {
-      console.log("_fetchCart error")
-      console.log(e)
-    })
+      ).catch(e => {
+        handleError(e, signout)
+      })
   }
     if (userInfo) {
       _fetchCart()
@@ -157,6 +155,7 @@ export const CartTab = ({navigation}) => {
               renderItem={({item}) => (
                 <CheckoutItem
                   userInfo = {userInfo}
+                  signout={signout}
                   item={item}
                   setCart={setCart}
                   updateTotal={updateTotal}
