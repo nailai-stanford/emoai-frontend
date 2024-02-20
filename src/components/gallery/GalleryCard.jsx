@@ -1,14 +1,18 @@
-import { View, Text, ScrollView, Image, TouchableHighlight, TouchableOpacity } from "react-native";import { TABs } from "../../static/Constants";
+import { View, Text, ScrollView, Image, TouchableHighlight, TouchableOpacity, ImageBackground } from "react-native";import { TABs } from "../../static/Constants";
 import { useNavigation } from '@react-navigation/native';
 import { useAuthenticationContext } from "../../providers/AuthenticationProvider";
 import { useCartContext } from "../../providers/CartContextProvider";
 import { APIs, getHeader} from "../../utils/API";
+import LinearGradient from "react-native-linear-gradient";
 
 
 import { ACTION_ICONS } from "../../styles/icons";
-import { SubHeader,P } from "../../styles/texts";
+import { SubHeader,P, GradientP, GradientMenuHeader } from "../../styles/texts";
+import { COLORS } from "../../styles/theme";
 
 import axios from "axios";
+import { useEffect } from "react";
+import { GradientButtonAction } from "../../styles/buttons";
 
 export const GalleryCard = ({ item, style }) => {
   const { user, image } = item;
@@ -49,6 +53,30 @@ export const GalleryCard = ({ item, style }) => {
       });
     }
   }
+
+
+
+  // make price according to promotion
+  const makePrice = () => {
+    if (item.promotion) {
+      return (
+        <View style={{ flex: 1, flexDirection:'row' }}>
+          <P $alignLeft style={{ color: "white", textDecorationLine: 'line-through', textDecorationStyle: 'solid' }}>${item.price}</P>
+          <GradientP $alignLeft $hideBold={false}> ${item.you_pay_price}</GradientP>
+        </View>
+      )
+    } else {
+      return (
+        <View style={{ flex: 1 }}>
+          <P $alignLeft> ${item.you_pay_price}</P>
+        </View>
+      )
+    }
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /*                             render gallery card                            */
+  /* -------------------------------------------------------------------------- */
   return (
     <View
       style={{
@@ -69,7 +97,19 @@ export const GalleryCard = ({ item, style }) => {
         navigation.navigate(TABs.PRODUCT, {product: item})
       }}
       >
-        {image ? <Image style={productImageStyle} source={{ uri: image.src }} /> : <View style={productImageStyle} />}
+        {image ? 
+          <ImageBackground style={productImageStyle} imageStyle={{borderRadius:15}} source={{ uri: image.src }} > 
+          { !!item.promotion && 
+              <LinearGradient style={{bottom:0, position:'absolute', width:'70%', height: 20, borderBottomLeftRadius:15, borderTopRightRadius:15, justifyContent:'center', alignItems:'center'}}
+                colors={COLORS.gradient1}
+                useAngle={true} angle={45} angleCenter={{x:0.5,y:0.5}}
+                locations={[0.14,0.49,0.83]}
+              >
+                  <P style={{fontSize:10}}>Limited Time Sale!</P>
+              </LinearGradient>}
+        </ImageBackground> 
+
+        : <View style={productImageStyle} />}
 
       </TouchableOpacity>
 
@@ -99,7 +139,8 @@ export const GalleryCard = ({ item, style }) => {
       )}
 
       <View style={{ flex: 1 }}>
-        <P $alignLeft style={{ color: "white" }}>${item.price}</P>
+        
+        {makePrice()}
         <TouchableOpacity style={{ position: "absolute", right: 0, bottom: 10 }} 
         onPress={add_to_cart}>
 
