@@ -8,7 +8,7 @@ import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { useTaskStatus } from "../providers/TaskContextProvider";
 import { TABs } from '../static/Constants';
 import { Modal } from "react-native-modals"
-
+import { useToast } from "react-native-toast-notifications";
 import { ButtonAction, ButtonSelection, GradientButtonAction, GradientButtonChatSelection, GradientButtonSelection } from "../styles/buttons";
 import { P, ButtonP, ButtonH,TitleHeader, MenuHeader } from "../styles/texts";
 import { InputView } from "../styles/inputs";
@@ -87,7 +87,7 @@ export const AIChatTab = ({ navigation }) => {
   const [conversationStage, setConversationStage] = useState('THEME');
   const { taskStatus, setTaskStatus } = useTaskStatus(); 
   const { userInfo, signout } = useAuthenticationContext();
-
+  const toast = useToast();
   const [userPreferences, setUserPreferences] = useState({
     THEME: null,
     COLOR: null,
@@ -125,21 +125,13 @@ export const AIChatTab = ({ navigation }) => {
         return
       }
       const resp = await response.json();
-
-      if (resp.messages == null || resp.messages.length == 0) {
-        setCurrentStage('THEME')
-        console.log('send message THEME')
-        setFetchHistory(false)
-        sendMessage('THEME', {})
-      } else {
-        if (resp.completed) {
-          let last_message = resp.messages[resp.messages.length - 1]
-          let last_options = last_message.options
-          setOptions(last_options)
-          appendChatHistory(resp.messages)
-          setPendingReply(false);
-          setFetchHistory(false);
-        }
+      if (resp.completed) {
+        let last_message = resp.messages[resp.messages.length - 1]
+        let last_options = last_message.options
+        setOptions(last_options)
+        appendChatHistory(resp.messages)
+        setPendingReply(false);
+        setFetchHistory(false);
       }
       
     } catch (error) {
@@ -168,9 +160,6 @@ export const AIChatTab = ({ navigation }) => {
       if (last_user_msg.next_stage) {
         console.log('next stage:', last_user_msg.next_stage)
         setCurrentStage(last_user_msg.next_stage)
-        if (last_user_msg.next_stage === 'SUBMIT' && last_role !== 'user') {
-          setOptions(['Yes', 'No'])
-        }
       }
       if (last_user_msg.current_tags) {
         console.log('last_tags', last_user_msg.current_tags)
@@ -238,7 +227,16 @@ export const AIChatTab = ({ navigation }) => {
         if (response.status == 401) {
           signout()
         }
-        console.log('send message failed', response)
+        toast.show("Send message failed, please retry", {
+          type: "normal",
+          placement: "bottom",
+          duration: 1000,
+          animationType: "zoom-in",
+          style : {
+            marginBottom: 150
+          }
+        })
+        setFetchHistory(true)
         setPendingReply(false)
         return
       }
@@ -248,7 +246,17 @@ export const AIChatTab = ({ navigation }) => {
       console.log('send message resp:', data)
       setOptions([])
     } catch (error) {
+      toast.show("Send message failed, please retry", {
+        type: "normal",
+        placement: "bottom",
+        duration: 1000,
+        animationType: "zoom-in",
+        style : {
+          marginBottom: 150
+        }
+      })
       setPendingReply(false)
+      setFetchHistory(true)
       console.error('send message failed', error)
     }
   }
@@ -288,11 +296,12 @@ export const AIChatTab = ({ navigation }) => {
     append_tmp_chat(finalInput)
     setOptions([])
     if (currentStage === 'SUBMIT') {
+      currentStage === 'THEME'
       console.log('submit', finalInput)
       setTags({})
       if (finalInput === 'Yes') {
         // submit task and redirect to loading page
-        sendMessage(currentStage, {'submit': 'Yes'})
+        sendMessage('THEME', {'submit': 'Yes'})
         try{
           idToken = ''
           if (userInfo) {
@@ -300,6 +309,7 @@ export const AIChatTab = ({ navigation }) => {
           }
           const headers = getHeader(idToken)
           console.log({tags: JSON.stringify(tags)})
+
           const response = await fetch(`${BASE_URL}/api/task/submit`, {
             method: 'POST',
             headers: headers,
@@ -319,7 +329,7 @@ export const AIChatTab = ({ navigation }) => {
         }
     
       } else {
-        sendMessage(currentStage, {'submit': 'No'})
+        sendMessage('THEME', {'submit': 'No'})
       }
       return
     }
