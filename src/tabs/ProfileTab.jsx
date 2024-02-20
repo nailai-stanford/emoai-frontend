@@ -19,11 +19,11 @@ export const ProfileTab = ({ onSignout }) => {
   const [collected, setCollected] = useState([])
   const [singleNail, setSingleNail] = useState([])
   const { userInfo } = useAuthenticationContext();
-  const headers = getHeader(userInfo.idToken);
   const isFocused = useIsFocused();
 
   useEffect(() => {
     async function _getMy() {
+      const headers = getHeader(userInfo.idToken);
       axios.get(
         `${APIs.GET_PRODUCTS}my/`,
         {headers}
@@ -34,11 +34,14 @@ export const ProfileTab = ({ onSignout }) => {
           }
       ).catch(e => console.log(e))
     }
+    if (userInfo) {
      _getMy() 
+    }
   },[isFocused]);
 
   useEffect(() => {
     async function _getCollected() {
+      const headers = getHeader(userInfo.idToken);
       axios.get(
         `${APIs.LIKE_COLLECT}collections/`,
         {headers}
@@ -51,11 +54,14 @@ export const ProfileTab = ({ onSignout }) => {
         }
       ).catch(e => console.log(e))
     }
-    _getCollected()
+    if (userInfo) {
+      _getCollected()
+    }
   },[isFocused]);
 
   useEffect(() => {
     async function _getCollected() {
+      const headers = getHeader(userInfo.idToken);
       axios.get(
         `${APIs.GET_PRODUCTS}single_nail/`,
         {headers}
@@ -66,7 +72,9 @@ export const ProfileTab = ({ onSignout }) => {
           }
       ).catch(e => console.log(e))
     }
-    _getCollected() 
+    if(userInfo) {
+      _getCollected() 
+    }
   },[isFocused]);
 
   return (

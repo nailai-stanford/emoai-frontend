@@ -118,6 +118,9 @@ export const AIChatTab = ({ navigation }) => {
       });
 
       if (!response.ok) {
+        if (response.status == 401) {
+          signout()
+        }
         console.log('fetch history failed')
         return
       }
@@ -145,8 +148,10 @@ export const AIChatTab = ({ navigation }) => {
   };
 
   useEffect(() => {
-    console.log(fetchChatHistory)
-    fetchChatHistory()
+    if (userInfo) {
+      console.log(fetchChatHistory)
+      fetchChatHistory()
+    }
   },[fetchHistory, userInfo]); 
 
   const appendChatHistory = (messages) => {
@@ -215,7 +220,10 @@ export const AIChatTab = ({ navigation }) => {
   
   const sendMessage = async (stage, request_tags) => {
     try {
-      const { idToken } = userInfo;
+      idToken = ''
+      if (userInfo) {
+         idToken = userInfo.idToken;
+      }
       const headers = getHeader(idToken)
       
       if (stage == 'THEME') {
@@ -228,6 +236,9 @@ export const AIChatTab = ({ navigation }) => {
         body: JSON.stringify({stage: stage, content: JSON.stringify(request_tags), assistant_id: "", threading_id: ""}),
       })
       if (!response.ok) {
+        if (response.status == 401) {
+          signout()
+        }
         console.log('send message failed', response)
         setPendingReply(false)
         return
@@ -284,7 +295,10 @@ export const AIChatTab = ({ navigation }) => {
         // submit task and redirect to loading page
         sendMessage(currentStage, {'submit': 'Yes'})
         try{
-          const { idToken } = userInfo;
+          idToken = ''
+          if (userInfo) {
+            idToken = userInfo.idToken;
+          }
           const headers = getHeader(idToken)
           console.log({tags: JSON.stringify(tags)})
           const response = await fetch(`${BASE_URL}/api/task/submit`, {

@@ -35,6 +35,8 @@ import { P, ButtonP, MenuHeader, TitleHeader, SubHeader, ButtonH} from "../style
 import { COLORS, PADDINGS, FONTS, ICON_SIZES } from "../styles/theme";
 import { ACTION_ICONS } from "../styles/icons";
 import { err } from "react-native-svg";
+import { handleError } from "../utils/Common";
+import { UserInfo } from "../components/UserInfo";
 
 // const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
@@ -42,7 +44,7 @@ import { err } from "react-native-svg";
 const generateMoreImage = "../../assets/generate_more.png";
 
 export const WorkshopTab = ({ navigation, route }) => {
-  const { userInfo} = useAuthenticationContext();
+  const { userInfo, signout} = useAuthenticationContext();
   const width = Dimensions.get('window').width - 2*PADDINGS.sm;
   const scrollX = useRef(new Animated.Value(0)).current;
   const [editMode, setEditMode] = useState(false);
@@ -75,7 +77,7 @@ export const WorkshopTab = ({ navigation, route }) => {
 
   useFocusEffect(
     useCallback(() => {
-      if (task_id) {
+      if (task_id && userInfo) {
         getTaskProducts(task_id).then(data => {
           products = data;
           hand_designs = products.data
@@ -148,7 +150,9 @@ export const WorkshopTab = ({ navigation, route }) => {
 
 
   const getOriginalCollect = async () => {
-
+    if (!userInfo) {
+      return
+    }
     const { idToken } = userInfo;
     const headers = getHeader(idToken);
     try {
@@ -161,12 +165,14 @@ export const WorkshopTab = ({ navigation, route }) => {
       const productImages = response.data.products.map(product => product.image.src);
       setOriginalCollect(productImages);
     } catch (e) {
-      console.error(e);
+      handleError(e, signout)
     }
   };
 
   useEffect(() => {
-    getOriginalCollect();
+    if (userInfo) {
+      getOriginalCollect();
+    }
   }, []); // Empty dependency array means this runs once on mount
 
 

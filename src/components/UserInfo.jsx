@@ -2,7 +2,6 @@ import axios from "axios";
 import React from "react";
 import { StyleSheet, View, Text, Button, Image } from "react-native";
 
-import { APIs, getHeader } from "../utils/API";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 
 import { ButtonAction, ButtonSelection } from "../styles/buttons";
@@ -13,7 +12,6 @@ export const UserInfo = (props) => {
   const {myDesignNum, myCollectionNum, followersNum} = props;
   const { userInfo, signout } = useAuthenticationContext();
   const { onSignout } = props;
-  const headers = getHeader(userInfo.idToken);
 
   const avatarSize = 110;
 

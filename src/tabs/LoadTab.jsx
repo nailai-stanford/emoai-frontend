@@ -15,13 +15,16 @@ import { GradientButtonAction } from '../styles/buttons.tsx';
 export const LoadTab = ({ navigation }) => {
   const [progress, setProgress] = useState(0);
   const {taskStatus, setTaskStatus, taskGlobalID, setTaskGlobalID} = useTaskStatus();
-  const { userInfo} = useAuthenticationContext();
+  const { userInfo, signout} = useAuthenticationContext();
   const isFocused = useIsFocused();
   // const { userTags } = route.params;
 
 
 
   useEffect(() => {
+    if (!userInfo) {
+      signout()
+    }
     const { idToken } = userInfo;
     const headers = getHeader(idToken);
 
