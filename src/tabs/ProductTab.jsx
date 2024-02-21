@@ -9,12 +9,14 @@ import { handleError } from "../utils/Common";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { useCartContext } from "../providers/CartContextProvider";
 import { Image, Button, Text } from '@rneui/themed';
-import { MenuHeader,ButtonH, ButtonP, TitleHeader,P, SubHeader, TermTitle } from "../styles/texts";
+import { MenuHeader,ButtonH, ButtonP, TitleHeader,P, SubHeader, TermTitle, GradientP } from "../styles/texts";
 import { ButtonAction,ButtonSelection, GradientButtonAction } from "../styles/buttons";
 import { BORDERS, COLORS, PADDINGS } from "../styles/theme";
 import { ACTION_ICONS } from "../styles/icons";
 import { useToast } from "react-native-toast-notifications";
 import { HeadImages } from "../components/ProductHeader";
+import LinearGradient from "react-native-linear-gradient";
+
 
 
 const size = 50;
@@ -216,7 +218,9 @@ export const ProductTab = ({ route, navigation }) => {
   const item = route.params.product
   const productId = item.id
   const [title, setTitle] = useState(item.title ? item.title : "")
-  const [price, setPrice] = useState(item.price ? item.price : "")
+  const [price, setPrice] = useState(item.you_pay_price ? item.you_pay_price : "")
+  const [originalPrice, setOriginalPrice] = useState(item.price ? item.price : "" )
+  const [promotion, setPromotion] = useState(item.promotion ? item.promotion : false )
   const [description, setDescription] = useState(item.body_html ? item.body_html : "")
   const [images, setImages] = useState(item.image && item.image.src ? [item.image.src] : [])
   const [terms, setTerms] = useState([])
@@ -230,7 +234,9 @@ export const ProductTab = ({ route, navigation }) => {
       ).then(res => {
         data = res.data
         setTitle(data.title)
-        setPrice(data.price)
+        setPrice(data.you_pay_price)
+        setOriginalPrice(data.price)
+        setPromotion(data.promotion)
         setDescription(data.description)
         setImages(data.images)
         setTerms(data.terms)
@@ -247,7 +253,6 @@ export const ProductTab = ({ route, navigation }) => {
  
   const ListItem = ({ title, content }) => {
     const [expanded, setExpanded] = useState(false);
-  
     return (
       <View>
         <TouchableOpacity onPress={() => setExpanded(!expanded)} style={styles.titleContainer}>
@@ -259,6 +264,33 @@ export const ProductTab = ({ route, navigation }) => {
     );
   };
 
+  const makePrice = () => {
+    if (promotion) {
+      return (
+        <View style={{ flex: 0.3, flexDirection:'row', marginTop:10 }}>
+          <P $alignLeft style={{ color: "white", textDecorationLine: 'line-through', textDecorationStyle: 'solid' }}>${originalPrice}</P>
+          <GradientP $alignLeft $hideBold={false}> ${price}</GradientP>
+          <LinearGradient style={{borderRadius: BORDERS.buttonSelectionRadius, paddingHorizontal: 10, marginLeft: 5}}
+          colors={COLORS.gradient1}
+          useAngle={true} angle={45} angleCenter={{x:0.5,y:0.5}}
+          locations={[0.14,0.49,0.83]}
+        >
+           <P>Limited Time Sale!</P>
+        </LinearGradient>
+        </View>
+      )
+    } else {
+      return (
+        <View style={{ flex: 0.3, marginTop:10 }}>
+          <P $alignLeft> ${price}</P>
+        </View>
+      )
+    }
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /*                             render product page                            */
+  /* -------------------------------------------------------------------------- */
   return (
     <View style={{height:"88%"}}>
         <ScrollView>
@@ -278,7 +310,7 @@ export const ProductTab = ({ route, navigation }) => {
               {/* some optional like when params go in */}
               {/* {item.user && item.user.fullName !== "emoai-original" && <Like productID={productId} />} */}
             </View>
-            <P style={{flex: 0.3}} $alignLeft={true}>${price}</P>
+            {makePrice()}
             {!!description && <P style={{ flex: 1, paddingTop: 10, paddingBottom:10 }} $alignLeft={true}>{ description }</P>}
             {terms && (
               <View style={styles.termsContainer}>

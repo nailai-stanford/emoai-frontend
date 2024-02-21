@@ -1,6 +1,5 @@
 import {COLORS, FONTS, PADDINGS, BORDERS} from './theme'
 import styled from 'styled-components/native'
-// import {LinearGradient} from 'expo-linear-gradient';
 import { Text } from 'react-native';
 import React from "react";
 import LinearGradient from "react-native-linear-gradient";
