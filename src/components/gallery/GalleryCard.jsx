@@ -25,7 +25,7 @@ export const GalleryCard = ({ item, style }) => {
   const {setCart} = useCartContext();
 
   const productImageStyle = {
-    minHeight: 100,
+    minHeight: 95,
     minWidth: 100,
     borderRadius: 15,
     backgroundColor: "white",
