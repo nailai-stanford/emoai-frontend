@@ -135,8 +135,8 @@ export const PaymentTab = ({route, navigation}) => {
     const sanitizedAddr = {...addrDetails};
     delete sanitizedAddr['target'];
     delete sanitizedAddr['isCheckboxSelected'];
-    console.log('presentPaymentSheet result:', error)
     if (error) {
+      console.log('presentPaymentSheet result:', error)
       Alert.alert(`Error code: ${error.code}`, error.message);
     } else {
       idToken = ''

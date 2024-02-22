@@ -12,7 +12,6 @@ export const HeadImages = ({ images }) => {
     const isCarousel = useRef(null);
     console.log("images", images)
     const _renderItem = ({ item, index }, parallaxProps) => {
-      console.log('_renderItem:', item)
       return (
         <View
         

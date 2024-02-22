@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 
 import {TouchableOpacity, View, Image, TextInput, Button, StyleSheet, Share, Text } from 'react-native';
 import axios from 'axios';
-import { APIs, getHeader } from "../utils/API";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { ButtonAction, ButtonSelection } from "../styles/buttons";
 import { P, ButtonP, ButtonH, MenuHeader, TitleHeader, SubHeader} from "../styles/texts";

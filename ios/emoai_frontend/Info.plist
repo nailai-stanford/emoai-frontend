@@ -37,11 +37,6 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>We are not using the camera for this beta, and in the future we might use the camera to capture user's nail size, we will not save the user's data from camera.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
@@ -66,10 +61,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>NSAppTransportSecurity</key>
-		<dict>
-		<key>NSAllowsArbitraryLoads</key>
-		<true/>
-    </dict>
 </dict>
 </plist>
