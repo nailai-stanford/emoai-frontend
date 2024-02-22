@@ -2,7 +2,7 @@
 
 export const Config = {
   // BASE_URL: "http://192.168.1.231:8000",
-  BASE_URL: "http://3.92.214.49:80",
+  BASE_URL: "https://api-test.e-m-o.ai",
 
   IOS_CLIENT_ID:
     "433081369336-ijjtbop5esp27v3h61qcdopbla1ifg0t.apps.googleusercontent.com",

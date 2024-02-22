@@ -1,6 +1,5 @@
 import React from 'react';
 import { StyleSheet, View, Image } from 'react-native';
-import {GoogleSigninButton} from '@react-native-google-signin/google-signin';
 import { StatusBar } from "react-native";
 import {
     getUserInfoFromStore,
