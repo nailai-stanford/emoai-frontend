@@ -7,6 +7,7 @@ import {handleError} from '../utils/Common';
 import {GalleryCard} from '../components/gallery/GalleryCard';
 import {Tab} from '@rneui/themed';
 import { APIs} from '../utils/API';
+import { format_theme } from '../utils/TextUtils';
 
 import {GradientButtonSelection} from '../styles/buttons';
 import {P, ButtonP, MenuHeader, TitleHeader, GradientMenuHeader} from '../styles/texts';
@@ -55,7 +56,7 @@ const ThemeHeader = ({index, setIndex}) => {
               $selected={index == idx}
               key={idx}
               onPress={() => setIndex(idx)}>
-              <ButtonP>{e.split('-')[1]}</ButtonP>
+              <ButtonP>{format_theme(e.split('-')[1])}</ButtonP>
             </GradientButtonSelection>
           ))}
         </ScrollView>
