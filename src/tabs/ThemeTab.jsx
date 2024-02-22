@@ -4,6 +4,7 @@ import { GalleryCard } from "../components/gallery/GalleryCard";
 import { ButtonSelection, GradientButtonSelection } from "../styles/buttons";
 import { P, ButtonP,ButtonH, MenuHeader, TitleHeader} from "../styles/texts";
 import axios from "axios";
+import { format_theme } from "../utils/TextUtils";
 import { getHeader, APIs } from "../utils/API";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { handleError } from "../utils/Common";
@@ -32,14 +33,14 @@ const Tab = ({ content, selected, setSelected, setSubList }) => {
     
     let currSelected = selected == content ? true : false
         return <GradientButtonSelection $selected={currSelected} onPress={()=>{setSelected(content);}}>
-                    <ButtonH>{content}</ButtonH>
+                    <ButtonH>{format_theme(content.split('-')[1])}</ButtonH>
                 </GradientButtonSelection>
 }
 
 const SubElement = ({content, selected, setSelected}) => {
     let currSelected = selected == content ? true : false
     return <GradientButtonSelection $selected={currSelected} onPress={()=>setSelected(content)} >
-                <ButtonP style={{fontSize:12}}>{content.split('-')[1]}</ButtonP>
+                <ButtonP style={{fontSize:12}}>{format_theme(content.split('-')[1])}</ButtonP>
             </GradientButtonSelection>
 }
 

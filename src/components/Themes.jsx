@@ -10,6 +10,7 @@ import {TABs} from '../static/Constants';
 import {useNavigation} from '@react-navigation/native';
 import axios from 'axios';
 import {APIs} from '../utils/API';
+import { format_theme } from '../utils/TextUtils'; 
 import {Image} from '@rneui/themed';
 
 
@@ -26,6 +27,8 @@ import {Dimensions} from 'react-native';
 
 const iconSize = 20;
 const windowWidth = Dimensions.get('window').width;
+
+
 
 export const Themes = props => {
   const [themes, setThemes] = useState([]);
@@ -102,7 +105,7 @@ const ThemeCard = ({item}) => {
         padding: 20,
       }}>
       <View style={{paddingBottom: 10, alignSelf: 'flex-start'}}>
-        <SubHeader>{item['theme'].split('-')[1]}</SubHeader>
+        <SubHeader>{format_theme(item['theme'].split('-')[1])}</SubHeader>
       </View>
       <View style={{flexDirection: "row"}}>
       {item['category'] &&
@@ -141,6 +144,7 @@ const ThemePreview = ({item}) => {
     _loadPictures();
   }, [pic]);
 
+
   return (
     <View
       style={{
@@ -166,7 +170,7 @@ const ThemePreview = ({item}) => {
           }}
         />
       )}
-      <P style={{textAlign: 'center', flex: 1}}>{item.name.split('-')[1]}</P>
+      <P style={{textAlign: 'center', flex: 1}}>{format_theme(item.name.split('-')[1])}</P>
     </View>
   );
 };
