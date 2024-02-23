@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Image, Linking, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, Image, Linking, TouchableOpacity,} from 'react-native';
 import { StatusBar, Text } from "react-native";
 import {
     getUserInfoFromStore,
@@ -8,7 +8,7 @@ import {
   } from './../utils/UserUtils';
 
 import { GradientButtonAction } from '../styles/buttons';
-import { ButtonH, ButtonP, P, GradientP} from '../styles/texts';
+import { ButtonH, ButtonP, P, GradientP, TermTitle} from '../styles/texts';
 import { OTHER_ICONS } from '../styles/icons';
 
 export const LogInPage = (props) => {  
@@ -16,6 +16,9 @@ export const LogInPage = (props) => {
     <View style={styles.container}>
       <Image source={require('../../assets/others/logoLarge.png')} 
              style={styles.logoImage}/>
+      <TermTitle style={styles.slogan}>
+      EMO AI: Wear Your Emotions, Crafted by AI.
+      </TermTitle>
       <GradientButtonAction
         onPress={() => {
           onPressSignIn()
@@ -32,15 +35,23 @@ export const LogInPage = (props) => {
         </View>
       </GradientButtonAction>
       <P style={styles.termsText}>
-          By clicking Sign In With Google, you are 
+          By clicking Sign In With Google, you are agreeing to
         </P>
       <View style={styles.textContainer}>
         <P>
-        agreeing to EMO AI's 
+        EMO AI's 
         </P>
         <TouchableOpacity onPress={() => Linking.openURL('https://www.e-m-o.ai/terms')}>
           <GradientP style={styles.termsLink} >
-            {" terms and conditions"}
+            {" Terms and conditions "}
+          </GradientP>
+        </TouchableOpacity>
+        <P>
+        And
+        </P>
+        <TouchableOpacity onPress={() => Linking.openURL('https://www.e-m-o.ai/privacy')}>
+          <GradientP style={styles.termsLink} >
+            {" Privacy policy."}
           </GradientP>
         </TouchableOpacity>
       </View>
@@ -53,10 +64,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   logoImage: {
-    marginBottom: 150,
+    marginBottom: 5,
+  },
+  slogan: {
+    marginBottom: 200,
   },
   textContainer: {
     flexDirection: 'row',
@@ -65,7 +79,7 @@ const styles = StyleSheet.create({
     maxWidth: '70%', // Adjust this to match the width of your GradientButtonAction
   },
   termsText: {
-    marginTop: 5,
+    marginTop: 15,
     color: "white",
     textDecorationStyle: 'solid',
   },
