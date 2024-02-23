@@ -38,8 +38,7 @@ export const PADDINGS = {
     buttonActionX: 30,
     buttonActionY: 10,
     buttonSelectionX: 24,
-    buttonSelectionY: 6,
-
+    buttonSelectionY: 5,
 }
 
 // spacing: 24
