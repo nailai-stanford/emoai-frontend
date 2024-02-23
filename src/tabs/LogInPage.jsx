@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Image, Linking, TouchableOpacity,} from 'react-native';
-import { StatusBar, Text } from "react-native";
+import { StatusBar, Text, Dimensions} from "react-native";
 import {
     getUserInfoFromStore,
     onPressSignIn,
@@ -10,6 +10,9 @@ import {
 import { GradientButtonAction } from '../styles/buttons';
 import { ButtonH, ButtonP, P, GradientP, TermTitle} from '../styles/texts';
 import { OTHER_ICONS } from '../styles/icons';
+
+const { width: screenWidth } = Dimensions.get("window");
+
 
 export const LogInPage = (props) => {  
   return (
@@ -64,10 +67,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center'
+    marginTop: 100
+    // justifyContent: 'center'
   },
   logoImage: {
-    marginBottom: 5,
+    width: screenWidth * 0.7,
+    resizeMode: 'contain',
   },
   slogan: {
     marginBottom: 200,
@@ -75,7 +80,6 @@ const styles = StyleSheet.create({
   textContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-
     maxWidth: '70%', // Adjust this to match the width of your GradientButtonAction
   },
   termsText: {
