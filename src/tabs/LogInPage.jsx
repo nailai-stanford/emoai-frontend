@@ -11,7 +11,9 @@ import { GradientButtonAction } from '../styles/buttons';
 import { ButtonH, ButtonP, P, GradientP, TermTitle} from '../styles/texts';
 import { OTHER_ICONS } from '../styles/icons';
 
+
 const { width: screenWidth } = Dimensions.get("window");
+const { height: ScreenHeight } = Dimensions.get("window");
 
 
 export const LogInPage = (props) => {  
@@ -67,15 +69,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    marginTop: 100
+    marginTop: ScreenHeight * 0.15
     // justifyContent: 'center'
   },
   logoImage: {
-    width: screenWidth * 0.7,
+    width: screenWidth * 0.6,
+    height: screenWidth * 0.6,
     resizeMode: 'contain',
   },
   slogan: {
-    marginBottom: 200,
+    marginBottom: 180,
   },
   textContainer: {
     flexDirection: 'row',
