@@ -91,7 +91,7 @@ const Title = (props) => {
     title = TAB_TITLES[tabName];
   }
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, height: 22}}>
       <MenuHeader>{title}</MenuHeader>
     </View>
   );
