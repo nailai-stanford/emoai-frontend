@@ -45,16 +45,20 @@ export const LoadTab = ({ navigation }) => {
         }
         const data = await response.json();
         task_id = data.task_id
-        task_status = data.status
+        let task_status = data.status
         console.log(task_id, task_status, taskStatus, 'progress:', data.progress)
-        setProgress(data.progress)
-        if (task_status === 3) {
-          // task_id = "506b07a3-84e2-4545-8840-ddb17da54193"
-          // navigation.navigate(TABs.WORKSHOP, {task_id: task_id})
+        if (task_status === 1) {
+          setTaskStatus("PROCESSING");
+          setProgress(0)
+        } else if (task_status === 2) {
+          setTaskStatus("PROCESSING");
+          setProgress(data.progress)
+        } else if (task_status === 3) {
           clearInterval(intervalId);
           setProgress(0);
           setTaskStatus("WORKSHOP_INIT");
           setTaskGlobalID(task_id);
+          navigation.navigate(TABs.WORKSHOP, {task_id: task_id})
         } else if (task_status === 4 || task_status === 5) {
           clearInterval(intervalId);
           setProgress(0);

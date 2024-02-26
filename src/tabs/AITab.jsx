@@ -8,7 +8,6 @@ import { BlurView } from "@react-native-community/blur";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { useTaskStatus } from "../providers/TaskContextProvider";
 import { BASE_URL, APIs, getHeader } from "../utils/API";
-import { err } from "react-native-svg";
 
 
 
@@ -17,8 +16,15 @@ export const AITab = ({ navigation }) => {
   const { userInfo, signout} = useAuthenticationContext();
   const {taskStatus, setTaskStatus, taskGlobalID, setTaskGlobalID} = useTaskStatus();
 
+  
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      check_last_task_status(true);
+    });
+    return unsubscribe;
+  }, [navigation]);
 
-  const check_last_task_status = async () => {
+  const check_last_task_status = async (init_check) => {
     if (!userInfo) {
       signout()
       return
@@ -38,26 +44,33 @@ export const AITab = ({ navigation }) => {
       }
       const data = await response.json();
       task_id = data.task_id
-      task_status = data.status
+      let task_status = data.status
       console.log(task_id, task_status)
       if (task_status === 1 || task_status === 2) {
         setTaskStatus("PROCESSING");
         setTaskGlobalID(task_id);
-        navigation.navigate(TABs.LOAD)
-      }
-      if (task_status === 3) {
+        if (!init_check) {
+          navigation.navigate(TABs.LOAD)
+        }
+      } else if (task_status === 3) {
         console.log('task_status is 3', task_id)
         setTaskStatus("WORKSHOP_INIT");
         setTaskGlobalID(task_id);
-        navigation.navigate(TABs.WORKSHOP, {task_id: task_id})
+        if (!init_check) {
+          navigation.navigate(TABs.WORKSHOP, {task_id: task_id})
+        }
       } else if (task_status === 4 || task_status === 5) {
         console.log('task_status is 4/5', task_id)
         setTaskStatus("NO_TASK");
-        navigation.navigate(TABs.AICHAT)
+        if (!init_check) {
+          navigation.navigate(TABs.AICHAT)
+        }
       } else {
         // more status?
-        setTaskStatus("PROCESSING");
-        navigation.navigate(TABs.LOAD)
+        setTaskStatus("NO_TASK");
+        if (!init_check) {
+          navigation.navigate(TABs.AICHAT)
+        }
       }
     } catch (error) {
       console.error('Error fetching task status:', error);
@@ -82,7 +95,6 @@ export const AITab = ({ navigation }) => {
           textAlign: "center",
           position: "absolute",
           bottom: 100,
-
         }}
       >
         { taskStatus === "NO_TASK" ? 
@@ -94,7 +106,7 @@ export const AITab = ({ navigation }) => {
           Embrace the power of AI magic to nail your style
         </P>
         <View>
-          <GradientButtonAction onPress={() => check_last_task_status()}>
+          <GradientButtonAction onPress={() => check_last_task_status(false)}>
             <ButtonH>Start Now</ButtonH>
           </GradientButtonAction>
         </View>
@@ -105,7 +117,7 @@ export const AITab = ({ navigation }) => {
         {taskStatus==="WORKSHOP_INIT" ? "Your Design is Here!" : "Welcome Back!"}
       </TitleHeader>
       <View>
-      <GradientButtonAction onPress={() => check_last_task_status()}>
+      <GradientButtonAction onPress={() => check_last_task_status(false)}>
         <ButtonH>{taskStatus==="WORKSHOP_INIT" ? "Go To Workshop" : "Check Status"}</ButtonH>
       </GradientButtonAction>
     </View>
