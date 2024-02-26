@@ -42,14 +42,13 @@ export const HomeTab = (navigation) => {
   }, [])
   
   useEffect(() => {
+   
     if (index === 0) {
-      setActiveProduct(productList);
-    }
-    if (index === 1) {
       setActiveProduct(original);
-    }
-    if (index === 2) {
+    } else if (index === 1) {
       setActiveProduct(community);
+    } else if (index === 2) {
+      setActiveProduct(productList);
     }
   },[index, productList, original, community])
 
@@ -59,9 +58,10 @@ export const HomeTab = (navigation) => {
       <Themes style={{ flex: 1 }} />
       <GradientMenuHeader style={{ flex:1, alignSelf:"flex-start", marginLeft:12}} >Category</GradientMenuHeader>
         <View style={styles.buttonRow}>
-          <GradientButtonSelection onPress={() => {setIndex(0)}} $selected={index===0 && true}><ButtonP>All</ButtonP></GradientButtonSelection>
-          <GradientButtonSelection onPress={() => setIndex(1)} $selected={index===1 && true} ><ButtonP>Original</ButtonP></GradientButtonSelection>
-          <GradientButtonSelection onPress={() => setIndex(2)}  $selected={index===2 && true}><ButtonP>Community</ButtonP></GradientButtonSelection>
+          <GradientButtonSelection onPress={() => setIndex(0)} $selected={index===0 && true} ><ButtonP>Original</ButtonP></GradientButtonSelection>
+          <GradientButtonSelection onPress={() => setIndex(1)}  $selected={index===1 && true}><ButtonP>Community</ButtonP></GradientButtonSelection>
+          <GradientButtonSelection onPress={() => {setIndex(2)}} $selected={index===2 && true}><ButtonP>All</ButtonP></GradientButtonSelection>
+    
         </View>
 
         <View
