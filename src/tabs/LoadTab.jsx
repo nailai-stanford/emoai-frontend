@@ -3,9 +3,7 @@ import { View, Text, ActivityIndicator } from 'react-native';
 import * as Progress from 'react-native-progress';
 import { TABs } from '../static/Constants';
 import { useAuthenticationContext } from "../providers/AuthenticationProvider"
-import { useTaskStatus } from '../providers/TaskContextProvider.jsx';
 import { BASE_URL, APIs, getHeader } from "../utils/API";
-import LottieView from "lottie-react-native";
 import { useIsFocused } from '@react-navigation/native';
 
 import {TitleHeader, P, GradientMenuHeader, ButtonP} from '../styles/texts.tsx'
@@ -14,11 +12,8 @@ import { GradientButtonAction } from '../styles/buttons.tsx';
 
 export const LoadTab = ({ navigation }) => {
   const [progress, setProgress] = useState(0);
-  const {taskStatus, setTaskStatus, taskGlobalID, setTaskGlobalID} = useTaskStatus();
   const { userInfo, signout} = useAuthenticationContext();
   const isFocused = useIsFocused();
-  // const { userTags } = route.params;
-
 
 
   useEffect(() => {
@@ -46,24 +41,20 @@ export const LoadTab = ({ navigation }) => {
         const data = await response.json();
         task_id = data.task_id
         let task_status = data.status
-        console.log(task_id, task_status, taskStatus, 'progress:', data.progress)
+        console.log(task_id, task_status, 'progress:', data.progress)
         if (task_status === 1) {
-          setTaskStatus("PROCESSING");
           setProgress(0)
         } else if (task_status === 2) {
-          setTaskStatus("PROCESSING");
           setProgress(data.progress)
         } else if (task_status === 3) {
           clearInterval(intervalId);
-          setProgress(0);
-          setTaskStatus("WORKSHOP_INIT");
-          setTaskGlobalID(task_id);
           navigation.navigate(TABs.WORKSHOP, {task_id: task_id})
         } else if (task_status === 4 || task_status === 5) {
           clearInterval(intervalId);
-          setProgress(0);
           // how to deal with failed?  need talk with PM
-          setTaskStatus("NO_TASK");
+          navigation.navigate(TABs.AICHAT)
+        } else {
+          clearInterval(intervalId);
           navigation.navigate(TABs.AICHAT)
         }
       } catch (error) {
@@ -71,7 +62,7 @@ export const LoadTab = ({ navigation }) => {
       }
     };
   
-    if (isFocused && taskStatus === "PROCESSING") { // Check if the screen is focused and taskStatus is "PROCESSING"
+    if (isFocused) { // Check if the screen is focused and taskStatus is "PROCESSING"
       intervalId = setInterval(get_last_task_status, 3000);
     }
   

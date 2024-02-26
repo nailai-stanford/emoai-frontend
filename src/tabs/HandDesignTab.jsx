@@ -15,7 +15,6 @@ import { LEFTHAND_NAILS } from '../styles/nails';
 import { BlurView } from "@react-native-community/blur";
 import { useFocusEffect } from '@react-navigation/native';
 
-import { useTaskStatus } from '../providers/TaskContextProvider';
 
 import MaskedView from "@react-native-masked-view/masked-view";
 
@@ -47,7 +46,6 @@ export const HandDesignTab = ({ route, navigation }) => {
   const handProducts = route.params?.handProducts || [];
   const taskId = route.params?.task_id || "";
   const userInfo = route.params?.userInfo || null;
-  const {taskStatus, setTaskStatus} = useTaskStatus();
 
   const [currentHand, setCurrentHand] = useState('left');
   const [nailCategory, setNailCategory] = useState('selected');
@@ -252,7 +250,6 @@ const isDropZone = (gesture, index) => {
       alert(`Please ensure all nails for both hands are assigned. Currently, there are ${checkIfAllNailsAreSelected()} nails empty. Make sure you checked the other hand too!`);
       return;
     }
-    setTaskStatus("NO_TASK");
     navigation.navigate(TABs.DESIGN_PREVIEW, { 
       leftHandNails: leftHandNails,
       rightHandNails: rightHandNails, 

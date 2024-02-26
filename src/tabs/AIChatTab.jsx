@@ -5,7 +5,6 @@ import {
   Platform, TouchableOpacity, Animated, Dimensions
 } from 'react-native';
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
-import { useTaskStatus } from "../providers/TaskContextProvider";
 import { TABs } from '../static/Constants';
 import { Modal } from "react-native-modals"
 import { useToast } from "react-native-toast-notifications";
@@ -85,7 +84,6 @@ export const AIChatTab = ({ navigation }) => {
   const [userInput, setUserInput] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
   const [conversationStage, setConversationStage] = useState('THEME');
-  const { taskStatus, setTaskStatus } = useTaskStatus(); 
   const { userInfo, signout } = useAuthenticationContext();
   const toast = useToast();
   const [userPreferences, setUserPreferences] = useState({
@@ -322,7 +320,6 @@ export const AIChatTab = ({ navigation }) => {
           setFetchHistory(false)
           data = await response.json()
           console.log('AI design task submitted, resp:', data)
-          setTaskStatus("PROCESSING");
           navigation.navigate(TABs.LOAD)
         } catch(error) {
           console.error('submit ai design task failed', error)

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {AuthenticationProvider} from './src/providers/AuthenticationProvider';
 import { CartContextProvider } from './src/providers/CartContextProvider';
-import { TaskStatusProvider } from './src/providers/TaskContextProvider';
 
 import {AppContent} from './src/AppContent';
 import {ModalPortal} from 'react-native-modals';
@@ -14,10 +13,8 @@ export default function App() {
       <AuthenticationProvider>
         <ToastProvider>
           <CartContextProvider>
-            <TaskStatusProvider>
               <AppContent />
               <ModalPortal />
-            </TaskStatusProvider>
           </CartContextProvider>
         </ToastProvider>
       </AuthenticationProvider>

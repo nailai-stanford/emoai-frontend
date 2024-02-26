@@ -6,7 +6,6 @@ import { P, ButtonP, ButtonH, TitleHeader } from "../styles/texts";
 import { TABs } from "../static/Constants";
 import { BlurView } from "@react-native-community/blur";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
-import { useTaskStatus } from "../providers/TaskContextProvider";
 import { BASE_URL, APIs, getHeader } from "../utils/API";
 
 
@@ -14,8 +13,7 @@ import { BASE_URL, APIs, getHeader } from "../utils/API";
 export const AITab = ({ navigation }) => {
 
   const { userInfo, signout} = useAuthenticationContext();
-  const {taskStatus, setTaskStatus, taskGlobalID, setTaskGlobalID} = useTaskStatus();
-
+  const [taskStatus, setTaskStatus] = useState('NO_TASK')
   
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
@@ -48,14 +46,12 @@ export const AITab = ({ navigation }) => {
       console.log(task_id, task_status)
       if (task_status === 1 || task_status === 2) {
         setTaskStatus("PROCESSING");
-        setTaskGlobalID(task_id);
         if (!init_check) {
           navigation.navigate(TABs.LOAD)
         }
       } else if (task_status === 3) {
         console.log('task_status is 3', task_id)
         setTaskStatus("WORKSHOP_INIT");
-        setTaskGlobalID(task_id);
         if (!init_check) {
           navigation.navigate(TABs.WORKSHOP, {task_id: task_id})
         }
