@@ -17,6 +17,8 @@ import { useCartContext } from '../providers/CartContextProvider';
 
 import { HeadImages } from '../components/ProductHeader';
 
+
+
 export const DesignPreviewTab = ({ navigation, route }) => {
     const [quantity, setQuantity] = React.useState(1);
     const [designIds, setDesignIds] = useState([]);
@@ -126,12 +128,6 @@ export const DesignPreviewTab = ({ navigation, route }) => {
       return (
         <View >
         <ScrollView style={{ paddingHorizontal: 20, display:'flex', flexDirection:'column' }}>
-          <View style={{left: 10}}>
-            <TouchableOpacity onPress={onBack} style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 5 }}>
-                <ACTION_ICONS.back width={5} />
-            <P style={{paddingLeft:PADDINGS.sm}}>Back to hand design</P>
-            </TouchableOpacity>
-          </View>
 
         {productImageList == null? 
         <View>

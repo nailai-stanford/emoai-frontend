@@ -103,6 +103,7 @@ const ButtonGroup = (props ) => {
   const [productCount, setProductCount] = useState(0)
   const navigation = props.navigation;
   const route = props.route;
+  const showCart = Boolean(route.name !== TABs.DESIGN_PREVIEW)
 
   useEffect(() => {
     console.log(route.name)
@@ -124,7 +125,7 @@ const ButtonGroup = (props ) => {
           handleError(e, signout)
         })
       }
-      if(userInfo) {
+      if(userInfo && showCart) {
         _fetchCart()
       }
     }
@@ -148,7 +149,7 @@ const ButtonGroup = (props ) => {
         height: iconSize,
       }}
     >
-      {route.name !== TABs.Home && 
+      {route.name !== TABs.HOME && 
       <TouchableOpacity size={iconSize} style={{ position: "absolute", right: 30 }} onPress={() => navigation.navigate(TABs.HOME)}>
         <ACTION_ICONS.home
           stroke={COLORS.white}
@@ -156,7 +157,7 @@ const ButtonGroup = (props ) => {
         />
       </TouchableOpacity>
       }
-      <TouchableOpacity style={{ position: "absolute", right: 0 }} onPress={() => navigation.navigate(TABs.CART)}>
+      {route.name !== TABs.DESIGN_PREVIEW && <TouchableOpacity style={{ position: "absolute", right: 0 }} onPress={() => navigation.navigate(TABs.CART)}>
         <View>
           <ACTION_ICONS.shop
             color={iconColor}
@@ -180,7 +181,7 @@ const ButtonGroup = (props ) => {
             )}
         </View>
       </TouchableOpacity>
-
+      }
     </View>
   );
 };
