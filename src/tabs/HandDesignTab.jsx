@@ -154,20 +154,18 @@ export const HandDesignTab = ({ route, navigation }) => {
             </View>
         }>
         <TouchableOpacity
-            // onPress={() => {
-            // const selectedNailData = nailListRender[index];
-            // navigation.navigate(TABs.NAIL_DESIGN, { 
-            //     currentHand: currentHand,
-            //     nailIndex: index,
-            //     nailImage: selectedNailData,
-            //     selectedNails: selectedNails,
-            //     updateNailImage: (newImage) => updateNailImage(currentHand, index, newImage),
-            // });
-            // }}
             activeOpacity={1}
         > 
             {nailListRender[index] ? 
-            <Image source={{ uri: nailListRender[index].url }} style={styles.nailImage} />
+            
+            <Image 
+              source={{ uri: nailListRender[index].url }} 
+              style={[
+                styles.nailImage,
+                index === 4 &&  {transform: [{ rotate: '45deg' }]},
+                index ===0  && { transform: [{ rotate: '-45deg' }]}
+              ]} 
+            />
             : <View style={[styles.nailImage, { backgroundColor: COLORS.dark }]} />
             }
         </TouchableOpacity>
@@ -333,10 +331,10 @@ const styles = StyleSheet.create({
     },
     clickableZone: {
       position: 'absolute',
-      borderWidth: 0, // Set to 0 for invisibility
-      borderColor: COLORS.white, 
-      // backgroundColor: 'transparent', // Uncomment for complete invisibility
-      // ... (other styles as needed)
+      // borderWidth: 0, // Set to 0 for invisibility
+      paddingHorizontal: 6,
+      paddingVertical: 8,
+      // borderColor: COLORS.white, 
     },
     dropZone: {
       position: 'absolute',
@@ -360,10 +358,12 @@ const styles = StyleSheet.create({
       paddingBottom: 30,
     },
     nailImage: {
-      width: 50,
-      height: 60,
+      width: 35,
+      height: 40,
       resizeMode:'contain',
-      marginHorizontal: 5,
+      marginHorizontal: 8,
+      // borderWidth: 1,
+      // borderColor: COLORS.white,
       // Add any additional styles for the image if necessary
     }
   });  
