@@ -1,5 +1,4 @@
 import { View, Text, Touchable, TouchableOpacity } from "react-native";
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
 import { TAB_TITLES, TABs } from "../static/Constants";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
@@ -9,9 +8,7 @@ import { COLORS, PADDINGS } from "../styles/theme";
 import { MenuHeader } from "../styles/texts";
 import { ACTION_ICONS } from "../styles/icons";
 import { useEffect, useState } from "react";
-import { getHeader, APIs } from "../utils/API";
-import axios from "axios";
-import { handleError } from "../utils/Common";
+import { APIs, GET } from "../utils/API";
 
 
 const iconSize = 20;
@@ -110,24 +107,15 @@ const ButtonGroup = (props ) => {
   }, [route])
   
   useEffect(() => {
-    if(userInfo && userInfo.idToken) {
-      const headers = getHeader(userInfo.idToken);
-      async function _fetchCart() {
-        axios.get(
-          `${APIs.ORDER_FETCH}`,
-          { headers }
-        ).then(
-          res => {
-            const cart = JSON.parse(JSON.stringify(res.data))
-            setCart(cart)
-          }
-        ).catch(e => {
-          handleError(e, signout)
-        })
+    async function _fetchCart() {
+      resp = await GET(`${APIs.ORDER_FETCH}`, userInfo)
+      if (resp.status === 200) {
+        const cart = JSON.parse(JSON.stringify(resp.data))
+        setCart(cart)
       }
-      if(userInfo && showCart) {
-        _fetchCart()
-      }
+    }
+    if(showCart && userInfo) {
+      _fetchCart()
     }
   }, [userInfo])
 

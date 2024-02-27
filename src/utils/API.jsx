@@ -1,4 +1,6 @@
 import {Config} from './Config';
+import axios from "axios";
+
 
 export const BASE_URL = String(Config.BASE_URL);
 
@@ -32,3 +34,38 @@ export const getHeader = (idToken = '') => {
   }
   return headers;
 };
+
+
+
+export const GET = async(url, userInfo, signout) => {
+  headers = null
+  if (userInfo && userInfo.idToken) {
+    headers = getHeader(userInfo.idToken)
+  }
+  try {
+    const response = await axios.get(url, { headers });
+    return { status: response.status, data: response.data };
+  } catch (e) {
+    if (signout && e.response && e.response.status === 401) {
+      signout();
+    }
+    return { status: e.response ? e.response.status : 500, error: e.message };
+  }
+}
+
+
+export const POST = async(url, payload, userInfo, signout) => {
+  headers = null
+  if (userInfo && userInfo.idToken) {
+    headers = getHeader(userInfo.idToken)
+  }
+  try {
+    const response = await axios.post(url, payload, { headers });
+    return { status: response.status, data: response.data };
+  } catch (e) {
+    if (signout && e.response && e.response.status === 401) {
+      signout();
+    }
+    return { status: e.response ? e.response.status : 500, error: e.message };
+  }
+}

@@ -1,8 +1,7 @@
 import React, {useState, useEffect} from "react";
 import {  View, Text, FlatList, Image, StyleSheet} from "react-native";
 import { GalleryCard } from "../components/gallery/GalleryCard";
-import axios from "axios";
-import { APIs } from "../utils/API";
+import { APIs, GET } from "../utils/API";
 import { TitleHeader } from "../styles/texts";
 import { COLORS,BORDERS } from "../styles/theme";
 import { BlurView } from "@react-native-community/blur";
@@ -13,13 +12,10 @@ export const CollectionTab = ({ route }) => {
 
     useEffect(() => {
         async function _loadProducts() {
-            axios.get(
-                `${APIs.GET_PRODUCTS}by_tags?tags=${encodeURIComponent(route.params.item)}&original=true`,
-            ).then(
-                res => {
-                    setCategoryItems(res.data);
-                }
-            ).catch(e => handleError(e))
+            resp = await GET(`${APIs.GET_PRODUCTS}by_tags?tags=${encodeURIComponent(route.params.item)}&original=true`)
+            if (resp.status === 200) {
+                setCategoryItems(resp.data);
+            }
         }
          _loadProducts() 
     }, [route.params.item]);

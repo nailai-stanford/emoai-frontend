@@ -4,7 +4,7 @@ import { TouchableOpacity, View, StyleSheet, SafeAreaView,   Dimensions, FlatLis
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { GalleryCard } from "../components/gallery/GalleryCard";
 import { useState, useEffect, useRef} from "react";
-import { APIs, getHeader } from "../utils/API";
+import { APIs, GET, getHeader } from "../utils/API";
 import { handleError } from "../utils/Common";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { useCartContext } from "../providers/CartContextProvider";
@@ -17,33 +17,23 @@ import { useToast } from "react-native-toast-notifications";
 import { HeadImages } from "../components/ProductHeader";
 import LinearGradient from "react-native-linear-gradient";
 
-
-
 const size = 50;
 const iconSize = 20;
 const { width: screenWidth } = Dimensions.get("window");
 
 
-const Explore = ({ }) => {
-  const { userInfo, signout } = useAuthenticationContext();
+const Recommend = ({ }) => {
   const [productList, setProductList] = useState([]);
   useEffect(() => {
-    async function _loadProducts() {
-      const headers = getHeader(userInfo.idToken);
-      axios
-        .get(
-          `${APIs.GET_PRODUCTS}recommended/`,
-          { headers }
-        )
-        .then((res) => {
-          setProductList(JSON.parse(JSON.stringify(res.data.products)));
-        })
-        .catch((e) => {
-          handleError(e, signout);
-        });
+    async function get_recommend_products() {
+      resp = await GET(`${APIs.GET_PRODUCTS}recommended/`)
+      if (resp.status === 200) {
+        setProductList(JSON.parse(JSON.stringify(resp.data.products)));
+      } 
     }
-    if (userInfo && productList.length == 0) { _loadProducts(); }
-    
+    if (productList.length == 0) {
+       get_recommend_products(); 
+    }
   });
     return <View>
       <View>
@@ -70,18 +60,15 @@ const ButtonGroup = ({ productID}) => {
   const toast = useToast();
   useEffect(() => {
     async function _getCollect() {
-      const headers = getHeader(userInfo.idToken);
-      axios.get(
-        `${APIs.LIKE_COLLECT}collected_product?product_id=${String(productID)}`,
-        { headers }
-      ).then(res => {
-        setCollected(res.data.exists)
-      }).catch(e => handleError(e, signout))
+      resp = await GET(`${APIs.LIKE_COLLECT}collected_product?product_id=${String(productID)}`, userInfo)
+      if (resp.status === 200) {
+        setCollected(resp.data.exists)
+      }
     }
     if (userInfo) {
       _getCollect()
     }
-  },[productID]);
+  },[productID, userInfo]);
 
   let cart
  
@@ -94,23 +81,24 @@ const ButtonGroup = ({ productID}) => {
             alignSelf: "center",
             alignItems: "center"
           }} 
-        onPress={() => {
-          if (!userInfo) {
-            return
-          }
-          const headers = getHeader(userInfo.idToken);
-          let URL = collected? APIs.DELETE_LIKE_COLLECT: APIs.LIKE_COLLECT
-          axios.post(
-            URL,
-            {
-              shopify_product_id: String(productID),
-              action: 2,
-            }, { headers }
-          ).then().catch((e) => {
-            handleError(e, signout);
-          });
-          setCollected(!collected);
-      }}>
+          onPress={() => {
+            // todo : login popwindow
+            if (!userInfo) {
+              return
+            }
+            const headers = getHeader(userInfo.idToken);
+            let URL = collected? APIs.DELETE_LIKE_COLLECT: APIs.LIKE_COLLECT
+            axios.post(
+              URL,
+              {
+                shopify_product_id: String(productID),
+                action: 2,
+              }, { headers }
+            ).then().catch((e) => {
+              handleError(e, signout);
+            });
+            setCollected(!collected);
+          }}>
             <ButtonH>{collected ? "UnCollect" : "Add to Collection"}</ButtonH>
         </GradientButtonAction>
            
@@ -227,12 +215,9 @@ export const ProductTab = ({ route, navigation }) => {
   const [creator, setCreator] = useState()
   useEffect(() => {
     async function get_product_detail() {
-      const headers = getHeader(userInfo.idToken);
-      axios.get(
-        `${APIs.GET_PRODUCTS}${String(productId)}`,
-        { headers }
-      ).then(res => {
-        data = res.data
+      resp = await GET(`${APIs.GET_PRODUCTS}${String(productId)}`)
+      if (resp.status === 200) {
+        data = resp.data
         setTitle(data.title)
         setPrice(data.you_pay_price)
         setOriginalPrice(data.price)
@@ -240,14 +225,9 @@ export const ProductTab = ({ route, navigation }) => {
         setDescription(data.description)
         setImages(data.images)
         setTerms(data.terms)
-      }).catch(e => {
-        console.log('error', e)
-        handleError(e, signout)
-      })
+      }
     }
-    if (userInfo) {
-      get_product_detail()
-    }
+    get_product_detail()
   }, [productId]) 
 
  
@@ -326,7 +306,7 @@ export const ProductTab = ({ route, navigation }) => {
         {item.user && item.user.fullName !== "emoai-original" &&  <SubHeader style={{alignSelf:"flex-start", paddingTop:0}}>Creator</SubHeader>}
             {/* some optional creator info */}
           {item.user && item.user.fullName !== "emoai-original" && <Creator user={item.user} />}
-        <Explore />
+        <Recommend />
         </View>
         </ScrollView>
       <ButtonGroup productID={item.id}/>

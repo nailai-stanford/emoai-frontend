@@ -103,7 +103,6 @@ export const AppContent = () => {
                 )
 
               case TABs.DISCOVER:
-
               return focused ?  <TAB_BAR_ICONS.discoverSelected width={ICON_SIZES.standard} height={ICON_SIZES.standard} fill={fill}  stroke={stroke}  /> 
               : <TAB_BAR_ICONS.discover width={ICON_SIZES.standard} height={ICON_SIZES.standard} fill={COLORS.grey}  /> 
               

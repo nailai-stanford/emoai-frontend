@@ -106,7 +106,6 @@ export const CartTab = ({navigation}) => {
   const {cart, setCart} = useCartContext();
   const [total, setTotal] = useState(0)
 
-
   useEffect(() => {
     async function _fetchCart() {
       const headers = getHeader(userInfo.idToken);
