@@ -8,14 +8,12 @@ import {
 } from 'react-native';
 import {TABs} from '../static/Constants';
 import {useNavigation} from '@react-navigation/native';
-import axios from 'axios';
-import {APIs} from '../utils/API';
+import {APIs, GET} from '../utils/API';
 import { format_theme } from '../utils/TextUtils'; 
 import {Image} from '@rneui/themed';
 
 
 import {useState, useEffect} from 'react';
-import {handleError} from '../utils/Common';
 
 
 import { ButtonSelection } from "../styles/buttons";
@@ -35,13 +33,10 @@ export const Themes = props => {
   data = {};
   useEffect(() => {
     async function _getThemes() {
-      axios
-        .get(`${APIs.GET_PRODUCTS}categoriesByThemes/`)
-        .then(res => {
-          let copy = JSON.parse(JSON.stringify(res.data));
-          setThemes(copy);
-        })
-        .catch(e => console.log(e));
+      resp = await GET(`${APIs.GET_PRODUCTS}categoriesByThemes/`)
+      if (resp.status === 200) {
+        setThemes(JSON.parse(JSON.stringify(resp.data)))
+      }
     }
     if (themes.length == 0) {
       _getThemes();
@@ -128,18 +123,10 @@ const ThemePreview = ({item}) => {
   const [pic, setPic] = useState('');
   useEffect(() => {
     async function _loadPictures() {
-      axios
-        .get(
-          `${APIs.GET_PRODUCTS}by_ids?ids=${encodeURIComponent([
-            item['pic_ids'],
-          ])}`,
-        )
-        .then(res => {
-          setPic(res.data.products[0]['image']['src']);
-        })
-        .catch(e => {
-          handleError(e);
-        });
+      resp = await GET(`${APIs.GET_PRODUCTS}by_ids?ids=${encodeURIComponent([item['pic_ids'],])}`)
+      if (resp.status === 200) {
+        setPic(resp.data.products[0]['image']['src']);
+      }
     }
     _loadPictures();
   }, [pic]);

@@ -8,13 +8,11 @@ import {
   Image,
   TouchableOpacity
 } from "react-native";
-import axios from "axios";
 import Carousel, {Pagination} from 'react-native-snap-carousel';
 import { useNavigation } from '@react-navigation/native';
-import { APIs } from "../utils/API";
+import { APIs, GET} from "../utils/API";
 import { COLORS, PADDINGS, BORDERS } from "../styles/theme";
 import { TABs } from "../static/Constants";
-
 
 const { width: screenWidth } = Dimensions.get("window");
 
@@ -26,14 +24,11 @@ export const Banner = () => {
   
   useEffect(() => {
     async function _getBanner() {
-      axios.get(
-        `${APIs.GET_PRODUCTS}banner/`,
-      ).then(
-        res => {
-          let copy = JSON.parse(JSON.stringify(res.data.products))
-          setBanner(copy)
-          }
-      ).catch(e => console.log(e))
+      resp = await GET(`${APIs.GET_PRODUCTS}banner/`)
+      if (resp.status === 200) {
+        let copy = JSON.parse(JSON.stringify(resp.data.products))
+        setBanner(copy)
+      }
     }
     if (banner.length == 0) { _getBanner() }
   });

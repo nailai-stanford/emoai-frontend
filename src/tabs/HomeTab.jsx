@@ -1,23 +1,15 @@
 import { React, useEffect, useState } from "react";
 import { StyleSheet, ScrollView, View } from "react-native";
-import axios from "axios";
-import { handleError } from "../utils/Common";
 import { GalleryCard } from "../components/gallery/GalleryCard";
 import { Banner } from "../components/Banner";
 import { Themes } from "../components/Themes";
-import { APIs } from "../utils/API";
-
+import { APIs, GET} from "../utils/API";
 
 import { GradientButtonSelection } from "../styles/buttons";
 import { ButtonP ,GradientMenuHeader } from "../styles/texts";
 
-
 export const HomeTab = (navigation) => {
-  // TODO use auth later
-  // const { userInfo } = useAuthenticationContext();
-  // const headers = getHeader(userInfo.idToken);
   const [index, setIndex] = useState(0)
-  const options = ["All", "Original", "Community"]
   const [original, setOriginal] = useState([])
   const [community, setCommunity] = useState([])
   const [productList, setProductList] = useState([])
@@ -26,23 +18,18 @@ export const HomeTab = (navigation) => {
 
   useEffect(() => {
     async function _loadProducts() {
-      axios.get(
-          `${APIs.GET_PRODUCTS}by_tags?original=true&community=true`,
-          // { headers }
-      ).then(
-        res => {
-          const copy = JSON.parse(JSON.stringify(res.data))
-          setProductList(copy)
-          setOriginal(copy.filter((e) => e["user"]["fullName"] === "emoai-original"));
-          setCommunity(copy.filter(e => e["user"]["fullName"] !== "emoai-original"));
-        }
-      ).catch(e => handleError(e))
+      resp = await GET(`${APIs.GET_PRODUCTS}by_tags?original=true&community=true`)
+      if (resp.status === 200) {
+        const copy = JSON.parse(JSON.stringify(resp.data))
+        setProductList(copy)
+        setOriginal(copy.filter((e) => e["user"]["fullName"] === "emoai-original"));
+        setCommunity(copy.filter(e => e["user"]["fullName"] !== "emoai-original"));
+      }
     }
     if (productList.length == 0) { _loadProducts() }
   }, [])
   
   useEffect(() => {
-   
     if (index === 0) {
       setActiveProduct(original);
     } else if (index === 1) {

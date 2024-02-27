@@ -3,32 +3,20 @@ import { TouchableOpacity, View, Text, FlatList} from "react-native";
 import { GalleryCard } from "../components/gallery/GalleryCard";
 import { ButtonSelection, GradientButtonSelection } from "../styles/buttons";
 import { P, ButtonP,ButtonH, MenuHeader, TitleHeader} from "../styles/texts";
-import axios from "axios";
 import { format_theme } from "../utils/TextUtils";
-import { getHeader, APIs } from "../utils/API";
-import { useAuthenticationContext } from "../providers/AuthenticationProvider";
-import { handleError } from "../utils/Common";
-import { PADDINGS } from "../styles/theme";
+import { APIs, GET } from "../utils/API";
 
 
 const Tab = ({ content, selected, setSelected, setSubList }) => {
-    const { userInfo, signout } = useAuthenticationContext();
     useEffect(() => {
         async function _getElements() {
-            const headers = getHeader(userInfo.idToken);
-            axios.get(
-                `${APIs.GET_PRODUCTS}${selected}/categories/`,
-                {headers}
-            ).then(
-                res => {
-                    let copy = JSON.parse(JSON.stringify(res.data));
-                    setSubList(copy);
-                }
-            ).catch(e => handleError(e, signout))
+            resp = await GET(`${APIs.GET_PRODUCTS}${selected}/categories/`)
+            if (resp.status === 200) {
+                let copy = JSON.parse(JSON.stringify(resp.data));
+                setSubList(copy);
+            }
         }
-        if (userInfo) {
-            _getElements();
-        }
+        _getElements()
     }, [selected])
     
     let currSelected = selected == content ? true : false
@@ -49,24 +37,19 @@ const ThemeHeader = () => {
     const [elementSelected, setElementSelected] = useState("")
     const [currSelected, setCurrSelected] = useState([themeSelected, elementSelected])
     const [subList, setSubList] = useState([])
-    const { userInfo, signout } = useAuthenticationContext();
     const [themeList, setThemeList] = useState([])
     useEffect(() => {
         async function _getThemes() {
-            const headers = getHeader(userInfo.idToken);
-            axios.get(
-                `${APIs.GET_PRODUCTS}themes/`,
-                {headers}
-            ).then(
-                res => {
-                    let copy = JSON.parse(JSON.stringify(res.data))
-                    setThemeList(copy)
+            resp = await GET(`${APIs.GET_PRODUCTS}themes/`)
+            if (resp.status === 200) {
+                let copy = JSON.parse(JSON.stringify(resp.data))
+                setThemeList(copy)
+                if (copy && copy.length > 0) {
+                    setThemeSelected(copy[0])
                 }
-            ).catch(e => handleError(e, signout))
+            }
         }
-        if (userInfo) {
-            _getThemes()
-        }
+        _getThemes()
     },[])
 
     useEffect(() => {
@@ -86,8 +69,8 @@ const ThemeHeader = () => {
                     setSubList={setSubList}
                     />
                 )}
-                keyExtractor={(item, index) => `theme-${index}`} // Ensure unique key for each theme item
-                horizontal
+            keyExtractor={(item, index) => `theme-${index}`} // Ensure unique key for each theme item
+            horizontal
       />
         </View>
         <View style={{flexDirection: "row"}}>
@@ -106,27 +89,18 @@ const ThemeHeader = () => {
         </View>
         <ThemeItems elementSelected={currSelected}/>
     </View>
-    
 }
 
 const ThemeItems = ({ elementSelected }) => {
-    const { userInfo, signout } = useAuthenticationContext();
     const [themeItems, setThemeItems] = useState([])
     useEffect(() => {
         async function _loadProducts() {
-            const headers = getHeader(userInfo.idToken);
-            axios.get(
-                `${APIs.GET_PRODUCTS}by_tags?tags=${encodeURIComponent(elementSelected)}&original=true`,
-                { headers }
-            ).then(
-                res => {
-                    setThemeItems(res.data)
-                }
-            ).catch(e => handleError(e, signout))
+            resp = await GET(`${APIs.GET_PRODUCTS}by_tags?tags=${encodeURIComponent(elementSelected)}&original=true`)
+            if (resp.status === 200) {
+                setThemeItems(resp.data)
+            }
         }
-        if (userInfo) {
-            _loadProducts()
-        }
+        _loadProducts()
     },[elementSelected]);
 
     return <View>
