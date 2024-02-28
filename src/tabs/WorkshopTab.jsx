@@ -1,8 +1,7 @@
 import { TABs } from "../static/Constants";
 import { NailSelector } from "../components/NailSelector";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
-import axios from "axios";
-import { APIs, BASE_URL, getHeader } from "../utils/API";
+import { APIs, BASE_URL, GET, getHeader } from "../utils/API";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 // import generateMoreImage from '../../assets/generate_more.png';
 import React, { useRef,useState, useEffect, useCallback } from 'react';
@@ -34,9 +33,6 @@ import { GradientButtonAction } from "../styles/buttons";
 import { P, ButtonP, MenuHeader, TitleHeader, SubHeader, ButtonH} from "../styles/texts";
 import { COLORS, PADDINGS, FONTS, ICON_SIZES } from "../styles/theme";
 import { ACTION_ICONS } from "../styles/icons";
-import { err } from "react-native-svg";
-import { handleError } from "../utils/Common";
-import { UserInfo } from "../components/UserInfo";
 
 // const AnimatedPagerView = Animated.createAnimatedComponent(PagerView);
 
@@ -62,29 +58,19 @@ export const WorkshopTab = ({ navigation, route }) => {
     task_id = route.params['task_id']
   }
 
- 
-
-  const getTaskProducts = async(task_id) => {
-    const { idToken } = userInfo;
-    const headers = getHeader(idToken);
-    try {
-      const response = await axios.get(`${BASE_URL}/api/task/${task_id}/products`, { headers });
-      return response.data
-    } catch(error) {
-      console.error(error);
-    }
-  }
-
   useFocusEffect(
-    useCallback(() => {
+    useCallback(async () => {
+      if (!userInfo) {
+        // todo: show login pop-window
+      }
       if (task_id && userInfo) {
-        getTaskProducts(task_id).then(data => {
-          products = data;
+        resp = await GET(`${BASE_URL}/api/task/${task_id}/products`, userInfo, signout)
+        if (resp.status === 200) {
+          products = resp.data;
+          console.log('useCallback: ', products)
           hand_designs = products.data
           setTaskProducts(products.data)
-        }).catch(error => {
-          console.error('error when calling getTaskProducts', error)
-        })
+        }
       }
       return () => {
         setCombinedData([])
@@ -151,22 +137,12 @@ export const WorkshopTab = ({ navigation, route }) => {
 
   const getOriginalCollect = async () => {
     if (!userInfo) {
+      // todo: show login pop window
       return
-    }
-    const { idToken } = userInfo;
-    const headers = getHeader(idToken);
-    try {
-      const response = await axios.get(
-        `${APIs.GET_PRODUCTS}collections/original_single_nails/`,
-        { headers }
-      );
-      // console.log("query collections single nails", response.data.products);
-      // let copy = JSON.parse(JSON.stringify(response.data.products));
-      const productImages = response.data.products.map(product => product.image.src);
-      setOriginalCollect(productImages);
-    } catch (e) {
-      handleError(e, signout)
-    }
+    }    
+    resp = await GET(`${APIs.GET_PRODUCTS}collections/original_single_nails/`, userInfo, signout)
+    const productImages = resp.data.products.map(product => product.image.src);
+    setOriginalCollect(productImages);
   };
 
   useEffect(() => {

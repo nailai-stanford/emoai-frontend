@@ -45,9 +45,7 @@ import {NameTab} from './tabs/NameTab';
 import {PaymentTab} from './tabs/PaymentTab';
 import {OrderConfirmationTab} from './tabs/OrderConfirmationTab';
 
-
 import { COLORS, ICON_SIZES } from "./styles/theme";
-import {BottomBar} from "../assets/others/bottomBar.svg";
 
 // import svg icons
 

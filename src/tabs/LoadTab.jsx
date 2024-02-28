@@ -3,7 +3,7 @@ import { View, Text, ActivityIndicator } from 'react-native';
 import * as Progress from 'react-native-progress';
 import { TABs } from '../static/Constants';
 import { useAuthenticationContext } from "../providers/AuthenticationProvider"
-import { BASE_URL, APIs, getHeader } from "../utils/API";
+import { BASE_URL, APIs, getHeader, GET } from "../utils/API";
 import { useIsFocused } from '@react-navigation/native';
 
 import {TitleHeader, P, GradientMenuHeader, ButtonP} from '../styles/texts.tsx'
@@ -15,30 +15,16 @@ export const LoadTab = ({ navigation }) => {
   const { userInfo, signout} = useAuthenticationContext();
   const isFocused = useIsFocused();
 
-
   useEffect(() => {
     if (!userInfo) {
       signout()
     }
-    const { idToken } = userInfo;
-    const headers = getHeader(idToken);
 
-    let intervalId;
-  
+    let intervalId;  
     const get_last_task_status = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/api/task/last_status`, {
-          method: 'GET',
-          headers: headers,
-        });
-        if (!response.ok) {
-          if (response.status == 401) {
-            signout()
-          }
-          console.error('Failed to fetch task status');
-          return;
-        }
-        const data = await response.json();
+      resp = await GET(`${BASE_URL}/api/task/last_status`, userInfo, signout)
+      if (resp.status === 200) {
+        const data = resp.data
         task_id = data.task_id
         let task_status = data.status
         console.log(task_id, task_status, 'progress:', data.progress)
@@ -57,15 +43,15 @@ export const LoadTab = ({ navigation }) => {
           clearInterval(intervalId);
           navigation.navigate(TABs.AICHAT)
         }
-      } catch (error) {
-        console.error('Error fetching task status:', error);
+      } else {
+        console.error('Failed to fetch task status');
       }
     };
   
-    if (isFocused) { // Check if the screen is focused and taskStatus is "PROCESSING"
+    if (isFocused) {
       intervalId = setInterval(get_last_task_status, 3000);
     }
-  
+
     return () => {
       clearInterval(intervalId);
     };
