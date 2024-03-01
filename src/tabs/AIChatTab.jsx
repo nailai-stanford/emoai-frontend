@@ -6,14 +6,13 @@ import {
 } from 'react-native';
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { TABs } from '../static/Constants';
-import { Modal } from "react-native-modals"
 import { useToast } from "react-native-toast-notifications";
 import { ButtonAction, ButtonSelection, GradientButtonAction, GradientButtonChatSelection, GradientButtonSelection } from "../styles/buttons";
 import { P, ButtonP, ButtonH,TitleHeader, MenuHeader } from "../styles/texts";
 import { InputView } from "../styles/inputs";
 import { COLORS,PADDINGS, ICON_SIZES } from "../styles/theme";
 import { FAB, Input } from 'react-native-elements';
-import { BASE_URL, APIs, getHeader } from "../utils/API";
+import { BASE_URL, APIs, getHeader, GET, POST } from "../utils/API";
 
 import {ACTION_ICONS} from '../styles/icons'
 
@@ -106,35 +105,21 @@ export const AIChatTab = ({ navigation }) => {
 
   const fetchChatHistory = async () => {
     console.log('fetch history')
-    try {
-      const { idToken } = userInfo;
-      const headers = getHeader(idToken)
-      url = `${BASE_URL}/api/chat/chat_history`
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: headers,
-      });
-
-      if (!response.ok) {
-        if (response.status == 401) {
-          signout()
+    resp = await GET(`${BASE_URL}/api/chat/chat_history`, userInfo, signout)
+      if (resp.status === 200) {
+        console.log(resp)
+        resp = resp.data
+        if (resp.completed) {
+          let last_message = resp.messages[resp.messages.length - 1]
+          let last_options = last_message.options
+          setOptions(last_options)
+          appendChatHistory(resp.messages)
+          setPendingReply(false);
+          setFetchHistory(false);
         }
-        console.log('fetch history failed')
-        return
+      } else {
+        console.error('Failed to fetch chat history:', error);
       }
-      const resp = await response.json();
-      if (resp.completed) {
-        let last_message = resp.messages[resp.messages.length - 1]
-        let last_options = last_message.options
-        setOptions(last_options)
-        appendChatHistory(resp.messages)
-        setPendingReply(false);
-        setFetchHistory(false);
-      }
-      
-    } catch (error) {
-      console.error('Failed to fetch chat history:', error);
-    }
   };
 
   useEffect(() => {
@@ -205,26 +190,20 @@ export const AIChatTab = ({ navigation }) => {
   }
   
   const sendMessage = async (stage, request_tags) => {
-    try {
-      idToken = ''
-      if (userInfo) {
-         idToken = userInfo.idToken;
-      }
-      const headers = getHeader(idToken)
-      
       if (stage == 'THEME') {
         content = null
       }
       console.log('start send message', stage, )
-      const response = await fetch(`${BASE_URL}/api/chat/chat`, {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify({stage: stage, content: JSON.stringify(request_tags), assistant_id: "", threading_id: ""}),
-      })
-      if (!response.ok) {
-        if (response.status == 401) {
-          signout()
-        }
+      let payload = JSON.stringify({stage: stage, content: JSON.stringify(request_tags), assistant_id: "", threading_id: ""}),
+
+      resp = await POST(`${BASE_URL}/api/chat/chat`,payload, userInfo, signout)
+
+      if (resp.status === 200) {
+        setPendingReply(true)
+        setFetchHistory(true)
+        console.log('send message resp:', resp.data)
+        setOptions([])
+      } else {
         toast.show("Send message failed, please retry", {
           type: "normal",
           placement: "bottom",
@@ -238,33 +217,11 @@ export const AIChatTab = ({ navigation }) => {
         setPendingReply(false)
         return
       }
-      setPendingReply(true)
-      setFetchHistory(true)
-      data = await response.json()
-      console.log('send message resp:', data)
-      setOptions([])
-    } catch (error) {
-      toast.show("Send message failed, please retry", {
-        type: "normal",
-        placement: "bottom",
-        duration: 1000,
-        animationType: "zoom-in",
-        style : {
-          marginBottom: 150
-        }
-      })
-      setPendingReply(false)
-      setFetchHistory(true)
-      console.error('send message failed', error)
-    }
   }
-
 
   useEffect(() => {
     scrollViewRef.current?.scrollToEnd({ animated: true });
   }, [chatHistory]);
-
-
 
   const handleOptionPress = (option, userInfo) => {
     console.log('option press:', option)
@@ -277,54 +234,33 @@ export const AIChatTab = ({ navigation }) => {
       const formattedMessage = {
         from: 'user',
         content: content,
-
       };
       return [...currentHistory, formattedMessage]
     })
   }
   const handleUserInput = async (input = '', userInfo) => {
     let finalInput = '';
-
     if (input) {
         finalInput = input;
     } else {
         finalInput = userInput;
     }
-
     append_tmp_chat(finalInput)
     setOptions([])
     if (currentStage === 'SUBMIT') {
       currentStage === 'THEME'
-      console.log('submit', finalInput)
       setTags({})
       if (finalInput === 'Yes') {
         // submit task and redirect to loading page
         sendMessage('THEME', {'submit': 'Yes'})
-        try{
-          idToken = ''
-          if (userInfo) {
-            idToken = userInfo.idToken;
-          }
-          const headers = getHeader(idToken)
-          console.log({tags: JSON.stringify(tags)})
-
-          const response = await fetch(`${BASE_URL}/api/task/submit`, {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify({tags: JSON.stringify(tags)}),
-          })
-          console.log(response)
-          if (!response.ok) {
-            console.error('submit ai design task failed')
-          }
+        resp = await POST(`${BASE_URL}/api/task/submit`, JSON.stringify({tags: JSON.stringify(tags)}), userInfo)
+        if (resp.status === 200) {
           setFetchHistory(false)
-          data = await response.json()
-          console.log('AI design task submitted, resp:', data)
+          data = resp.data
           navigation.navigate(TABs.LOAD)
-        } catch(error) {
-          console.error('submit ai design task failed', error)
+        } else {
+          console.error('submit ai design task failed')
         }
-    
       } else {
         sendMessage('THEME', {'submit': 'No'})
       }

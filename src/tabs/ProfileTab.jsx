@@ -2,10 +2,9 @@ import React, {useEffect, useState} from "react";
 import { StyleSheet, View, ScrollView } from "react-native";
 import { Tab } from '@rneui/themed';
 import { UserInfo } from "../components/UserInfo";
-import axios from "axios";
 import { GalleryCard } from "../components/gallery/GalleryCard";
 
-import { APIs, getHeader } from "../utils/API";
+import { APIs, GET, getHeader } from "../utils/API";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { useIsFocused } from '@react-navigation/native';
 
@@ -17,22 +16,18 @@ export const ProfileTab = ({ onSignout }) => {
   const [index, setIndex] = useState(0);
   const [design, setDesign] = useState([])
   const [collected, setCollected] = useState([])
-  const [singleNail, setSingleNail] = useState([])
-  const { userInfo } = useAuthenticationContext();
+  const { userInfo, signout } = useAuthenticationContext();
   const isFocused = useIsFocused();
 
   useEffect(() => {
     async function _getMy() {
-      const headers = getHeader(userInfo.idToken);
-      axios.get(
-        `${APIs.GET_PRODUCTS}my/`,
-        {headers}
-      ).then(
-        res => {
-          let copy = JSON.parse(JSON.stringify(res.data.products))
-          setDesign(copy)
-          }
-      ).catch(e => console.log(e))
+      // const headers = getHeader(userInfo.idToken);
+      resp = await GET(`${APIs.GET_PRODUCTS}my/`, userInfo, signout)
+      if (resp.status === 200) {
+        if (resp.data && resp.data.products) {
+          setDesign(resp.data.products)
+        }
+      }
     }
     if (userInfo) {
      _getMy() 
@@ -41,39 +36,15 @@ export const ProfileTab = ({ onSignout }) => {
 
   useEffect(() => {
     async function _getCollected() {
-      const headers = getHeader(userInfo.idToken);
-      axios.get(
-        `${APIs.LIKE_COLLECT}collections/`,
-        {headers}
-      ).then(
-        res => {
-          if (res.data.length != 0) {
-            let copy = JSON.parse(JSON.stringify(res.data.products))
-            setCollected(copy)
-          } 
+      resp = await GET(`${APIs.LIKE_COLLECT}collections/`, userInfo, signout)
+      if (resp.status === 200) {
+        if (resp.data && resp.data.products) {
+          setCollected(resp.data.products)
         }
-      ).catch(e => console.log(e))
+      }
     }
     if (userInfo) {
       _getCollected()
-    }
-  },[isFocused]);
-
-  useEffect(() => {
-    async function _getCollected() {
-      const headers = getHeader(userInfo.idToken);
-      axios.get(
-        `${APIs.GET_PRODUCTS}single_nail/`,
-        {headers}
-      ).then(
-        res => {
-          let copy = JSON.parse(JSON.stringify(res.data.products))
-          setSingleNail(copy)
-          }
-      ).catch(e => console.log(e))
-    }
-    if(userInfo) {
-      _getCollected() 
     }
   },[isFocused]);
 

@@ -7,7 +7,7 @@ import { PADDINGS } from "../styles/theme";
 import { GradientButtonAction } from "../styles/buttons";
 import { useEffect, useState } from "react";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
-import { getHeader, BASE_URL } from "../utils/API";
+import { getHeader, BASE_URL, GET } from "../utils/API";
 
 export const WorkshopIdleTab = ({navigation, route}) => {
     const { userInfo, signout} = useAuthenticationContext();
@@ -15,52 +15,40 @@ export const WorkshopIdleTab = ({navigation, route}) => {
 
     const check_last_task_status = async (init_check) => {
         if (!userInfo) {
-          signout()
+          //todo: show login status
           return
         }
-        const headers = getHeader(userInfo.idToken);
-        try {
-          const response = await fetch(`${BASE_URL}/api/task/last_status`, {
-            method: 'GET',
-            headers: headers,
-          });
-          if (!response.ok) {
-            console.error('Failed to fetch task status');
-            if (response.status == 401) {
-              signout()
+        resp = await GET(`${BASE_URL}/api/task/last_status`, userInfo, signout)
+        if (resp.status === 200) {
+            const data = resp.data
+            task_id = data.task_id
+            let task_status = data.status
+            console.log(task_id, task_status)
+            if (task_status === 1 || task_status === 2) {
+              if (!init_check) {
+                navigation.navigate(TABs.LOAD)
+              }
+              setButtonText('See AI Progress')
+            } else if (task_status === 3) {
+              console.log('task_status is 3', task_id)
+              setButtonText('Go To Workshop')
+              if (!init_check) {
+                navigation.navigate(TABs.WORKSHOP, {task_id: task_id})
+              }
+            } else if (task_status === 4 || task_status === 5) {
+              console.log('task_status is 4/5', task_id)
+              setButtonText('Explore in Chatbot')
+              if (!init_check) {
+                navigation.navigate(TABs.AICHAT)
+              }
+            } else {
+              setButtonText('Explore in Chatbot')
+              if (!init_check) {
+                navigation.navigate(TABs.AICHAT)
+              }
             }
-            return;
-          }
-          const data = await response.json();
-          task_id = data.task_id
-          let task_status = data.status
-          console.log(task_id, task_status)
-          if (task_status === 1 || task_status === 2) {
-            if (!init_check) {
-              navigation.navigate(TABs.LOAD)
-            }
-            setButtonText('See AI Progress')
-
-          } else if (task_status === 3) {
-            console.log('task_status is 3', task_id)
-            setButtonText('Go To Workshop')
-            if (!init_check) {
-              navigation.navigate(TABs.WORKSHOP, {task_id: task_id})
-            }
-          } else if (task_status === 4 || task_status === 5) {
-            console.log('task_status is 4/5', task_id)
-            setButtonText('Explore in Chatbot')
-            if (!init_check) {
-              navigation.navigate(TABs.AICHAT)
-            }
-          } else {
-            setButtonText('Explore in Chatbot')
-            if (!init_check) {
-              navigation.navigate(TABs.AICHAT)
-            }
-          }
-        } catch (error) {
-          console.error('Error fetching task status:', error);
+        } else {
+            console.error('Error fetching task status:', error);
         }
       };
 

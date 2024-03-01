@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {useStripe, AddressSheet} from '@stripe/stripe-react-native';
-import {getHeader, APIs} from '../utils/API';
+import {getHeader, APIs, POST, GET} from '../utils/API';
 import {useAuthenticationContext} from '../providers/AuthenticationProvider';
 import { useCartContext } from '../providers/CartContextProvider';
 
 import {Image} from '@rneui/themed';
-import axios from 'axios';
 
 import {View, ScrollView, Alert, StyleSheet} from 'react-native';
 import {ButtonH, ButtonP, TitleHeader, P, SubHeader} from '../styles/texts';
@@ -50,56 +49,43 @@ export const PaymentTab = ({route, navigation}) => {
     }
   }, [cart])
 
-
-
   useEffect(()=> {
     const fetch_address = async () => {
-      const headers = getHeader(userInfo.idToken);
-      axios
-      .get(
-        APIs.ADDRESS,
-        {headers},
-      )
-      .then(res => {
-        if (res.status == 200) {
-          console.log('address:', res.data)
-          address = res.data
-          setAddrVisible(false);
-          setName(address.name);
-          setCountry(address.country);
-          setState(address.province);
-          setCity(address.city);
-          setZip(address.zip);
-          setPhone(address.phone);
-          setLine1(address.address1);
-          setLine2(address.address2);
-
-          newAddressDetails = {
-            name: address.name,
-            phone: address.phone, 
-            address: {
-              country: address.country,
-              state: address.province,
-              city: address.city,
-              postalCode: address.zip,
-              line1: address.address1,
-              line2: address.address2
-            }
-          }
-          setAddrDetails(newAddressDetails);
-        } else {
-          console.log('get address failed')
+      resp = await GET(APIs.ADDRESS, userInfo, signout)
+      if (resp.status !== 200) {
+        console.log('get address failed')
+        return
+      }
+      console.log('address:', resp.data)
+      address = resp.data
+      setAddrVisible(false);
+      setName(address.name);
+      setCountry(address.country);
+      setState(address.province);
+      setCity(address.city);
+      setZip(address.zip);
+      setPhone(address.phone);
+      setLine1(address.address1);
+      setLine2(address.address2);
+      newAddressDetails = {
+        name: address.name,
+        phone: address.phone, 
+        address: {
+          country: address.country,
+          state: address.province,
+          city: address.city,
+          postalCode: address.zip,
+          line1: address.address1,
+          line2: address.address2
         }
-      })
-      .catch(e => {
-        handleError(e, signout);
-      });
+      }
+      setAddrDetails(newAddressDetails);
     }
-    console.log('fetch_address')
     if (userInfo && !(line1 && city && name && country && phone && state && zip)) {
       fetch_address()
+    } else if (!userInfo) {
+      signout()
     }
-
   }, [userInfo])
 
   const OrderSummary = () => {
@@ -139,29 +125,18 @@ export const PaymentTab = ({route, navigation}) => {
       console.log('presentPaymentSheet result:', error)
       Alert.alert(`Error code: ${error.code}`, error.message);
     } else {
-      idToken = ''
-      if (userInfo) {
-        idToken = userInfo.idToken
-      }
-
-      const headers = getHeader(idToken);
-
       payload = {
         payment_order_id: orderPaymentId,
         shipping: sanitizedAddr
       }
-      axios.post(
-        APIs.ORDER, payload, {headers}
-      ).then(res=> {
-        if (res.status == 200) {
-          Alert.alert('Success', 'Your order is confirmed!');
-          clearCart()
-          navigation.navigate(TABs.CONFIRMATION, {name: name});
-        }
-      }).catch(err => {
-        handleError(err)
-      })
-     
+      resp = await POST(APIs.ORDER, payload, userInfo, signout)
+      if (resp.status === 200) {
+        Alert.alert('Success', 'Your order is confirmed!');
+        clearCart()
+        navigation.navigate(TABs.CONFIRMATION, {name: name});
+      } else {
+        console.log('pay order failed:', resp)
+      }
     }
   };
 
@@ -176,31 +151,21 @@ export const PaymentTab = ({route, navigation}) => {
       idToken = userInfo.idToken
     }
     const headers = getHeader(idToken);
-    axios
-      .post(
-        APIs.ADDRESS,
-        {
-          address1: address1,
-          address2: address2,
-          city: city,
-          name: name,
-          country: country,
-          phone: phone,
-          province: province,
-          zip: zip,
-        },
-        {headers},
-      )
-      .then(res => {
-        if (res.status == 200) {
-          console.log('address saved')
-        } else {
-          console.log('save address failed')
-        }
-      })
-      .catch(e => {
-        handleError(e);
-      });
+    
+    payload = {
+      address1: address1,
+      address2: address2,
+      city: city,
+      name: name,
+      country: country,
+      phone: phone,
+      province: province,
+      zip: zip,
+    }
+    resp = await POST(APIs.ADDRESS, payload, userInfo, signout)
+    if (resp.status !== 200) {
+      console.log('save address failed')
+    }
   }
 
   const getPaymentSheet = async orderId => {
@@ -213,21 +178,15 @@ export const PaymentTab = ({route, navigation}) => {
     delete addressClean['postalCode'];
     addressClean['postal_code'] = zip_code;
     sanitizedAddr['address'] = addressClean;
-    idToken = ''
-    if (userInfo) {
-      idToken = userInfo.idToken
-    }
-    const headers = getHeader(idToken);
-    const res = await axios.post(
-      `${APIs.PAYMENT}payment-sheet`,
-      {orderId: orderId, name: name, shipping: sanitizedAddr, phone: phone},
-      {headers},
-    );
-    if (res.status != 200) {
+  
+    const resp = await POST(`${APIs.PAYMENT}payment-sheet`, 
+    {orderId: orderId, name: name, shipping: sanitizedAddr, phone: phone}, userInfo)
+    
+    if (resp.status !== 200) {
       console.log('getPaymentSheet failed')
       return
     }
-    const {paymentIntent, ephemeralKey, customer, orderPaymentId} = res.data;
+    const {paymentIntent, ephemeralKey, customer, orderPaymentId} = resp.data;
     let {error} = await initPaymentSheet({
       merchantDisplayName: 'EMOAI, Inc.',
       customerId: customer,
@@ -302,7 +261,7 @@ export const PaymentTab = ({route, navigation}) => {
               addressDetails.address.postalCode)
           }}
           onError={error => {
-            setAddressSheetVisible(false);
+            setAddrVisible(false);
           }}
         />
         <GradientButtonAction

@@ -2,7 +2,7 @@ import { View, Text, ScrollView, Image, TouchableHighlight, TouchableOpacity, Im
 import { useNavigation } from '@react-navigation/native';
 import { useAuthenticationContext } from "../../providers/AuthenticationProvider";
 import { useCartContext } from "../../providers/CartContextProvider";
-import { APIs, getHeader} from "../../utils/API";
+import { APIs, POST, getHeader} from "../../utils/API";
 import LinearGradient from "react-native-linear-gradient";
 
 
@@ -10,7 +10,6 @@ import { ACTION_ICONS } from "../../styles/icons";
 import { SubHeader,P, GradientP, GradientMenuHeader } from "../../styles/texts";
 import { COLORS } from "../../styles/theme";
 
-import axios from "axios";
 import { useEffect } from "react";
 import { GradientButtonAction } from "../../styles/buttons";
 import { handleError } from "../../utils/Common";
@@ -40,20 +39,20 @@ export const GalleryCard = ({ item, style }) => {
   }
     
 
-  const add_to_cart = () => {
-    if(userInfo && productId) {
-      const headers = getHeader(userInfo.idToken);
-      payload = {actions: [{id: String(productId), count: 1}]}
-      axios.post(APIs.ORDER_UPDATE, payload, { headers })
-      .then(resp => {
-        if (resp.status == 200) {
-          setCart(resp.data)
-        }
-      }).catch((e) => {
-        handleError(e, signout);
-      });
+  const add_to_cart = async () => {
+    if (!userInfo) {
+      // todo: show login pop  window
+      return
     }
-
+    if(productId) {
+      payload = {actions: [{id: String(productId), count: 1}]}
+      resp = await POST(APIs.ORDER_UPDATE, payload, userInfo, signout)
+      if (resp.status === 200) {
+        setCart(resp.data)
+      } else {
+        console.log('GalleryCard: add_to_cart failed:', resp) 
+      }
+    }
   }
 
 

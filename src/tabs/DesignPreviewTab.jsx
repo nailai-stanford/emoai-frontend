@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Image, TouchableOpacity, TextInput, ScrollView, ActivityIndicator } from 'react-native';
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
-import axios from "axios";
-import { APIs, BASE_URL, getHeader } from "../utils/API";
+import { APIs, BASE_URL, POST } from "../utils/API";
 import { TABs } from '../static/Constants';
 
 
@@ -14,6 +13,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { useToast } from "react-native-toast-notifications";
 import { handleError } from "../utils/Common";
 import { useCartContext } from '../providers/CartContextProvider';
+import { useIsFocused } from '@react-navigation/native';
 
 import { HeadImages } from '../components/ProductHeader';
 
@@ -21,7 +21,6 @@ import { HeadImages } from '../components/ProductHeader';
 
 export const DesignPreviewTab = ({ navigation, route }) => {
     const [quantity, setQuantity] = React.useState(1);
-    const [designIds, setDesignIds] = useState([]);
     const [enableAddToCart, setEnableAddToCart] = useState(false)
     const { userInfo, signout} = useAuthenticationContext();
     const [title, setTitle] = useState('');
@@ -33,6 +32,7 @@ export const DesignPreviewTab = ({ navigation, route }) => {
     const { leftHandNails, rightHandNails, handProducts, taskId} = route.params;
     const toast = useToast();
     const {setCart} = useCartContext()
+    const isFocused = useIsFocused();
 
 
     const onBack = () => {
@@ -52,58 +52,40 @@ export const DesignPreviewTab = ({ navigation, route }) => {
         };
       }, [])
     );
-
   
-    const add_to_cart = () => {
+    const add_to_cart = async() => {
       if (!userInfo) {
-        signout()
+        // todo: show login pop window
         return
       }
-      const headers = getHeader(userInfo.idToken);
       if(designSetId && quantity > 0) {
         payload = {actions: [{id: String(designSetId), count: quantity}]}
-        axios.post(APIs.ORDER_UPDATE, payload, { headers })
-        .then(resp => {
-          if (resp.status == 200) {
-            setCart(resp.data)
-            toast.show("Added to cart", {
-              type: "normal",
-              placement: "bottom",
-              duration: 1000,
-              animationType: "zoom-in",
-              style : {
-                marginBottom: 150
-              }
-            })
-          }
-        }).catch((e) => {
-          handleError(e, signout);
-        });
+        resp = await POST(APIs.ORDER_UPDATE, payload, userInfo, signout)
+        if (resp.status === 200) {
+          setCart(resp.data)
+          toast.show("Added to cart", {
+            type: "normal",
+            placement: "bottom",
+            duration: 1000,
+            animationType: "zoom-in",
+            style : {
+              marginBottom: 150
+            }
+          })
+        }
       }
     }
     useEffect(() => {
       nails = leftHandNails.concat(rightHandNails)
       const save_design_set = async() => {
-        try {
-          const { idToken } = userInfo;
-          const headers = getHeader(idToken);
-          console.log('headers:', headers)
-          body = JSON.stringify({
-                task_id: taskId,
-                nail_designs: nails,
-                hand_designs: handProducts
-              })
-          const response = await fetch(`${BASE_URL}/api/design_sets/`, {
-            method: 'POST',
-            headers: headers,
-            body: body,
-          });
-          if (!response.ok){
-            alert('save designset failed, please try again')
-            return
-          }
-        
-          const data = await response.json();
+        body = JSON.stringify({
+              task_id: taskId,
+              nail_designs: nails,
+              hand_designs: handProducts
+            })
+        resp = await POST(`${BASE_URL}/api/design_sets/`, body, userInfo, signout)
+        if (resp.status === 200) {
+          const data = resp.data
           let design_set = data.design_set
           setTitle(design_set.title); 
           setDescription(design_set.description)
@@ -112,12 +94,15 @@ export const DesignPreviewTab = ({ navigation, route }) => {
           setPrice(design_set.price)
           setDesignSetId(design_set.shopify_product_id)
           setEnableAddToCart(true)
-        } catch (error) {
+          console.log('save_design_set:', data)
+        } else {
           alert('save designset failed, please try again')
         }
       }
-      if (userInfo) {
+      if (userInfo && isFocused) {
         save_design_set() 
+      } else {
+        // todo: show login popwindow
       }
     }, [leftHandNails, rightHandNails, handProducts, userInfo])
 

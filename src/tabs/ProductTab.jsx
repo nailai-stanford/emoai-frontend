@@ -1,10 +1,9 @@
 import React from "react";
-import axios from "axios";
 import { TouchableOpacity, View, StyleSheet, SafeAreaView,   Dimensions, FlatList, ScrollView } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { GalleryCard } from "../components/gallery/GalleryCard";
 import { useState, useEffect, useRef} from "react";
-import { APIs, GET, getHeader } from "../utils/API";
+import { APIs, GET, POST, getHeader } from "../utils/API";
 import { handleError } from "../utils/Common";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { useCartContext } from "../providers/CartContextProvider";
@@ -81,107 +80,55 @@ const ButtonGroup = ({ productID}) => {
             alignSelf: "center",
             alignItems: "center"
           }} 
-          onPress={() => {
-            // todo : login popwindow
+          onPress={async () => {
             if (!userInfo) {
+              // todo : login popwindow
               return
             }
             const headers = getHeader(userInfo.idToken);
             let URL = collected? APIs.DELETE_LIKE_COLLECT: APIs.LIKE_COLLECT
-            axios.post(
-              URL,
-              {
-                shopify_product_id: String(productID),
-                action: 2,
-              }, { headers }
-            ).then().catch((e) => {
-              handleError(e, signout);
-            });
-            setCollected(!collected);
+            payload = {
+              shopify_product_id: String(productID),
+              action: 2,
+            }
+            resp = await POST(URL, payload, userInfo, signout)
+            if (resp.status === 200) {
+              setCollected(!collected);
+            } else {
+              // todo: toast try again
+            }
           }}>
             <ButtonH>{collected ? "UnCollect" : "Add to Collection"}</ButtonH>
         </GradientButtonAction>
            
       <GradientButtonAction style={{ display: "inline-flex", flexDirection: "row", alignItems: "center"}}
-        onPress={() => {
+        onPress={async() => {
           if (!userInfo) {
+            // todo: show login popwindow
             return
           }
-          const headers = getHeader(userInfo.idToken);
           payload = {actions: [{id: String(productID), count: 1}]}
-          axios.post(APIs.ORDER_UPDATE, payload, { headers })
-          .then(resp => {
-            if (resp.status === 200) {
-              setCart(resp.data)
-              toast.show("Added to cart", {
-                type: "normal",
-                placement: "bottom",
-                duration: 1000,
-                animationType: "zoom-in",
-                style : {
-                  marginBottom: 150
-                }
-              })
-            }
-          }).catch((e) => {
-            handleError(e, signout);
-          });
+          resp = await POST(APIs.ORDER_UPDATE, payload, userInfo, signout)
+          if (resp.status === 200) {
+            setCart(resp.data)
+            toast.show("Added to cart", {
+              type: "normal",
+              placement: "bottom",
+              duration: 1000,
+              animationType: "zoom-in",
+              style : {
+                marginBottom: 150
+              }
+            })
+          }
         }}>
        
-            <ButtonH>Add to Cart</ButtonH>
-            <ACTION_ICONS.shop
-                size={iconSize}
-                style={{color:COLORS.white, paddingLeft:PADDINGS.sm}}/>
-            
+        <ButtonH>Add to Cart</ButtonH>
+          <ACTION_ICONS.shop
+            size={iconSize}
+            style={{color:COLORS.white, paddingLeft:PADDINGS.sm}}/>
         </GradientButtonAction>
     </View>
-}
-
-const Like = ({ productID }) => {
-  const { userInfo, signout } = useAuthenticationContext();
-  const [liked, setLiked] = useState(false)
-  
-  useEffect(() => {
-    async function _getLike() {
-      const headers = getHeader(userInfo.idToken);
-      axios.get(
-        `${APIs.LIKE_COLLECT}liked_product?product_id=${String(productID)}`,
-        { headers }
-      ).then(res => {
-        setLiked(res.data.exists)
-      }).catch(e => handleError(e, signout))
-    }
-    if (userInfo) {
-      _getLike()
-    }
-  },[productID]);
-
-  return <ButtonSelection $isWhite={true} style={{height:30, flex:0.5, paddingTop: 0}}
-    onPress={() => {
-      let URL = liked? APIs.DELETE_LIKE_COLLECT: APIs.LIKE_COLLECT
-      axios.post(
-        URL,
-        {
-          shopify_product_id: String(productID),
-          action: 1,
-        }, { headers }
-      ).then().catch((e) => {
-        handleError(e);
-      });
-      setLiked(!liked);
-    }}>
-      <View
-        style={{
-        display: "inline-flex",
-        flexDirection: "row",
-        alignSelf: "center",}}
-      >
-        <ACTION_ICONS.like
-          fill={liked? "red": "white"}/>
-          <ButtonP style={{ alignSelf: "center"}}>{liked? "unlike": "like"}</ButtonP>
-
-    </View>
-  </ButtonSelection>
 }
 
 const Creator = ({ user }) => {
@@ -202,7 +149,6 @@ const Creator = ({ user }) => {
 }
 
 export const ProductTab = ({ route, navigation }) => {
-  const { userInfo, signout } = useAuthenticationContext();
   const item = route.params.product
   const productId = item.id
   const [title, setTitle] = useState(item.title ? item.title : "")

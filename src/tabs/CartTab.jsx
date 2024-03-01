@@ -7,11 +7,10 @@ import {
   FlatList,
   SafeAreaView,
 } from 'react-native';
-import {getHeader, APIs} from '../utils/API';
+import {getHeader, APIs, GET, POST} from '../utils/API';
 import {handleError} from '../utils/Common';
 import {useAuthenticationContext} from '../providers/AuthenticationProvider';
 import { useCartContext } from '../providers/CartContextProvider';
-import axios from 'axios';
 import {Image, Button} from '@rneui/themed';
 
 import {ButtonAction, ButtonSelection, GradientButtonAction} from '../styles/buttons';
@@ -19,6 +18,7 @@ import {P, ButtonP, MenuHeader, TitleHeader, SubHeader} from '../styles/texts';
 import {COLORS, PADDINGS} from '../styles/theme';
 import {TABs} from '../static/Constants';
 import { ACTION_ICONS } from '../styles/icons';
+import { useIsFocused } from '@react-navigation/native';
 
 const iconSize = 20;
 const pictureHeight = 60;
@@ -31,21 +31,17 @@ const CheckoutItem = ({userInfo, signout, item, setCart, updateTotal}) => {
   const id = item.product_id
   
 
-  const update_quantity = (value) => {
+  const update_quantity = async (value) => {
     if (!userInfo) {
+      // todo: show login pop window
       return
     }
-    const headers = getHeader(userInfo.idToken);
     if(id) {
       payload = {actions: [{id: String(id), count: value}]}
-      axios.post(APIs.ORDER_UPDATE, payload, { headers })
-      .then(resp => {
-        if (resp.status === 200) {
-          setCart(resp.data)
-        }
-      }).catch((e) => {
-        handleError(e, signout);
-      });
+      resp = await POST(APIs.ORDER_UPDATE, payload, userInfo, signout)
+      if (resp.status === 200) {
+        setCart(resp.data)
+      }
     }
   }
 
@@ -105,29 +101,23 @@ export const CartTab = ({navigation}) => {
   const {userInfo, signout} = useAuthenticationContext();
   const {cart, setCart} = useCartContext();
   const [total, setTotal] = useState(0)
+  const isFocused = useIsFocused();
+
 
   useEffect(() => {
     async function _fetchCart() {
-      const headers = getHeader(userInfo.idToken);
-      axios.get(
-        `${APIs.ORDER_FETCH}`,
-        { headers }
-      ).then(res => {
-          if (res.status == 200 && res.data) {
-            const cart = JSON.parse(JSON.stringify(res.data))
-            setCart(cart)
-          } else {
-            console.log('_fetchCart empty resp: ', res.status, res)
-          }
-        }
-      ).catch(e => {
-        handleError(e, signout)
-      })
-  }
+      resp = await GET(`${APIs.ORDER_FETCH}`, userInfo)
+      if (resp.status === 200) {
+        // const cart = 
+        console.log('_fetchCart:', resp.data)
+        setCart(resp.data)
+      }
+    }
+    
     if (userInfo) {
       _fetchCart()
     }
-  }, [userInfo]);
+  }, [userInfo, isFocused]);
 
   useEffect(()=> {
     if(cart && cart.total_price) {

@@ -62,6 +62,7 @@ export const NailDesignTab = ({ navigation, route }) => {
     // message = prompt + ;
     
     try {
+      // todo: use API.POST function
       const response = await fetch(`${BASE_URL}/api/message`, {
         method: 'POST',
         headers: {
