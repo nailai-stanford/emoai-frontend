@@ -107,6 +107,8 @@ export const AIChatTab = ({ navigation }) => {
     console.log('fetch history')
     resp = await GET(`${BASE_URL}/api/chat/chat_history`, userInfo, signout)
       if (resp.status === 200) {
+        console.log(resp)
+        resp = resp.data
         if (resp.completed) {
           let last_message = resp.messages[resp.messages.length - 1]
           let last_options = last_message.options
@@ -247,7 +249,6 @@ export const AIChatTab = ({ navigation }) => {
     setOptions([])
     if (currentStage === 'SUBMIT') {
       currentStage === 'THEME'
-      console.log('submit', finalInput)
       setTags({})
       if (finalInput === 'Yes') {
         // submit task and redirect to loading page
@@ -255,8 +256,7 @@ export const AIChatTab = ({ navigation }) => {
         resp = await POST(`${BASE_URL}/api/task/submit`, JSON.stringify({tags: JSON.stringify(tags)}), userInfo)
         if (resp.status === 200) {
           setFetchHistory(false)
-          data = await response.json()
-          console.log('AI design task submitted, resp:', data)
+          data = resp.data
           navigation.navigate(TABs.LOAD)
         } else {
           console.error('submit ai design task failed')

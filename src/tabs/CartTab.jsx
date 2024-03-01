@@ -18,6 +18,7 @@ import {P, ButtonP, MenuHeader, TitleHeader, SubHeader} from '../styles/texts';
 import {COLORS, PADDINGS} from '../styles/theme';
 import {TABs} from '../static/Constants';
 import { ACTION_ICONS } from '../styles/icons';
+import { useIsFocused } from '@react-navigation/native';
 
 const iconSize = 20;
 const pictureHeight = 60;
@@ -100,20 +101,23 @@ export const CartTab = ({navigation}) => {
   const {userInfo, signout} = useAuthenticationContext();
   const {cart, setCart} = useCartContext();
   const [total, setTotal] = useState(0)
+  const isFocused = useIsFocused();
+
 
   useEffect(() => {
     async function _fetchCart() {
       resp = await GET(`${APIs.ORDER_FETCH}`, userInfo)
       if (resp.status === 200) {
-        const cart = JSON.parse(JSON.stringify(resp.data))
-        setCart(cart)
+        // const cart = 
+        console.log('_fetchCart:', resp.data)
+        setCart(resp.data)
       }
     }
     
     if (userInfo) {
       _fetchCart()
     }
-  }, [userInfo]);
+  }, [userInfo, isFocused]);
 
   useEffect(()=> {
     if(cart && cart.total_price) {
