@@ -5,7 +5,9 @@ import axios from "axios";
 export const BASE_URL = String(Config.BASE_URL);
 
 export const APIs = {
-  USER_LOGIN: `${BASE_URL}/api/users/login/`,
+  USER_LOGIN: `${BASE_URL}/api/users/login/google`,
+  EMAIL_CODE: `${BASE_URL}/api/users/login/email/code`,
+  EMAIL_LOGIN: `${BASE_URL}/api/users/login/email`,
   GET_PRODUCTS: `${BASE_URL}/api/products/`,
   POST_HAND_DESIGN: `${BASE_URL}/api/hand_designs/`,
   LIKE_COLLECT: `${BASE_URL}/api/like_collect/`,
@@ -19,7 +21,7 @@ export const APIs = {
   ADDRESS: `${BASE_URL}/api/address/`,
 };
 
-export const getHeader = (idToken = '') => {
+export const getHeader = (jwt = '') => {
   // https://stackoverflow.com/questions/46337471/how-to-allow-cors-in-react-js
   const headers = {
     'Content-Type': 'application/json',
@@ -29,8 +31,8 @@ export const getHeader = (idToken = '') => {
       'Authorization',
     ],
   };
-  if (idToken.length > 0) {
-    headers['Authorization'] = 'Bearer ' + idToken;
+  if (jwt.length > 0) {
+    headers['Authorization'] = 'Bearer ' + jwt;
   }
   return headers;
 };
@@ -39,13 +41,14 @@ export const getHeader = (idToken = '') => {
 
 export const GET = async(url, userInfo, signout) => {
   headers = null
-  if (userInfo && userInfo.idToken) {
-    headers = getHeader(userInfo.idToken)
+  if (userInfo && userInfo.jwt) {
+    headers = getHeader(userInfo.jwt)
   }
   try {
     const response = await axios.get(url, { headers });
     return { status: response.status, data: response.data };
   } catch (e) {
+    console.log('GET ', url, 'failed, e:', e)
     if (signout && e.response && e.response.status === 401) {
       signout();
     }
@@ -56,13 +59,14 @@ export const GET = async(url, userInfo, signout) => {
 
 export const POST = async(url, payload, userInfo, signout) => {
   headers = null
-  if (userInfo && userInfo.idToken) {
-    headers = getHeader(userInfo.idToken)
+  if (userInfo && userInfo.jwt) {
+    headers = getHeader(userInfo.jwt)
   }
   try {
     const response = await axios.post(url, payload, { headers });
     return { status: response.status, data: response.data };
   } catch (e) {
+    console.log('POST ', url, 'with payload:', payload, 'failed, e:', e)
     if (signout && e.response && e.response.status === 401) {
       signout();
     }

@@ -1,44 +1,54 @@
 import React from 'react';
-import { StyleSheet, View, Image, Linking, TouchableOpacity,} from 'react-native';
+import { StyleSheet, View, Image, Linking, TouchableOpacity, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import { StatusBar, Text, Dimensions} from "react-native";
 import {
-    getUserInfoFromStore,
     onPressSignIn,
-    onPressLogout,
   } from './../utils/UserUtils';
 
-import { GradientButtonAction } from '../styles/buttons';
+import { GradientButtonAction, GradientButtonSelection } from '../styles/buttons';
 import { ButtonH, ButtonP, P, GradientP, TermTitle} from '../styles/texts';
 import { OTHER_ICONS } from '../styles/icons';
 
+import { EmailLoginView } from '../components/EmailLoginView';
 
 const { width: screenWidth } = Dimensions.get("window");
 const { height: ScreenHeight } = Dimensions.get("window");
 
 
+
 export const LogInPage = (props) => {  
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
   return (
+    <TouchableWithoutFeedback onPress={dismissKeyboard}>
+
     <View style={styles.container}>
       <Image source={require('../../assets/others/logoLarge.png')} 
              style={styles.logoImage}/>
       <TermTitle style={styles.slogan}>
       EMO AI: Wear Your Emotions, Crafted by AI.
       </TermTitle>
-      <GradientButtonAction
+      <EmailLoginView setIsLoggedInState={props.setIsLoggedInState} setUserInfo={props.setUserInfo}/>
+      <Text style={styles.divider}>
+        Login with Google
+      </Text>
+      <GradientButtonSelection
         onPress={() => {
           onPressSignIn()
             .then(({response, userInfo}) => {
               props.setIsLoggedInState(true);
               props.setUserInfo(userInfo);
+              console.log('login by google success:', userInfo)
             })
             .catch(e => {});
         }}
       >
-        <View style={{flexDirection:"row", justifyContent:"start"}}>
+        <View style={{flexDirection:"row", justifyContent:"start", width: 220}}>
           <OTHER_ICONS.google width={20} height={20} style={{paddingHorizontal:15}}/>
           <ButtonP>Sign In with Google</ButtonP>
         </View>
-      </GradientButtonAction>
+      </GradientButtonSelection>
       <P style={styles.termsText}>
           By clicking Sign In With Google, you are agreeing to
         </P>
@@ -62,6 +72,7 @@ export const LogInPage = (props) => {
       </View>
       <StatusBar style="auto" />
     </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -78,7 +89,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   slogan: {
-    marginBottom: 180,
+    marginBottom: 40,
   },
   textContainer: {
     flexDirection: 'row',
@@ -90,7 +101,8 @@ const styles = StyleSheet.create({
     color: "white",
     textDecorationStyle: 'solid',
   },
-  termsLink: {
-    // Add any specific styling for the link text here
+  divider: {
+    marginTop: 60,
+    color: 'white'
   },
 });

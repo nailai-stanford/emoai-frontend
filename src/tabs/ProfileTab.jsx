@@ -24,7 +24,9 @@ export const ProfileTab = ({ onSignout }) => {
       // const headers = getHeader(userInfo.idToken);
       resp = await GET(`${APIs.GET_PRODUCTS}my/`, userInfo, signout)
       if (resp.status === 200) {
-        setDesign(JSON.parse(JSON.stringify(resp.data.products)))
+        if (resp.data && resp.data.products) {
+          setDesign(resp.data.products)
+        }
       }
     }
     if (userInfo) {
@@ -36,7 +38,9 @@ export const ProfileTab = ({ onSignout }) => {
     async function _getCollected() {
       resp = await GET(`${APIs.LIKE_COLLECT}collections/`, userInfo, signout)
       if (resp.status === 200) {
-        setCollected(JSON.parse(JSON.stringify(resp.data.products)))
+        if (resp.data && resp.data.products) {
+          setCollected(resp.data.products)
+        }
       }
     }
     if (userInfo) {

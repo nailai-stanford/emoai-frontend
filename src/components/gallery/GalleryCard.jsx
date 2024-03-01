@@ -10,7 +10,6 @@ import { ACTION_ICONS } from "../../styles/icons";
 import { SubHeader,P, GradientP, GradientMenuHeader } from "../../styles/texts";
 import { COLORS } from "../../styles/theme";
 
-import axios from "axios";
 import { useEffect } from "react";
 import { GradientButtonAction } from "../../styles/buttons";
 import { handleError } from "../../utils/Common";

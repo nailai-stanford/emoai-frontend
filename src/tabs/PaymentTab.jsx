@@ -5,7 +5,6 @@ import {useAuthenticationContext} from '../providers/AuthenticationProvider';
 import { useCartContext } from '../providers/CartContextProvider';
 
 import {Image} from '@rneui/themed';
-import axios from 'axios';
 
 import {View, ScrollView, Alert, StyleSheet} from 'react-native';
 import {ButtonH, ButtonP, TitleHeader, P, SubHeader} from '../styles/texts';
@@ -152,31 +151,21 @@ export const PaymentTab = ({route, navigation}) => {
       idToken = userInfo.idToken
     }
     const headers = getHeader(idToken);
-    axios
-      .post(
-        APIs.ADDRESS,
-        {
-          address1: address1,
-          address2: address2,
-          city: city,
-          name: name,
-          country: country,
-          phone: phone,
-          province: province,
-          zip: zip,
-        },
-        {headers},
-      )
-      .then(res => {
-        if (res.status == 200) {
-          console.log('address saved')
-        } else {
-          console.log('save address failed')
-        }
-      })
-      .catch(e => {
-        handleError(e);
-      });
+    
+    payload = {
+      address1: address1,
+      address2: address2,
+      city: city,
+      name: name,
+      country: country,
+      phone: phone,
+      province: province,
+      zip: zip,
+    }
+    resp = await POST(APIs.ADDRESS, payload, userInfo, signout)
+    if (resp.status !== 200) {
+      console.log('save address failed')
+    }
   }
 
   const getPaymentSheet = async orderId => {

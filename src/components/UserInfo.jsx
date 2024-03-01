@@ -1,4 +1,3 @@
-import axios from "axios";
 import React from "react";
 import { StyleSheet, View, Text, Button, Image } from "react-native";
 

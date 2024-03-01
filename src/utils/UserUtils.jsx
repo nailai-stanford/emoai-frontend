@@ -1,8 +1,7 @@
-import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
-import {APIs, getHeader} from './API';
+import {APIs, POST} from './API';
 import {SecureStoreKeys, handleError, handleResponse} from './Common';
 import {Config} from './Config';
 
@@ -37,47 +36,40 @@ export const onPressSignIn = () => {
     iosClientId: Config.IOS_CLIENT_ID,
   });
 
-  return new Promise((resolve, reject) => {
-    return GoogleSignin.hasPlayServices()
-      .then(hasPlayService => {
-        if (hasPlayService) {
-          GoogleSignin.signIn()
-            .then(userInfo => {
-              const headers = getHeader();
-              const {idToken, scopes, user} = userInfo;
-              axios
-                .post(
-                  APIs.USER_LOGIN,
-                  {
-                    idToken: idToken,
-                    email: user.email,
-                    source: 'google',
-                    sourceId: user.id,
-                    firstName: user.givenName ? user.givenName: "",
-                    lastName: user.familyName ? user.familyName: "",
-                  },
-                  {headers},
-                )
-                .then(response => {
-                  setUserInfoInStore(userInfo);
-                  console.log('login user_info:', userInfo)
-                  handleResponse(response, userInfo);
-                  resolve({response, userInfo});
-                })
-                .catch(e => {
-                  handleError(e);
-                  reject(e);
-                });
-            })
-            .catch(e => {
-              handleError(e);
-              reject(e);
-            });
-        }
-      })
-      .catch(e => {
-        handleError(e);
-        reject(e);
-      });
+  return new Promise(async (resolve, reject) => {
+    try {
+      const hasPlayService = await GoogleSignin.hasPlayServices();
+      if (hasPlayService) {
+        GoogleSignin.signIn()
+          .then(async (userInfo) => {
+            const { idToken, scopes, user } = userInfo;
+            payload = {
+              idToken: idToken,
+              email: user.email,
+              source: 'google',
+              sourceId: user.id,
+              firstName: user.givenName ? user.givenName : "",
+              lastName: user.familyName ? user.familyName : "",
+              photo: user.photo
+            };
+            resp = await POST(APIs.USER_LOGIN, payload);
+            if (resp.status === 200) {
+              userInfo = {
+                jwt: resp.data.user.jwt,
+                user: resp.data.user
+              }
+              setUserInfoInStore(userInfo);
+              resolve({ resp, userInfo });
+            }
+          })
+          .catch(e => {
+            handleError(e);
+            reject(e);
+          });
+      }
+    } catch (e_2) {
+      handleError(e_2);
+      reject(e_2);
+    }
   });
 };

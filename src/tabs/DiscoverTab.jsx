@@ -1,4 +1,3 @@
-import axios from 'axios';
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View, Text, FlatList, ScrollView} from 'react-native';
 
@@ -6,7 +5,7 @@ import {useAuthenticationContext} from '../providers/AuthenticationProvider';
 import {handleError} from '../utils/Common';
 import {GalleryCard} from '../components/gallery/GalleryCard';
 import {Tab} from '@rneui/themed';
-import { APIs} from '../utils/API';
+import { APIs, GET} from '../utils/API';
 import { format_theme } from '../utils/TextUtils';
 
 import {GradientButtonSelection} from '../styles/buttons';
@@ -20,30 +19,24 @@ const ThemeHeader = ({index, setIndex}) => {
 
   useEffect(() => {
     async function _getThemes() {
-      axios
-        .get(`${APIs.GET_PRODUCTS}themes/`)
-        .then(res => {
-          let copy = JSON.parse(JSON.stringify(res.data));
-          setThemeList(copy);
-        })
-        .catch(e => console.log(e));
+      resp = await GET(`${APIs.GET_PRODUCTS}themes/`)
+      if (resp.status === 200) {
+        setThemeList(resp.data);
+      }
     }
     _getThemes();
   }, []);
 
   useEffect(() => {
     async function _loadProducts() {
-      axios
-        .get(
-          `${APIs.GET_PRODUCTS}by_tags?tags=${encodeURIComponent(
-            themeList[index],
-          )}&original=true`,
-        )
-        .then(res => {
-          setThemeItems(JSON.parse(JSON.stringify(res.data)));
-        })
-        .catch(e => handleError(e));
+      resp = await GET(`${APIs.GET_PRODUCTS}by_tags?tags=${encodeURIComponent(
+        themeList[index],
+      )}&original=true`)
+
+      if (resp.status === 200) {
+        setThemeItems(resp.data);
       }
+    }
     _loadProducts();
   }, [index, themeList]);
 
@@ -88,14 +81,10 @@ export const DiscoverTab = ({ route }) => {
 
   useEffect(() => {
     async function _loadProducts() {
-      axios
-        .get(`${APIs.GET_PRODUCTS}by_tags?community=true`)
-        .then(res => {
-          setProductList(JSON.parse(JSON.stringify(res.data)));
-        })
-        .catch(e => {
-          handleError(e);
-        });
+      resp = await GET(`${APIs.GET_PRODUCTS}by_tags?community=true`)
+      if (resp.status === 200) {
+        setProductList(resp.data)
+      }
     }
     if (userInfo && productList && productList.length == 0) {
       _loadProducts();

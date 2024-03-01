@@ -16,7 +16,7 @@ const GoBackScreens = [TABs.THEME, TABs.COLLECTION, TABs.CART, TABs.SETTINGS, TA
 export const Header = (props) => {
   // TODO Refactor CSS styles
   const route = props.route;
-  const showButtons = Boolean(route.name !== TABs.AICHAT && route.name != TABs.PROFILE && (route.name != TABs.SETTINGS) && route.name != TABs.ADDRESS ) ;
+  const showButtons = Boolean(route.name !== TABs.AICHAT && (route.name != TABs.SETTINGS) && route.name != TABs.ADDRESS ) ;
   const goBack = (route.name == TABs.THEME) || (route.name == TABs.COLLECTION) || (route.name == TABs.CART)
     || (route.name == TABs.SETTINGS) || (route.name == TABs.ADDRESS) || (route.name == TABs.NAME)
   const profileIcon = (route.name == TABs.PROFILE)
@@ -137,7 +137,7 @@ const ButtonGroup = (props ) => {
         height: iconSize,
       }}
     >
-      {route.name !== TABs.HOME && 
+      {route.name !== TABs.HOME && route.name !== TABs.PROFILE && 
       <TouchableOpacity size={iconSize} style={{ position: "absolute", right: 30 }} onPress={() => navigation.navigate(TABs.HOME)}>
         <ACTION_ICONS.home
           stroke={COLORS.white}
@@ -145,7 +145,8 @@ const ButtonGroup = (props ) => {
         />
       </TouchableOpacity>
       }
-      {route.name !== TABs.DESIGN_PREVIEW && <TouchableOpacity style={{ position: "absolute", right: 0 }} onPress={() => navigation.navigate(TABs.CART)}>
+      {route.name !== TABs.DESIGN_PREVIEW && route.name !== TABs.PROFILE && 
+      <TouchableOpacity style={{ position: "absolute", right: 0 }} onPress={() => navigation.navigate(TABs.CART)}>
         <View>
           <ACTION_ICONS.shop
             color={iconColor}
@@ -169,6 +170,13 @@ const ButtonGroup = (props ) => {
             )}
         </View>
       </TouchableOpacity>
+      }
+      {route.name === TABs.PROFILE &&
+        <TouchableOpacity  style={{ position: "absolute", right: 0 }} onPress={() => navigation.navigate(TABs.SETTINGS)}>
+         <ACTION_ICONS.setting name='settings'
+           color={COLORS.white}
+         />
+       </TouchableOpacity>
       }
     </View>
   );
