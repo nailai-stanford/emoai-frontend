@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Image, TouchableOpacity, TextInput, ScrollView, ActivityIndicator } from 'react-native';
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
+import { useLocalLoginStatusContext } from '../providers/LocalLoginStatusContextProvider';
 import { APIs, BASE_URL, POST } from "../utils/API";
 import { TABs } from '../static/Constants';
 
@@ -29,22 +30,10 @@ export const DesignPreviewTab = ({ navigation, route }) => {
     const toast = useToast();
     const {setCart} = useCartContext()
     const isFocused = useIsFocused();
+    const { localLogin, setPopupVisibility } = useLocalLoginStatusContext()
 
-
-    const onBack = () => {
-      setTitle(''); 
-      setDescription('')
-      setProductImage('')
-      setProductImageList(null)
-      setPrice('')
-      setDesignSetId(null)
-      setEnableAddToCart(false)
-      navigation.navigate(TABs.AI)
-    };
-
-    useEffect(()=> {
-      if (!isFocused) {
-        console.log('lose focus, clear cache')
+    useEffect(() => {
+      const unsubscribe = navigation.addListener('blur', () => {
         setTitle(''); 
         setDescription('')
         setProductImage('')
@@ -52,26 +41,14 @@ export const DesignPreviewTab = ({ navigation, route }) => {
         setPrice('')
         setDesignSetId(null)
         setEnableAddToCart(false)
-      }
-    }, [isFocused])
-
-    // useFocusEffect(
-    //   React.useCallback(() => {
-    //     return () => {
-    //       setTitle(''); 
-    //       setDescription('')
-    //       setProductImage('')
-    //       setProductImageList(null)
-    //       setPrice('')
-    //       setDesignSetId(null)
-    //       setEnableAddToCart(false)
-    //     };
-    //   }, [])
-    // );
+      });
+  
+      return unsubscribe; // Unsubscribe on unmount
+    }, [navigation]);
   
     const add_to_cart = async() => {
-      if (!userInfo) {
-        // todo: show login pop window
+      if (!userInfo || !localLogin) {
+        setPopupVisibility(true)
         return
       }
       if(designSetId && quantity > 0) {
