@@ -6,6 +6,7 @@ import {AppContent} from './src/AppContent';
 import {ModalPortal} from 'react-native-modals';
 import {StripeProvider} from '@stripe/stripe-react-native';
 import { ToastProvider } from 'react-native-toast-notifications'
+import { LocalLoginStatusContextProvider } from './src/providers/LocalLoginStatusContextProvider';
 
 export default function App() {
   return (
@@ -13,8 +14,10 @@ export default function App() {
       <AuthenticationProvider>
         <ToastProvider>
           <CartContextProvider>
+            <LocalLoginStatusContextProvider>
               <AppContent />
               <ModalPortal />
+            </LocalLoginStatusContextProvider>
           </CartContextProvider>
         </ToastProvider>
       </AuthenticationProvider>

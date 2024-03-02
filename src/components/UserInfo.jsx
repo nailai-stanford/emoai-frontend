@@ -6,11 +6,13 @@ import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { ButtonAction, ButtonSelection } from "../styles/buttons";
 import { P, ButtonP, MenuHeader, GradientP} from "../styles/texts";
 import { COLORS, PADDINGS } from "../styles/theme";
+import { useLocalLoginStatusContext } from "../providers/LocalLoginStatusContextProvider";
 
 export const UserInfo = (props) => {
   const {myDesignNum, myCollectionNum, followersNum} = props;
   const { userInfo, signout } = useAuthenticationContext();
   const { onSignout } = props;
+  const {localLogin} = useLocalLoginStatusContext()
 
   const avatarSize = 110;
 
@@ -32,20 +34,21 @@ export const UserInfo = (props) => {
               borderRadius: avatarSize / 2,
             }}
             source={{
-              uri: userInfo && userInfo.user.photo,
+              uri: localLogin ? userInfo && userInfo.user.photo : "https://emobackend.s3.amazonaws.com/app_assets/portrait-cat2.png",
             }}
           />
         </View>
         <View style={{ flex: 2, alignSelf: "center", marginLeft: 20 }}>
-          <MenuHeader>{userInfo && userInfo.user.name}</MenuHeader>
-          <GradientP $colored={true} $alignLeft={true}>Modern Artist</GradientP>
-          <ButtonAction $isWhite={true} style={{alignSelf: "flex-start", marginLeft:0}}
+          <MenuHeader>{localLogin ? userInfo.user.name : "Visitor"}</MenuHeader>
+          {localLogin && <GradientP $colored={true} $alignLeft={true}>Modern Artist</GradientP>}
+          {localLogin && <ButtonAction $isWhite={true} style={{alignSelf: "flex-start", marginLeft:0}}
             onPress={() => {
               signout();
               onSignout();
             }}>
               <P style={{color:COLORS.white}}>Sign Out</P>
           </ButtonAction>
+          }
         </View>
       </View>
 
@@ -67,7 +70,7 @@ export const UserInfo = (props) => {
             flexDirection: "column",
           }}
         >
-          <P style={{ flex: 1 }}>{myCollectionNum}</P>
+          <P style={{ flex: 1 }}>{localLogin ? myCollectionNum : 0}</P>
           <P style={{ flex: 1, fontWeight: "bold" }}>Collection</P>
         </View>
 
@@ -79,7 +82,7 @@ export const UserInfo = (props) => {
             flexDirection: "column",
           }}
         >
-          <P style={{ flex: 1}}>{myDesignNum}</P>
+          <P style={{ flex: 1}}>{localLogin ? myDesignNum: 0}</P>
           <P style={{ flex: 1, fontWeight: "bold" }}>
             My Design
           </P>

@@ -29,7 +29,6 @@ const ChatMessage = ({ item }) => {
   const { userInfo, signout } = useAuthenticationContext();
 
 
-
   return (
     <View style={{ display: 'flex', flexDirection, marginBottom: 25 , alignItems:"flex-start"}}>
       {isSystemMessage && ( <Image style={{

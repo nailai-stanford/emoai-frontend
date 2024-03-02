@@ -9,6 +9,7 @@ import { MenuHeader } from "../styles/texts";
 import { ACTION_ICONS } from "../styles/icons";
 import { useEffect, useState } from "react";
 import { APIs, GET } from "../utils/API";
+import { useLocalLoginStatusContext } from "../providers/LocalLoginStatusContextProvider";
 
 
 const iconSize = 20;
@@ -77,12 +78,13 @@ const ProfileIconGroup = ({ navigation }) => {
 const Title = (props) => {
   const tabName = props.route.name;
   const { userInfo } = useAuthenticationContext();
+  const {localLogin} = useLocalLoginStatusContext()
 
   let title;
   if (tabName == TABs.HOME) {
     title = TAB_TITLES[tabName].replace(
       "{NAME}",
-      userInfo ? userInfo.user.name : "user"
+      localLogin && userInfo ? userInfo.user.name : "Visitor"
     );
   } else {
     title = TAB_TITLES[tabName];
@@ -101,6 +103,7 @@ const ButtonGroup = (props ) => {
   const navigation = props.navigation;
   const route = props.route;
   const showCart = Boolean(route.name !== TABs.DESIGN_PREVIEW)
+  const {localLogin} = useLocalLoginStatusContext()
 
   useEffect(() => {
     console.log(route.name)
@@ -171,7 +174,7 @@ const ButtonGroup = (props ) => {
         </View>
       </TouchableOpacity>
       }
-      {route.name === TABs.PROFILE &&
+      {route.name === TABs.PROFILE && localLogin && 
         <TouchableOpacity  style={{ position: "absolute", right: 0 }} onPress={() => navigation.navigate(TABs.SETTINGS)}>
          <ACTION_ICONS.setting name='settings'
            color={COLORS.white}

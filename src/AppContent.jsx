@@ -10,6 +10,9 @@ import {DefaultTheme, NavigationContainer} from '@react-navigation/native';
 
 import {TABs} from './static/Constants';
 import {useAuthenticationContext} from './providers/AuthenticationProvider';
+import { useLocalLoginStatusContext } from "./providers/LocalLoginStatusContextProvider";
+import { useCartContext } from "./providers/CartContextProvider";
+
 import {
   getUserInfoFromStore,
   onPressSignIn,
@@ -50,7 +53,8 @@ import { COLORS, ICON_SIZES } from "./styles/theme";
 // import svg icons
 
 import { TAB_BAR_ICONS } from "./styles/icons";
-
+import { LoginPopup } from "./components/LoginPopup";
+import { useLocalLoginStatus } from "./providers/LocalLoginStatusContextProvider";
 
 
 const Tab = createBottomTabNavigator();
@@ -58,17 +62,29 @@ const Tab = createBottomTabNavigator();
 
 export const AppContent = () => {
   const {isLoggedIn, setUserInfo} = useAuthenticationContext();
-  const [isLoggedInState, setIsLoggedInState] = useState(isLoggedIn);
+  const {isPopupVisible, localLogin, isLoginPageVisible, 
+    setPopupVisibility, setLoginPageVisibility, setLocalLogin} = useLocalLoginStatusContext()
+  
+  const {clearCart} = useCartContext()
 
   useEffect(() => {
     async function _fetchUserInfo() {
-      if (isLoggedIn) return;
+      if (isLoggedIn) {
+        setLocalLogin(false)
+        setLoginPageVisibility(false)
+        setPopupVisibility(false)
+      }
       const userInfo = await getUserInfoFromStore();
       if (userInfo != null) {
-        setIsLoggedInState(true);
+
         setUserInfo(userInfo);
+        setLocalLogin(true);
+        setLoginPageVisibility(false)
+        setPopupVisibility(false)
       } else {
-        setIsLoggedInState(false)
+        setLocalLogin(false)
+        setLoginPageVisibility(false)
+        setPopupVisibility(false)
       }
     }
     _fetchUserInfo();
@@ -82,8 +98,12 @@ export const AppContent = () => {
       source={require('../assets/bg/bg.png')}
       resizeMode="cover"
       style={styles.imageContainer}>
-      {!isLoggedInState ? <LogInPage setIsLoggedInState={setIsLoggedInState} setUserInfo={setUserInfo}/> : 
+      {isLoginPageVisible ? <LogInPage setLocalLogin={setLocalLogin} setUserInfo={setUserInfo}/> : 
       <NavigationContainer theme={navTheme}>
+          {isPopupVisible && <View style={styles.overlay}>
+              <LoginPopup isVisible={isPopupVisible} toggleVisibility={togglePopupVisibility} />
+            </View>
+          }
         <Tab.Navigator
         backBehavior="history"
         screenOptions={({ route }) => ({
@@ -175,12 +195,21 @@ export const AppContent = () => {
           />
           <Tab.Screen
             name={TABs.SETTINGS}
-            component={SettingsTab}
             options={{
               tabBarButton: () => null,
               tabBarVisible: false,
             }}
-          />
+          >
+            {() => (
+              <SettingsTab
+                onSignout={() => {
+                  onPressLogout();
+                  setLocalLogin(false);
+                  clearCart();
+                }}
+              />
+            )}
+          </Tab.Screen>
           <Tab.Screen
             name={TABs.ADDRESS}
             component={AddressTab}
@@ -295,7 +324,8 @@ export const AppContent = () => {
               <ProfileTab
                 onSignout={() => {
                   onPressLogout();
-                  setIsLoggedInState(false);
+                  setLocalLogin(false);
+                  clearCart()
                 }}
               />
             )}
@@ -308,6 +338,12 @@ export const AppContent = () => {
 };
 
 const styles = StyleSheet.create({
+  overlay: {
+    position: 'absolute',
+    zIndex: 2, // higher zIndex
+    width: '100%',
+    height: '100%',
+  },
   container: {
     flex: 1,
     // backgroundColor: "#fff",
