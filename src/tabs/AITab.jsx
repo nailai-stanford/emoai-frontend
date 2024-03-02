@@ -97,31 +97,31 @@ export const AITab = ({ navigation }) => {
         }}
       >
         { taskStatus === "NO_TASK" ? 
-        <>
-        <TitleHeader >
-          {title}
+          <>
+          <TitleHeader >
+            {title}
+          </TitleHeader>
+          <P style={{ textAlign: "center", marginBottom: 20, width: 150 }}>
+            {subtitle}
+          </P>
+          <View>
+            <GradientButtonAction onPress={() => check_last_task_status(false)}>
+              <ButtonH>{buttonText}</ButtonH>
+            </GradientButtonAction>
+          </View>
+          </> 
+          :  
+          <>
+          <TitleHeader >
+          {taskStatus==="WORKSHOP_INIT" ? "Your Design is Here!" : "Welcome Back!"}
         </TitleHeader>
-        <P style={{ textAlign: "center", marginBottom: 20, width: 150 }}>
-          {subtitle}
-        </P>
         <View>
-          <GradientButtonAction onPress={() => check_last_task_status(false)}>
-            <ButtonH>{buttonText}</ButtonH>
-          </GradientButtonAction>
-        </View>
-        </> 
-        :  
-        <>
-        <TitleHeader >
-        {taskStatus==="WORKSHOP_INIT" ? "Your Design is Here!" : "Welcome Back!"}
-      </TitleHeader>
-      <View>
-      <GradientButtonAction onPress={() => check_last_task_status(false)}>
-        <ButtonH>{taskStatus==="WORKSHOP_INIT" ? "Go To Workshop" : "Check Status"}</ButtonH>
-      </GradientButtonAction>
-    </View>
-    </>
-} 
+        <GradientButtonAction onPress={() => check_last_task_status(false)}>
+          <ButtonH>{taskStatus==="WORKSHOP_INIT" ? "Go To Workshop" : "Check Status"}</ButtonH>
+        </GradientButtonAction>
+      </View>
+      </>
+    } 
       </BlurView>
     </View>
   );

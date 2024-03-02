@@ -1,6 +1,7 @@
 import { View, Text, ScrollView, Image, TouchableHighlight, TouchableOpacity, ImageBackground } from "react-native";import { TABs } from "../../static/Constants";
 import { useNavigation } from '@react-navigation/native';
 import { useAuthenticationContext } from "../../providers/AuthenticationProvider";
+import { useLocalLoginStatusContext } from "../../providers/LocalLoginStatusContextProvider";
 import { useCartContext } from "../../providers/CartContextProvider";
 import { APIs, POST, getHeader} from "../../utils/API";
 import LinearGradient from "react-native-linear-gradient";
@@ -21,6 +22,7 @@ export const GalleryCard = ({ item, style }) => {
   const avatarSize = 16;
   const productId = item && item.id? item.id : ""
   const { userInfo, signout} = useAuthenticationContext();
+  const { localLogin, setPopupVisibility } = useLocalLoginStatusContext()
   const {setCart} = useCartContext();
 
   const productImageStyle = {
@@ -40,8 +42,8 @@ export const GalleryCard = ({ item, style }) => {
     
 
   const add_to_cart = async () => {
-    if (!userInfo) {
-      // todo: show login pop  window
+    if (!localLogin || !userInfo) {
+      setPopupVisibility(true)
       return
     }
     if(productId) {

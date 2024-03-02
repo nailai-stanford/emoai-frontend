@@ -8,13 +8,9 @@ import { TABs } from '../static/Constants';
 import { ButtonAction, ButtonSelection, GradientButtonAction } from "../styles/buttons";
 import { P, ButtonP, MenuHeader, TitleHeader, SubHeader, ButtonH} from "../styles/texts";
 import { COLORS, PADDINGS, FONTS } from "../styles/theme";
-import { ACTION_ICONS } from '../styles/icons';
-import { useFocusEffect } from '@react-navigation/native';
 import { useToast } from "react-native-toast-notifications";
-import { handleError } from "../utils/Common";
 import { useCartContext } from '../providers/CartContextProvider';
 import { useIsFocused } from '@react-navigation/native';
-
 import { HeadImages } from '../components/ProductHeader';
 
 
@@ -36,22 +32,42 @@ export const DesignPreviewTab = ({ navigation, route }) => {
 
 
     const onBack = () => {
-      // navigation.goBack();
+      setTitle(''); 
+      setDescription('')
+      setProductImage('')
+      setProductImageList(null)
+      setPrice('')
+      setDesignSetId(null)
+      setEnableAddToCart(false)
       navigation.navigate(TABs.AI)
     };
-    useFocusEffect(
-      React.useCallback(() => {
-        return () => {
-          setTitle(''); 
-          setDescription('')
-          setProductImage('')
-          setProductImageList(null)
-          setPrice('')
-          setDesignSetId(null)
-          setEnableAddToCart(false)
-        };
-      }, [])
-    );
+
+    useEffect(()=> {
+      if (!isFocused) {
+        console.log('lose focus, clear cache')
+        setTitle(''); 
+        setDescription('')
+        setProductImage('')
+        setProductImageList(null)
+        setPrice('')
+        setDesignSetId(null)
+        setEnableAddToCart(false)
+      }
+    }, [isFocused])
+
+    // useFocusEffect(
+    //   React.useCallback(() => {
+    //     return () => {
+    //       setTitle(''); 
+    //       setDescription('')
+    //       setProductImage('')
+    //       setProductImageList(null)
+    //       setPrice('')
+    //       setDesignSetId(null)
+    //       setEnableAddToCart(false)
+    //     };
+    //   }, [])
+    // );
   
     const add_to_cart = async() => {
       if (!userInfo) {

@@ -2,16 +2,37 @@ import { TABs } from "../static/Constants";
 import {Image, View,StyleSheet } from "react-native";
 
 
-import { P, TitleHeader, MenuHeader, ButtonH } from "../styles/texts";
+import { P, MenuHeader, ButtonH } from "../styles/texts";
 import { PADDINGS } from "../styles/theme";
 import { GradientButtonAction } from "../styles/buttons";
 import { useEffect, useState } from "react";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
-import { getHeader, BASE_URL, GET } from "../utils/API";
+import { BASE_URL, GET } from "../utils/API";
+import { useLocalLoginStatusContext } from "../providers/LocalLoginStatusContextProvider";
+import { useIsFocused } from "@react-navigation/native";
 
-export const WorkshopIdleTab = ({navigation, route}) => {
+export const WorkshopTabComponent = ({navigation, route}) => {
+  const { setPopupVisibility, isPopupVisible, localLogin } = useLocalLoginStatusContext();
+  const isFocused = useIsFocused()
+  useEffect(() => {
+    if (!localLogin && isFocused) {
+      setPopupVisibility(true);
+      navigation.goBack()
+    }
+  }, [localLogin, isFocused]);
+
+  if (localLogin) {
+    return <WorkshopIdleTab navigation={navigation} route={route} />;
+  } else {
+    return null
+  }
+};
+
+const WorkshopIdleTab = ({navigation, route}) => {
     const { userInfo, signout} = useAuthenticationContext();
     const [buttonText, setButtonText] = useState('Explore in Chatbot')
+    const {setPopupVisibility, localLogin} = useLocalLoginStatusContext()
+    const isFocused = useIsFocused()
 
     const check_last_task_status = async (init_check) => {
         if (!userInfo) {
@@ -51,7 +72,6 @@ export const WorkshopIdleTab = ({navigation, route}) => {
             console.error('Error fetching task status:', error);
         }
       };
-
       
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {

@@ -26,7 +26,7 @@ import {DiscoverTab} from './tabs/DiscoverTab';
 import {AITab} from './tabs/AITab';
 import {AIChatTab} from './tabs/AIChatTab';
 import {WorkshopTab} from './tabs/WorkshopTab';
-import {WorkshopIdleTab} from './tabs/WorkshopIdleTab';
+import {WorkshopTabComponent} from './tabs/WorkshopIdleTab';
 import {HandDesignTab} from './tabs/HandDesignTab';
 
 import {NailDesignTab} from './tabs/NailDesignTab';
@@ -101,9 +101,10 @@ export const AppContent = () => {
       {isLoginPageVisible ? <LogInPage/> : 
       <NavigationContainer theme={navTheme}>
           {isPopupVisible && <View style={styles.overlay}>
-              <LoginPopup isVisible={isPopupVisible} toggleVisibility={togglePopupVisibility} />
+              <LoginPopup isVisible={isPopupVisible} toggleVisibility={setPopupVisibility} />
             </View>
           }
+          
         <Tab.Navigator
         backBehavior="history"
         screenOptions={({ route }) => ({
@@ -243,7 +244,7 @@ export const AppContent = () => {
             }} />
           <Tab.Screen
             name={TABs.WORKSHOP_IDLE}
-            component={WorkshopIdleTab}
+            component={WorkshopTabComponent}
             options={{ tabBarLabel: 'WORKSHOP' }}
           />
           <Tab.Screen
@@ -341,8 +342,10 @@ const styles = StyleSheet.create({
   overlay: {
     position: 'absolute',
     zIndex: 2, // higher zIndex
-    width: '100%',
-    height: '100%',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0
   },
   container: {
     flex: 1,

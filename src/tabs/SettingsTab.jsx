@@ -4,12 +4,10 @@ import { StyleSheet, View, ScrollView, Dimensions, Text, Button, Image} from "re
 import { TABs } from "../static/Constants";
 import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { GradientButtonAction } from "../styles/buttons";
-import { useLocalLoginStatusContext } from "../providers/LocalLoginStatusContextProvider";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { POST, APIs} from "../utils/API";
 import { useToast } from "react-native-toast-notifications";
 import { BlurView } from '@react-native-community/blur';
-import { useIsFocusVisible } from "@mui/material";
 
 
 const DeleteConfirm = (props) => {
@@ -17,7 +15,6 @@ const DeleteConfirm = (props) => {
 
     const {userInfo} = useAuthenticationContext()
     const toast = useToast();
-    const {isPopupVisible,localLogin,isLoginPageVisible,setPopupVisibility,setLoginPageVisibility,setLocalLogin} = useLocalLoginStatusContext()
 
     const IMG_PATH = "../../assets/pngc.png";
     const navigation = useNavigation();
