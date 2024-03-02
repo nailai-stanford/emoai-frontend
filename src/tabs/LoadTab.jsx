@@ -53,6 +53,7 @@ export const LoadTab = ({ navigation }) => {
     }
 
     return () => {
+      setProgress(0)
       clearInterval(intervalId);
     };
 
