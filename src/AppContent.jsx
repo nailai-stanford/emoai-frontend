@@ -98,7 +98,7 @@ export const AppContent = () => {
       source={require('../assets/bg/bg.png')}
       resizeMode="cover"
       style={styles.imageContainer}>
-      {isLoginPageVisible ? <LogInPage setLocalLogin={setLocalLogin} setUserInfo={setUserInfo}/> : 
+      {isLoginPageVisible ? <LogInPage/> : 
       <NavigationContainer theme={navTheme}>
           {isPopupVisible && <View style={styles.overlay}>
               <LoginPopup isVisible={isPopupVisible} toggleVisibility={togglePopupVisibility} />

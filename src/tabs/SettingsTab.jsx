@@ -1,36 +1,37 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 // import { Input, Icon, Text, Button, Overlay } from '@rneui/themed';
-import { StyleSheet, View, ScrollView, Dimensions, Text, Button} from "react-native";
+import { StyleSheet, View, ScrollView, Dimensions, Text, Button, Image} from "react-native";
 import { TABs } from "../static/Constants";
-import { useNavigation } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import { GradientButtonAction } from "../styles/buttons";
 import { useLocalLoginStatusContext } from "../providers/LocalLoginStatusContextProvider";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { POST, APIs} from "../utils/API";
 import { useToast } from "react-native-toast-notifications";
+import { BlurView } from '@react-native-community/blur';
+import { useIsFocusVisible } from "@mui/material";
 
 
-export const SettingsTab = (props) => {
-    // need to fetch from db and also get from addr/name tabs
-    const navigation = useNavigation();
-    const [name, setName] = useState('New User');
-    const [addr, setAddr] = useState("A wonderful world");
-    const [payment, setPayment] = useState('');
-    const { isPopupVisible,localLogin,isLoginPageVisible,setPopupVisibility,setLoginPageVisibility,setLocalLogin} = useLocalLoginStatusContext()
-    const toast = useToast();
+const DeleteConfirm = (props) => {
+    const { setShowConfirm, signOut } = props;
+
     const {userInfo} = useAuthenticationContext()
+    const toast = useToast();
+    const {isPopupVisible,localLogin,isLoginPageVisible,setPopupVisibility,setLoginPageVisibility,setLocalLogin} = useLocalLoginStatusContext()
 
-    const signOut = () =>{
-        props.onSignout()
-        navigation.navigate(TABs.HOME)
-    }    
+    const IMG_PATH = "../../assets/pngc.png";
+    const navigation = useNavigation();
 
-    const delete_account = async () => {
-        // todo: delete account
+    const handleKeepAccount = () => {
+        setShowConfirm(false)
+    };
+
+    const handleConfirmDeletion = async() => {
+        // Logic to confirm account deletion
         resp = await POST(APIs.DELETE_ACCOUNT, null, userInfo)
         if (resp.status === 200) {
             console.log('delete account success')
-            props.onSignout()
+            signOut()
             navigation.navigate(TABs.HOME)
         } else {
             toast.show("Operation failed, please try again", {
@@ -43,57 +44,139 @@ export const SettingsTab = (props) => {
                 }
               })
         }
-        
+    };
+
+    return (
+        <View style={styles.deleteConfirmContainer}>
+            <BlurView  style={styles.blurViewStyle}
+                blurType="dark" // or 'dark', 'xlight', etc.
+                blurAmount={5}  // blur intensity
+            >
+                <Image source={require(IMG_PATH)} style={{ width: 120, height: 120, borderRadius: 10, resizeMode: 'contain', marginTop: 50}} />
+                <View style={styles.content}>
+                    <Text style={styles.title}>Consider Before Deleting Your Account</Text>
+                    <Text style={styles.description}>
+                        Permanent Data Removal: Deleting your account will permanently erase all your data, including personal information, settings, and any content you've created.
+                    </Text>
+                    <Text style={styles.description}>
+                        Content Deletion: All your posts, photos, videos, and other created content will be irretrievably lost.
+                    </Text>
+                    <Text style={styles.description}>
+                        Think Twice: We value your presence in our community. Are you sure you want to leave and delete your account?
+                    </Text>
+                </View>
+                <View style={styles.buttonContainer}>
+                    <GradientButtonAction onPress={handleKeepAccount} style={{width: 200}}>
+                            <Text style={styles.buttonText}>Keep Account</Text>
+                    </GradientButtonAction>
+                    <Text onPress={handleConfirmDeletion} style={styles.deleteButton}>Confirm Delete</Text>
+                </View>
+            </BlurView>
+        </View>
+    )
+}
+
+export const SettingsTab = (props) => {
+    // need to fetch from db and also get from addr/name tabs
+    const navigation = useNavigation();
+    const [showConfirm, setShowConfirm] = useState(false)
+    const isFocused = useIsFocused()
+
+    useEffect(()=> {
+        if (!isFocused) {
+            setShowConfirm(false)
+        }
+    })
+
+    const signOut = () =>{
+        props.onSignout()
+        navigation.navigate(TABs.HOME)
+    }    
+
+    const showConfirmPage = () => {
+        setShowConfirm(true)
     }
 
-    return <View style={{ padding: 10, alignItems: "center"}}>
-        {/* <Text>Profile</Text>
-        <Input
-            rightIcon={<Icon name='edit' />}
-            onChangeText={value => setName(value)}
-            disabled
-        />
-        <Text>User Name</Text>
-        <Input
-            placeholder={name}
-            rightIcon={<Icon name='edit' onPress={()=>{navigation.navigate(TABs.NAME)}}/>}
-            disabled
-            disabledInputStyle={{backgroundColor: "#ddd"}}
-        /> */}
-       
-        {/* <Text>Shipping Address</Text>
-        <Input
-            placeholder={addr}
-            rightIcon={<Icon name='edit' onPress={()=>{navigation.navigate(TABs.ADDRESS) }}/>}
-            // onChangeText={() => {  }}
-            disabled
-            disabledInputStyle={{ backgroundColor: "#ddd" }}
-        /> */}
+   
 
-        {/* <Text>Payment Method</Text>
-        <Input
-            placeholder={payment}
-            rightIcon={<Icon name='edit' onPress={()=>{setPaymentDisabled(false)}}/>}
-            onChangeText={value => { setPayment(value);  }}
-            disabled
-            disabledInputStyle={{ backgroundColor: "#ddd" }}
-        /> */}
+    return (
+        <View style={{alignItems: "center", position: "absolute", left: 0, right: 0, top: 0, bottom: 0}}>
             <GradientButtonAction onPress={signOut} style={{width: 200}}>
-                <Text style={styles.buttonText}>Sign Out</Text>
+                    <Text style={styles.buttonText}>Sign Out</Text>
             </GradientButtonAction>
-        <Text style={{color: "#999999", marginTop: 20}} onPress={delete_account}>Delete Account</Text>
-        {/* <Button title="Sign Out" type="outline" /> */}
-        {/* <Button title="Delete Account" type="outline" /> */}
-
-    </View>
+            <Text style={{color: "#999999", marginTop: 20}} onPress={showConfirmPage}>Delete Account</Text>
+            {showConfirm && 
+                <View style={{ position: 'absolute', width: '100%', height: '100%', left: 0, top: 0 }}>
+                    <DeleteConfirm setShowConfirm={setShowConfirm} signOut={props.onSignout}/>
+                </View>
+            }
+        </View>
+    )
 }
 
 const styles = StyleSheet.create({
-  buttonText: {
-    textAlign: 'center',
-    color: 'white',
-    fontSize: 18,
-    paddingLeft: 20,
-    paddingRight: 20
-}
+    buttonText: {
+        textAlign: 'center',
+        color: 'white',
+        fontSize: 18,
+        paddingLeft: 20,
+        paddingRight: 20
+    },
+    blurViewStyle: {
+        position: 'absolute',
+        alignItems: 'center',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+    },
+    deleteConfirmContainer: {
+        flex: 1,
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0
+    },
+    warningHeader: {
+        // Style for the header with the warning icon
+    },
+    warningTitle: {
+        color: 'white',
+        fontSize: 20,
+        fontWeight: 'bold',
+        marginBottom: 20,
+    },
+    content: {
+        width: '100%',
+        color: "white",
+    },
+    title: {
+        color: "#cccccc",
+        fontSize: 16,
+        fontWeight: 'bold',
+        padding: 20,
+    },
+    description: {
+        color: "#cccccc",
+        fontSize: 16,
+        padding: 20,
+        // textAlign: 'left', // Align text to the start
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        marginTop: 20,
+        alignItems: "center",
+        alignSelf: "flex-end",
+        marginRight: 20
+        
+    },
+    keepButton: {
+        // Style for the keep account button
+    },
+    deleteButton: {
+        // Style for the confirm deletion button
+        color: "#cccccc"
+    },
 });
