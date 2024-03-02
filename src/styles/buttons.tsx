@@ -71,6 +71,18 @@ export const GradientButtonSelection = (props) => {
     );
   };
 
+  export const GradientDivider = (props) => {
+    return (
+        <LinearGradient style={[props.style, styles.gradientDivider]}
+          colors={COLORS.gradient1}
+          useAngle={true} angle={45} angleCenter={{x:0.5,y:0.5}}
+          locations={[0.14,0.49,0.83]}
+        >
+            <ButtonActionNew {...props}  $isWhite={true}/>
+        </LinearGradient>
+    );
+  };
+
   export const GradientButtonChatSelection = (props) => {
     return (
         props.$selected ? 
@@ -87,6 +99,10 @@ export const GradientButtonSelection = (props) => {
 
 
   const styles = StyleSheet.create({
+    gradientDivider: {
+      borderWidth:1,
+      height: 4,
+    },
     gradientButtonSelection:{
         borderRadius: BORDERS.buttonSelectionRadius,
         borderWidth:1,

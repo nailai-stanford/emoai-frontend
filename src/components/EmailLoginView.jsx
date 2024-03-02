@@ -57,7 +57,7 @@ export const EmailLoginView = (props) => {
                     user: resp.data.user
                   }
                 setUserInfoInStore(userInfo);
-                props.setIsLoggedInState(true);
+                props.setLocalLogin(true);
                 props.setUserInfo(userInfo);
                 console.log('login by email success:', userInfo)
             } else if(resp.status === 402) {

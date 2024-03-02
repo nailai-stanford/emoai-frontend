@@ -8,15 +8,26 @@ import {
 import { GradientButtonAction, GradientButtonSelection } from '../styles/buttons';
 import { ButtonH, ButtonP, P, GradientP, TermTitle} from '../styles/texts';
 import { OTHER_ICONS } from '../styles/icons';
-
+import { useLocalLoginStatusContext } from '../providers/LocalLoginStatusContextProvider';
+import { useAuthenticationContext } from '../providers/AuthenticationProvider';
 import { EmailLoginView } from '../components/EmailLoginView';
 
 const { width: screenWidth } = Dimensions.get("window");
 const { height: ScreenHeight } = Dimensions.get("window");
 
 
+export const LogInPage = () => {  
 
-export const LogInPage = (props) => {  
+  const {isPopupVisible,
+    localLogin,
+    isLoginPageVisible,
+    setPopupVisibility,
+    setLoginPageVisibility,
+    setLocalLogin}
+    = useLocalLoginStatusContext()
+
+  const {userInfo, setUserInfo} = useAuthenticationContext()
+
   const dismissKeyboard = () => {
     Keyboard.dismiss();
   };
@@ -29,7 +40,7 @@ export const LogInPage = (props) => {
       <TermTitle style={styles.slogan}>
       EMO AI: Wear Your Emotions, Crafted by AI.
       </TermTitle>
-      <EmailLoginView setIsLoggedInState={props.setIsLoggedInState} setUserInfo={props.setUserInfo}/>
+      <EmailLoginView setLocalLogin={setLocalLogin} setUserInfo={setUserInfo}/>
       <Text style={styles.divider}>
         Login with Google
       </Text>
@@ -37,8 +48,11 @@ export const LogInPage = (props) => {
         onPress={() => {
           onPressSignIn()
             .then(({response, userInfo}) => {
-              props.setIsLoggedInState(true);
-              props.setUserInfo(userInfo);
+              console.log('onPressSignIn', resp)
+              setUserInfo(userInfo);
+              setLocalLogin(true)
+              setLoginPageVisibility(false)
+              setPopupVisibility(false)
               console.log('login by google success:', userInfo)
             })
             .catch(e => {});

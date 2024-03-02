@@ -7,28 +7,37 @@ import { TABs } from "../static/Constants";
 import { BlurView } from "@react-native-community/blur";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { BASE_URL, APIs, getHeader, GET } from "../utils/API";
-
+import { useLocalLoginStatusContext } from "../providers/LocalLoginStatusContextProvider";
 
 
 export const AITab = ({ navigation }) => {
 
   const { userInfo, signout} = useAuthenticationContext();
   const [taskStatus, setTaskStatus] = useState('NO_TASK')
-  
+  const {localLogin, setLoginPageVisibility} = useLocalLoginStatusContext()
+
+  const [title, setTitle] = useState(localLogin ? "Start Generating Images Using EMO.AI" : "Account Required")
+  const [subtitle, setSubtitle] = useState(localLogin ? "Embrace the power of AI magic to nail your style" : "Setting up an account is required to run EMO AI.")
+  const [buttonText, setButtonText] = useState(localLogin ? "Start Now" : "Sign Up")
+
+  useEffect(() => {
+    setTitle(localLogin ? "Start Generating Images Using EMO.AI" : "Account Required")
+    setSubtitle(localLogin ? "Embrace the power of AI magic to nail your style" : "Setting up an account is required to run EMO AI.")
+    setButtonText(localLogin ? "Start Now" : "Sign Up")
+  }, [localLogin])
+
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      if (userInfo) {
+      if (userInfo && localLogin) {
         check_last_task_status(true);
-      } else {
-        // todo: show login pop window
       }
     });
     return unsubscribe;
-  }, [navigation]);
+  }, [navigation, localLogin, userInfo]);
 
   const check_last_task_status = async (init_check) => {
-    if (!userInfo) {
-      // todo: show login pop window
+    if (!localLogin) {
+      setLoginPageVisibility(true)
       return
     }
     
@@ -90,14 +99,14 @@ export const AITab = ({ navigation }) => {
         { taskStatus === "NO_TASK" ? 
         <>
         <TitleHeader >
-          Start Generating Images Using EMO.AI
+          {title}
         </TitleHeader>
         <P style={{ textAlign: "center", marginBottom: 20, width: 150 }}>
-          Embrace the power of AI magic to nail your style
+          {subtitle}
         </P>
         <View>
           <GradientButtonAction onPress={() => check_last_task_status(false)}>
-            <ButtonH>Start Now</ButtonH>
+            <ButtonH>{buttonText}</ButtonH>
           </GradientButtonAction>
         </View>
         </> 

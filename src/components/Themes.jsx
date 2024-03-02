@@ -125,7 +125,9 @@ const ThemePreview = ({item}) => {
     async function _loadPictures() {
       resp = await GET(`${APIs.GET_PRODUCTS}by_ids?ids=${encodeURIComponent([item['pic_ids'],])}`)
       if (resp.status === 200) {
-        setPic(resp.data.products[0]['image']['src']);
+        if (resp.data && resp.data.products) {
+          setPic(resp.data.products[0]['image']['src']);
+        }
       }
     }
     _loadPictures();

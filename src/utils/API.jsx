@@ -8,6 +8,7 @@ export const APIs = {
   USER_LOGIN: `${BASE_URL}/api/users/login/google`,
   EMAIL_CODE: `${BASE_URL}/api/users/login/email/code`,
   EMAIL_LOGIN: `${BASE_URL}/api/users/login/email`,
+  DELETE_ACCOUNT: `${BASE_URL}/api/users/delete`,
   GET_PRODUCTS: `${BASE_URL}/api/products/`,
   POST_HAND_DESIGN: `${BASE_URL}/api/hand_designs/`,
   LIKE_COLLECT: `${BASE_URL}/api/like_collect/`,
