@@ -2,19 +2,19 @@ import React from "react";
 import { TouchableOpacity, View, StyleSheet, SafeAreaView,   Dimensions, FlatList, ScrollView } from "react-native";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { GalleryCard } from "../components/gallery/GalleryCard";
-import { useState, useEffect, useRef} from "react";
-import { APIs, GET, POST, getHeader } from "../utils/API";
-import { handleError } from "../utils/Common";
+import { useState, useEffect} from "react";
+import { APIs, GET, POST } from "../utils/API";
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { useCartContext } from "../providers/CartContextProvider";
 import { Image, Button, Text } from '@rneui/themed';
 import { MenuHeader,ButtonH, ButtonP, TitleHeader,P, SubHeader, TermTitle, GradientP } from "../styles/texts";
-import { ButtonAction,ButtonSelection, GradientButtonAction } from "../styles/buttons";
+import { GradientButtonAction } from "../styles/buttons";
 import { BORDERS, COLORS, PADDINGS } from "../styles/theme";
 import { ACTION_ICONS } from "../styles/icons";
 import { useToast } from "react-native-toast-notifications";
 import { HeadImages } from "../components/ProductHeader";
 import LinearGradient from "react-native-linear-gradient";
+import { useLocalLoginStatusContext } from "../providers/LocalLoginStatusContextProvider";
 
 const size = 50;
 const iconSize = 20;
@@ -57,6 +57,8 @@ const ButtonGroup = ({ productID}) => {
   const [collected, setCollected] = useState(false)
   const {setCart} = useCartContext()
   const toast = useToast();
+  const {localLogin, setPopupVisibility } = useLocalLoginStatusContext()
+
   useEffect(() => {
     async function _getCollect() {
       resp = await GET(`${APIs.LIKE_COLLECT}collected_product?product_id=${String(productID)}`, userInfo)
@@ -81,11 +83,10 @@ const ButtonGroup = ({ productID}) => {
             alignItems: "center"
           }} 
           onPress={async () => {
-            if (!userInfo) {
-              // todo : login popwindow
+            if (!userInfo || !localLogin) {
+              setPopupVisibility(true)
               return
             }
-            const headers = getHeader(userInfo.idToken);
             let URL = collected? APIs.DELETE_LIKE_COLLECT: APIs.LIKE_COLLECT
             payload = {
               shopify_product_id: String(productID),
@@ -95,7 +96,7 @@ const ButtonGroup = ({ productID}) => {
             if (resp.status === 200) {
               setCollected(!collected);
             } else {
-              // todo: toast try again
+              console.log('collect/uncollect failed, please try again')
             }
           }}>
             <ButtonH>{collected ? "UnCollect" : "Add to Collection"}</ButtonH>
@@ -103,8 +104,8 @@ const ButtonGroup = ({ productID}) => {
            
       <GradientButtonAction style={{ display: "inline-flex", flexDirection: "row", alignItems: "center"}}
         onPress={async() => {
-          if (!userInfo) {
-            // todo: show login popwindow
+          if (!userInfo || !localStorage) {
+            setPopupVisibility(true)
             return
           }
           payload = {actions: [{id: String(productID), count: 1}]}

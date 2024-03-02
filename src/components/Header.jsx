@@ -103,7 +103,7 @@ const ButtonGroup = (props ) => {
   const navigation = props.navigation;
   const route = props.route;
   const showCart = Boolean(route.name !== TABs.DESIGN_PREVIEW)
-  const {localLogin} = useLocalLoginStatusContext()
+  const {localLogin, setPopupVisibility } = useLocalLoginStatusContext()
 
   useEffect(() => {
     console.log(route.name)
@@ -117,7 +117,7 @@ const ButtonGroup = (props ) => {
         setCart(cart)
       }
     }
-    if(showCart && userInfo) {
+    if(showCart && userInfo && localLogin) {
       _fetchCart()
     }
   }, [userInfo])
@@ -129,6 +129,14 @@ const ButtonGroup = (props ) => {
       setProductCount(0)
     }
   }, [cart])
+
+  const open_cart = () => {
+    if (localLogin && userInfo) {
+      navigation.navigate(TABs.CART)
+    } else {
+      setPopupVisibility(true)
+    }
+  }
 
   const iconColor = COLORS.white;
   return (
@@ -149,7 +157,7 @@ const ButtonGroup = (props ) => {
       </TouchableOpacity>
       }
       {route.name !== TABs.DESIGN_PREVIEW && route.name !== TABs.PROFILE && 
-      <TouchableOpacity style={{ position: "absolute", right: 0 }} onPress={() => navigation.navigate(TABs.CART)}>
+      <TouchableOpacity style={{ position: "absolute", right: 0 }} onPress={open_cart}>
         <View>
           <ACTION_ICONS.shop
             color={iconColor}

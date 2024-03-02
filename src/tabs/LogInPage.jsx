@@ -18,15 +18,9 @@ const { height: ScreenHeight } = Dimensions.get("window");
 
 export const LogInPage = () => {  
 
-  const {isPopupVisible,
-    localLogin,
-    isLoginPageVisible,
-    setPopupVisibility,
-    setLoginPageVisibility,
-    setLocalLogin}
-    = useLocalLoginStatusContext()
+  const { setPopupVisibility, setLoginPageVisibility, setLocalLogin } = useLocalLoginStatusContext()
 
-  const {userInfo, setUserInfo} = useAuthenticationContext()
+  const {setUserInfo} = useAuthenticationContext()
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -41,9 +35,11 @@ export const LogInPage = () => {
       EMO AI: Wear Your Emotions, Crafted by AI.
       </TermTitle>
       <EmailLoginView setLocalLogin={setLocalLogin} setUserInfo={setUserInfo}/>
-      <Text style={styles.divider}>
-        Login with Google
-      </Text>
+      <View style={styles.loginWithGoogleContainer}>
+        <View style={styles.dividerLine} />
+        <Text style={styles.divider}>Login with Google</Text>
+        <View style={styles.dividerLine} />
+      </View>
       <GradientButtonSelection
         onPress={() => {
           onPressSignIn()
@@ -115,8 +111,19 @@ const styles = StyleSheet.create({
     color: "white",
     textDecorationStyle: 'solid',
   },
-  divider: {
+  loginWithGoogleContainer: {
     marginTop: 60,
-    color: 'white'
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  divider: {
+    color: 'white',
+  },
+  dividerLine: {
+    backgroundColor: 'white',
+    height: 1,
+    flex: 1,
+    margin: 10
   },
 });

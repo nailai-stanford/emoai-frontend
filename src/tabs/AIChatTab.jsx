@@ -103,7 +103,6 @@ export const AIChatTab = ({ navigation }) => {
 
 
   const fetchChatHistory = async () => {
-    console.log('fetch history')
     resp = await GET(`${BASE_URL}/api/chat/chat_history`, userInfo, signout)
       if (resp.status === 200) {
         console.log(resp)
@@ -140,11 +139,9 @@ export const AIChatTab = ({ navigation }) => {
 
     if (last_user_msg != null) {
       if (last_user_msg.next_stage) {
-        console.log('next stage:', last_user_msg.next_stage)
         setCurrentStage(last_user_msg.next_stage)
       }
       if (last_user_msg.current_tags) {
-        console.log('last_tags', last_user_msg.current_tags)
         setTags(JSON.parse(last_user_msg.current_tags.replace(/'/g, '"')))
       }      
     }
