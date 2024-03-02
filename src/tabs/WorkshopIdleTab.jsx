@@ -12,7 +12,7 @@ import { useLocalLoginStatusContext } from "../providers/LocalLoginStatusContext
 import { useIsFocused } from "@react-navigation/native";
 
 export const WorkshopTabComponent = ({navigation, route}) => {
-  const { setPopupVisibility, isPopupVisible, localLogin } = useLocalLoginStatusContext();
+  const { setPopupVisibility, localLogin } = useLocalLoginStatusContext();
   const isFocused = useIsFocused()
   useEffect(() => {
     if (!localLogin && isFocused) {
@@ -31,12 +31,12 @@ export const WorkshopTabComponent = ({navigation, route}) => {
 const WorkshopIdleTab = ({navigation, route}) => {
     const { userInfo, signout} = useAuthenticationContext();
     const [buttonText, setButtonText] = useState('Explore in Chatbot')
-    const {setPopupVisibility, localLogin} = useLocalLoginStatusContext()
-    const isFocused = useIsFocused()
+    const { setPopupVisibility, localLogin } = useLocalLoginStatusContext();
+
 
     const check_last_task_status = async (init_check) => {
-        if (!userInfo) {
-          //todo: show login status
+        if (!userInfo || !localLogin) {
+          setPopupVisibility(true)
           return
         }
         resp = await GET(`${BASE_URL}/api/task/last_status`, userInfo, signout)
