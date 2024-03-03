@@ -1,9 +1,9 @@
 import { View, Text, ScrollView, Image, TouchableHighlight, TouchableOpacity, ImageBackground } from "react-native";import { TABs } from "../../static/Constants";
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { useAuthenticationContext } from "../../providers/AuthenticationProvider";
 import { useLocalLoginStatusContext } from "../../providers/LocalLoginStatusContextProvider";
 import { useCartContext } from "../../providers/CartContextProvider";
-import { APIs, POST, getHeader} from "../../utils/API";
+import { APIs, GET, POST} from "../../utils/API";
 import LinearGradient from "react-native-linear-gradient";
 
 
@@ -11,9 +11,6 @@ import { ACTION_ICONS } from "../../styles/icons";
 import { SubHeader,P, GradientP, GradientMenuHeader } from "../../styles/texts";
 import { COLORS } from "../../styles/theme";
 
-import { useEffect } from "react";
-import { GradientButtonAction } from "../../styles/buttons";
-import { handleError } from "../../utils/Common";
 
 export const GalleryCard = ({ item, style }) => {
   const { user, image } = item;
@@ -23,7 +20,7 @@ export const GalleryCard = ({ item, style }) => {
   const productId = item && item.id? item.id : ""
   const { userInfo, signout} = useAuthenticationContext();
   const { localLogin, setPopupVisibility } = useLocalLoginStatusContext()
-  const {setCart} = useCartContext();
+  const { setCart } = useCartContext();
 
   const productImageStyle = {
     minHeight: 95,
@@ -39,7 +36,6 @@ export const GalleryCard = ({ item, style }) => {
     let titleList = title.split(':')
     return (titleList[0] ? titleList[0] : title)
   }
-    
 
   const add_to_cart = async () => {
     if (!localLogin || !userInfo) {
@@ -56,8 +52,6 @@ export const GalleryCard = ({ item, style }) => {
       }
     }
   }
-
-
 
   // make price according to promotion
   const makePrice = () => {

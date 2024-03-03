@@ -3,17 +3,15 @@ import { View, Image, TouchableOpacity, TextInput, ScrollView, ActivityIndicator
 import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { useLocalLoginStatusContext } from '../providers/LocalLoginStatusContextProvider';
 import { APIs, BASE_URL, POST } from "../utils/API";
-import { TABs } from '../static/Constants';
 
 
-import { ButtonAction, ButtonSelection, GradientButtonAction } from "../styles/buttons";
+import { GradientButtonAction } from "../styles/buttons";
 import { P, ButtonP, MenuHeader, TitleHeader, SubHeader, ButtonH} from "../styles/texts";
-import { COLORS, PADDINGS, FONTS } from "../styles/theme";
+import { COLORS } from "../styles/theme";
 import { useToast } from "react-native-toast-notifications";
 import { useCartContext } from '../providers/CartContextProvider';
 import { useIsFocused } from '@react-navigation/native';
 import { HeadImages } from '../components/ProductHeader';
-
 
 
 export const DesignPreviewTab = ({ navigation, route }) => {
@@ -28,7 +26,7 @@ export const DesignPreviewTab = ({ navigation, route }) => {
     const [productImageList, setProductImageList] = useState(null);
     const { leftHandNails, rightHandNails, handProducts, taskId} = route.params;
     const toast = useToast();
-    const {setCart} = useCartContext()
+    const {setCart} = useCartContext();
     const isFocused = useIsFocused();
     const { localLogin, setPopupVisibility } = useLocalLoginStatusContext()
 
@@ -42,7 +40,6 @@ export const DesignPreviewTab = ({ navigation, route }) => {
         setDesignSetId(null)
         setEnableAddToCart(false)
       });
-  
       return unsubscribe; // Unsubscribe on unmount
     }, [navigation]);
   
@@ -77,7 +74,7 @@ export const DesignPreviewTab = ({ navigation, route }) => {
               hand_designs: handProducts
             })
         resp = await POST(`${BASE_URL}/api/design_sets/`, body, userInfo, signout)
-        if (resp.status === 200) {
+        if(resp.status === 200) {
           const data = resp.data
           let design_set = data.design_set
           setTitle(design_set.title); 

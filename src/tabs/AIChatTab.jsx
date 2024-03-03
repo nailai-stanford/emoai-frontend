@@ -38,14 +38,14 @@ const ChatMessage = ({ item }) => {
           alignSelf: "flex-start",
         }} source={require(CHAT_IMAGE_PATH)}></Image>)}
       {!isSystemMessage && ( 
-      <Image
-        style={{
-          width: imageSize,
-          height: imageSize,
-          borderRadius: imageSize / 2,
-          alignSelf: "flex-start",
-        }}
-        source={{ uri:  userInfo && userInfo.user.photo }}
+        <Image
+          style={{
+            width: imageSize,
+            height: imageSize,
+            borderRadius: imageSize / 2,
+            alignSelf: "flex-start",
+          }}
+          source={{ uri:  userInfo && userInfo.user.photo ? userInfo.user.photo : 'https://emobackend.s3.amazonaws.com/app_assets/portrait-frog2.jpg'}}
       />)}
       <View style={{ paddingHorizontal:24, paddingVertical:10, backgroundColor: 'transparent', 
         borderColor: isSystemMessage? COLORS.chatbot: COLORS.chatme, 
