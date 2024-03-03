@@ -34,7 +34,7 @@ export const UserInfo = (props) => {
               borderRadius: avatarSize / 2,
             }}
             source={{
-              uri: localLogin ? userInfo && userInfo.user.photo : "https://emobackend.s3.amazonaws.com/app_assets/portrait-cat2.png",
+              uri: localLogin && userInfo ? userInfo.user.photo : "https://emobackend.s3.amazonaws.com/app_assets/portrait-frog2.jpg",
             }}
           />
         </View>

@@ -29,7 +29,7 @@ const CheckoutItem = ({userInfo, signout, item, setCart, updateTotal}) => {
 
   const [quantity, setQuantity] = useState(item.quantity);
   const id = item.product_id
-  
+
 
   const update_quantity = async (value) => {
     if (!userInfo) {
@@ -86,8 +86,7 @@ const CheckoutItem = ({userInfo, signout, item, setCart, updateTotal}) => {
                     update_quantity(1)
                     updateTotal(Number(item.you_pay_price).toFixed(2))
                   }}>
-                  <ACTION_ICONS.plus
-                  />
+                  <ACTION_ICONS.plus/>
               </TouchableOpacity>
             </View>
           </View>
@@ -102,19 +101,26 @@ export const CartTab = ({navigation}) => {
   const {cart, setCart} = useCartContext();
   const [total, setTotal] = useState(0)
   const isFocused = useIsFocused();
+  const [products, setProducts] = useState(cart && cart.products ? cart.products : [])
+  const [refreshFlag, setRefreshFlag] = useState(false);
 
+
+  useEffect(() => {
+    setProducts(cart && cart.products ? cart.products : [])
+    setRefreshFlag(flag => !flag); // Toggle the flag
+  }, [cart])
 
   useEffect(() => {
     async function _fetchCart() {
       resp = await GET(`${APIs.ORDER_FETCH}`, userInfo)
       if (resp.status === 200) {
-        // const cart = 
-        console.log('_fetchCart:', resp.data)
         setCart(resp.data)
+      } else {
+        console.log('_fetchCart failed:', resp)
       }
     }
     
-    if (userInfo) {
+    if (userInfo && isFocused) {
       _fetchCart()
     }
   }, [userInfo, isFocused]);
@@ -140,7 +146,8 @@ export const CartTab = ({navigation}) => {
         <View style={styles.container}>
           <SafeAreaView style={{flex: 7}}>
             <FlatList
-              data={cart.products}
+              data={products}
+              key={refreshFlag.toString()} // Convert the boolean to a string for the key
               renderItem={({item}) => (
                 <CheckoutItem
                   userInfo = {userInfo}

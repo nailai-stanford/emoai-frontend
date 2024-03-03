@@ -71,7 +71,6 @@ const ButtonGroup = ({ productID}) => {
     }
   },[productID, userInfo]);
 
-  let cart
  
   return <View style={{ 
       flexDirection: "row", alignSelf: "center", justifyContent:'center', postion: "absolute", bottom: 0, width: screenWidth, height: 50,
@@ -104,7 +103,7 @@ const ButtonGroup = ({ productID}) => {
            
       <GradientButtonAction style={{ display: "inline-flex", flexDirection: "row", alignItems: "center"}}
         onPress={async() => {
-          if (!userInfo || !localStorage) {
+          if (!userInfo || !localLogin) {
             setPopupVisibility(true)
             return
           }
