@@ -63,7 +63,7 @@ export const EmailLoginView = (props) => {
                 setLoginPageVisibility(false)
                 props.setUserInfo(userInfo);
                 console.log('login by email success:', userInfo)
-            } else if(resp.status === 402) {
+            } else if(resp.status === 400) {
                 setIsCodeValid(false)
             } else {
                 toast.show("Login failed, please try again", {
