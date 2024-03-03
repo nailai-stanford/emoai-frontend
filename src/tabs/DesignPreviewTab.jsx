@@ -17,7 +17,7 @@ import { HeadImages } from '../components/ProductHeader';
 export const DesignPreviewTab = ({ navigation, route }) => {
     const [quantity, setQuantity] = React.useState(1);
     const [enableAddToCart, setEnableAddToCart] = useState(false)
-    const { userInfo, signout} = useAuthenticationContext();
+    const {userInfo, signout} = useAuthenticationContext();
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState("Embrace your exclusive nail design! Add it to your cart now for crafting and share your unique creation with the community by naming it. Let's get your one-of-a-kind nails in production pronto!");
     const [productImage, setProductImage] = useState('');
@@ -29,7 +29,9 @@ export const DesignPreviewTab = ({ navigation, route }) => {
     const {setCart} = useCartContext();
     const isFocused = useIsFocused();
     const { localLogin, setPopupVisibility } = useLocalLoginStatusContext()
+    const [displayRetry, setDisplayRetry] = useState(false)
 
+    
     useEffect(() => {
       const unsubscribe = navigation.addListener('blur', () => {
         setTitle(''); 
@@ -65,6 +67,7 @@ export const DesignPreviewTab = ({ navigation, route }) => {
         }
       }
     }
+
     useEffect(() => {
       nails = leftHandNails.concat(rightHandNails)
       const save_design_set = async() => {

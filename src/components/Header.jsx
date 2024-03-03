@@ -38,7 +38,6 @@ export const Header = (props) => {
       <Title {...props} />
       {!!showButtons && <ButtonGroup {...props} />}
       {!!profileIcon && <ProfileIconGroup {...props} />}
-
     </View>
   );
 };
@@ -46,8 +45,8 @@ export const Header = (props) => {
 const BackButton = ({navigation}) => {
   return (<TouchableOpacity size={iconSize} onPress={() => {navigation.goBack();}}>
     <ACTION_ICONS.back
-  style={{ right: 0, color: COLORS.white, marginRight: PADDINGS.sm }}
-  />
+      style={{ right: 0, color: COLORS.white, marginRight: PADDINGS.sm }}
+    />
   </TouchableOpacity>)
 }
 
@@ -124,7 +123,7 @@ const ButtonGroup = (props ) => {
 
   useEffect(()=> {
     if (cart && cart.products && cart.products.length > 0) {
-      setProductCount(cart.products.length)
+      setProductCount(cart.products.reduce((total, product) => total + product.quantity, 0))
     } else {
       setProductCount(0)
     }
