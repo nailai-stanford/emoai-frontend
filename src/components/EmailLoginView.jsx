@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { APIs, POST } from '../utils/API';
 import { useToast } from 'react-native-toast-notifications';
 import { setUserInfoInStore } from '../utils/UserUtils';
-
+import { useLocalLoginStatusContext } from '../providers/LocalLoginStatusContextProvider';
 
 export const EmailLoginView = (props) => {
     const [email, setEmail] = useState('');
@@ -17,6 +17,7 @@ export const EmailLoginView = (props) => {
     const [countdown, setCountdown] = useState(0);
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
 
+    const {setPopupVisibility,setLoginPageVisibility,setLocalLogin} = useLocalLoginStatusContext()
     const toast = useToast();
 
     useEffect(() => {
@@ -57,7 +58,9 @@ export const EmailLoginView = (props) => {
                     user: resp.data.user
                   }
                 setUserInfoInStore(userInfo);
-                props.setLocalLogin(true);
+                setLocalLogin(true)
+                setPopupVisibility(false)
+                setLoginPageVisibility(false)
                 props.setUserInfo(userInfo);
                 console.log('login by email success:', userInfo)
             } else if(resp.status === 402) {
