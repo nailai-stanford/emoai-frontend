@@ -53,6 +53,7 @@ export const FONTS = {
     subHeader: 16,
     termTitle: 13,
     sm: 12,
+    chat: 13,
     md: 18,
     header: 20,
     lg: 24,

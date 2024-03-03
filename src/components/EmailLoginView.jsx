@@ -131,7 +131,7 @@ export const EmailLoginView = (props) => {
                 />
             </GradientButtonSelection>
             <View>
-                <GradientButtonSelection>
+                <GradientButtonSelection style={{height: 35, marginTop: 9}}>
                     <TextInput 
                         placeholder="Verification code" 
                         placeholderTextColor={isCodeValid ? "#ffffff90" : "red"}
@@ -183,10 +183,10 @@ const styles = StyleSheet.create({
     },
     sendAction: {
         position: 'absolute',
-        right: 0,
+        right: 1,
         width: 100,
         justifyContent: 'center', // Centers content horizontally in flexbox
-        alignItems: 'center',   
+        alignItems: 'center',  
     },
     sendCode: {
         textAlign: 'center',

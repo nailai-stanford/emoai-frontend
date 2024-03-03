@@ -24,6 +24,13 @@ export const P = styled.Text<{ $colored?:boolean, $alignLeft?:boolean, $hideBold
     text-align: ${props => props.$alignLeft ? "left" : "center"};
 `;
 
+export const ChatText = styled.Text<{ $colored?:boolean, $alignLeft?:boolean, $hideBold?:boolean}>`
+    color: ${props => props.$colored ? COLORS.gradientSub1 : COLORS.white};
+    font-size: ${FONTS.chat}px;
+    font-family: ${props => props.$hideBold ? FONT_FAMILYS.regular : FONT_FAMILYS.bold };
+    text-align: ${props => props.$alignLeft ? "left" : "center"};
+`;
+
 
 export const SubHeader = styled.Text<{ $colored?:boolean}>`
     color: ${props => props.$colored ? COLORS.gradientSub1 : COLORS.white};

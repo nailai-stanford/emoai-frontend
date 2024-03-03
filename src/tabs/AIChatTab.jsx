@@ -8,7 +8,7 @@ import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { TABs } from '../static/Constants';
 import { useToast } from "react-native-toast-notifications";
 import { ButtonAction, ButtonSelection, GradientButtonAction, GradientButtonChatSelection, GradientButtonSelection } from "../styles/buttons";
-import { P, ButtonP, ButtonH,TitleHeader, MenuHeader } from "../styles/texts";
+import { P, ChatText, ButtonP, ButtonH,TitleHeader, MenuHeader } from "../styles/texts";
 import { InputView } from "../styles/inputs";
 import { COLORS,PADDINGS, ICON_SIZES } from "../styles/theme";
 import { FAB, Input } from 'react-native-elements';
@@ -58,7 +58,7 @@ const ChatMessage = ({ item }) => {
       </View>
     ))
       ) : (
-        <P style={{textAlign:"left", shadowOffset:{width:0, height:0}}}>{item.content}</P>
+        <ChatText style={{textAlign:"left", shadowOffset:{width:0, height:0}}}>{item.content}</ChatText>
       )}
       </View>
     </View>
@@ -69,7 +69,7 @@ const ChatButton = ({ title, onPress, selection }) => {
     <GradientButtonChatSelection onPress={onPress} $selected={selection} 
    style={selection && {paddingTop:3, paddingBottom:0}} 
     > 
-      <ButtonP style={{fontSize:12}}>{title}</ButtonP>
+      <ButtonP style={{fontSize:13, textAlign: "left"}}>{title}</ButtonP>
     </GradientButtonChatSelection>
   );
 };
