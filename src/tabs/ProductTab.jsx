@@ -15,6 +15,7 @@ import { useToast } from "react-native-toast-notifications";
 import { HeadImages } from "../components/ProductHeader";
 import LinearGradient from "react-native-linear-gradient";
 import { useLocalLoginStatusContext } from "../providers/LocalLoginStatusContextProvider";
+import { useIsFocused } from "@react-navigation/native";
 
 const size = 50;
 const iconSize = 20;
@@ -23,6 +24,14 @@ const { width: screenWidth } = Dimensions.get("window");
 
 const Recommend = ({ }) => {
   const [productList, setProductList] = useState([]);
+  const isFocused = useIsFocused()
+
+  useEffect(() => {
+    if(!isFocused) {
+        setProductList([])
+    }
+  }, [isFocused])
+
   useEffect(() => {
     async function get_recommend_products() {
       resp = await GET(`${APIs.GET_PRODUCTS}recommended/`)
@@ -159,6 +168,8 @@ export const ProductTab = ({ route, navigation }) => {
   const [images, setImages] = useState(item.image && item.image.src ? [item.image.src] : [])
   const [terms, setTerms] = useState([])
   const [creator, setCreator] = useState()
+  const isFocused = useIsFocused()
+
   useEffect(() => {
     async function get_product_detail() {
       resp = await GET(`${APIs.GET_PRODUCTS}${String(productId)}`)
@@ -176,6 +187,17 @@ export const ProductTab = ({ route, navigation }) => {
     get_product_detail()
   }, [productId]) 
 
+  useEffect(() => {
+    if(!isFocused) {
+        setTitle("")
+        setPrice("")
+        setOriginalPrice("")
+        setPromotion(false)
+        setDescription("")
+        setImages([])
+        setTerms([])
+    }
+  }, [isFocused])
  
   const ListItem = ({ title, content }) => {
     const [expanded, setExpanded] = useState(false);
