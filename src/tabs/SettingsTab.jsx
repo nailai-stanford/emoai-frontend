@@ -8,20 +8,24 @@ import { useAuthenticationContext } from "../providers/AuthenticationProvider";
 import { POST, APIs} from "../utils/API";
 import { useToast } from "react-native-toast-notifications";
 import { BlurView } from '@react-native-community/blur';
+import { P, ButtonH, TitleHeader } from "../styles/texts";
 
 
-const DeleteConfirm = (props) => {
-    const { setShowConfirm, signOut } = props;
-
+const ConfirmPop = (props) => {
+    const { setShowConfirmPop, signOut } = props;
+    const navigation = useNavigation();
     const {userInfo} = useAuthenticationContext()
     const toast = useToast();
+    const IMG_PATH = "../../assets/warning.png";
 
-    const IMG_PATH = "../../assets/pngc.png";
-    const navigation = useNavigation();
 
-    const handleKeepAccount = () => {
-        setShowConfirm(false)
-    };
+    useEffect(()=> {
+        console.log('show pop')
+    })
+    const handleKeepAccount =() => {
+        setShowConfirmPop(false)
+        navigation.navigate(TABs.PROFILE)
+    }
 
     const handleConfirmDeletion = async() => {
         // Logic to confirm account deletion
@@ -29,6 +33,7 @@ const DeleteConfirm = (props) => {
         if (resp.status === 200) {
             console.log('delete account success')
             signOut()
+            setShowConfirmPop(false)
             navigation.navigate(TABs.HOME)
         } else {
             toast.show("Operation failed, please try again", {
@@ -41,6 +46,74 @@ const DeleteConfirm = (props) => {
                 }
               })
         }
+    };
+
+    return (
+        <View style={styles.popContainer}>
+        <BlurView 
+        blurType="dark"
+        blurAmount={5}
+        style={{
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            alignContent: "center",
+            alignItems: "center",
+            justifyContent: "center",
+            textAlign: "center",
+            position: "absolute",
+        }}
+        >
+        <Image source={require(IMG_PATH)} style={{ width: 200, height: 200, borderRadius: 10, resizeMode: 'contain', zIndex: 2, marginTop: -350}} />
+        <View
+            style={{
+            marginBottom: 10,
+            borderRadius: 25,
+            paddingHorizontal: 35,
+            paddingVertical: 30,
+            marginLeft: 150,
+            alignContent: "center",
+            alignItems: "center",
+            textAlign: "center",
+            position: "absolute",
+            backgroundColor: '#282828',
+            zIndex: 1
+            }}
+        >
+            <>
+            <TitleHeader style={{marginTop: 35}}>
+                Are you sure you want to Delete Account?
+            </TitleHeader>
+           
+            <View>
+                <GradientButtonAction onPress={handleKeepAccount}>
+                <ButtonH>Keep Account</ButtonH>
+                </GradientButtonAction>
+                <Text style={{color:"#cccccc", textAlign: 'center', marginTop: 5}} onPress={handleConfirmDeletion}>Confirm Deletion</Text>
+            </View> 
+            </> 
+        </View>
+    </BlurView>
+</View>
+    )
+}
+
+const DeleteConfirm = (props) => {
+    const { setShowConfirm, setShowConfirmPop } = props;
+    const navigation = useNavigation();
+
+    const IMG_PATH = "../../assets/pngc.png";
+
+    const handleKeepAccount = () => {
+        setShowConfirm(false)
+        navigation.navigate(TABs.PROFILE)
+    };
+
+    const handleConfirmDeletion = async() => {
+        setShowConfirm(false)
+        setShowConfirmPop(true)
     };
 
     return (
@@ -77,6 +150,7 @@ export const SettingsTab = (props) => {
     // need to fetch from db and also get from addr/name tabs
     const navigation = useNavigation();
     const [showConfirm, setShowConfirm] = useState(false)
+    const [showConfirmPop, setShowConfirmPop] = useState(false)
     const isFocused = useIsFocused()
 
     useEffect(()=> {
@@ -92,6 +166,7 @@ export const SettingsTab = (props) => {
 
     const showConfirmPage = () => {
         setShowConfirm(true)
+        console.log('delete account')
     }
 
    
@@ -103,8 +178,13 @@ export const SettingsTab = (props) => {
             </GradientButtonAction>
             <Text style={{color: "#999999", marginTop: 20}} onPress={showConfirmPage}>Delete Account</Text>
             {showConfirm && 
-                <View style={{ position: 'absolute', width: '100%', height: '100%', left: 0, top: 0 }}>
-                    <DeleteConfirm setShowConfirm={setShowConfirm} signOut={props.onSignout}/>
+                <View style={{zIndex: 2, position: 'absolute', top: 0, bottom: 0, left: 0, right: 0 }}>
+                    <DeleteConfirm setShowConfirm={setShowConfirm} setShowConfirmPop={setShowConfirmPop}/>
+                </View>
+            }
+            {showConfirmPop && 
+                <View style={{zIndex: 2, position: 'absolute', top: 0, bottom: 0, left: 0, right: 0 }}>
+                    <ConfirmPop setShowConfirmPop={setShowConfirmPop} signOut={props.onSignout}/>
                 </View>
             }
         </View>
@@ -112,6 +192,7 @@ export const SettingsTab = (props) => {
 }
 
 const styles = StyleSheet.create({
+    
     buttonText: {
         textAlign: 'center',
         color: 'white',
@@ -158,6 +239,10 @@ const styles = StyleSheet.create({
         color: "#cccccc",
         fontSize: 16,
         padding: 20,
+        paddingLeft: 20,
+        paddingRight: 20,
+        paddingTop: 10,
+        paddingBottom: 10,
         // textAlign: 'left', // Align text to the start
     },
     buttonContainer: {
@@ -175,5 +260,15 @@ const styles = StyleSheet.create({
     deleteButton: {
         // Style for the confirm deletion button
         color: "#cccccc"
+    },
+    popContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,   
     },
 });

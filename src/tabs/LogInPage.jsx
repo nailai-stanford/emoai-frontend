@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    marginTop: ScreenHeight * 0.15
+    marginTop: ScreenHeight * 0.14
     // justifyContent: 'center'
   },
   logoImage: {
@@ -99,7 +99,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   slogan: {
-    marginBottom: 40,
+    marginBottom: 25,
   },
   textContainer: {
     flexDirection: 'row',
