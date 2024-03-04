@@ -7,7 +7,6 @@ import { GradientButtonAction } from '../styles/buttons';
 import { useLocalLoginStatusContext } from '../providers/LocalLoginStatusContextProvider';
 
 
-
 export const LoginPopup = ({ isVisible, toggleVisibility }) => {
     const IMG_PATH = "../../assets/pnga.png";
     const {setPopupVisibility, setLoginPageVisibility}= useLocalLoginStatusContext()

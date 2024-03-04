@@ -19,8 +19,6 @@ import {
   ScrollView,
   Image,
   TouchableOpacity, 
-  ImageBackground,
-  TouchableHighlight, 
   Pressable,
 } from 'react-native';
 
@@ -111,11 +109,6 @@ export const WorkshopTab = ({ navigation, route }) => {
           }))
       };
     });
-  //  newCombinedData.push({
-  //     handDesignImageUrl: generateMoreImage,
-  //     handDesignId: null,
-  //     nails: []
-  //   });
     setCombinedData(newCombinedData);
 
   }, [taskProducts, route]);
@@ -135,24 +128,6 @@ export const WorkshopTab = ({ navigation, route }) => {
 
 
 
-  const getOriginalCollect = async () => {
-    if (!userInfo) {
-      // todo: show login pop window
-      return
-    }    
-    resp = await GET(`${APIs.GET_PRODUCTS}collections/original_single_nails/`, userInfo, signout)
-    const productImages = resp.data.products.map(product => product.image.src);
-    setOriginalCollect(productImages);
-  };
-
-  useEffect(() => {
-    if (userInfo) {
-      getOriginalCollect();
-    }
-  }, []); // Empty dependency array means this runs once on mount
-
-
-
 const handleNailSelect = (nail) => {
   // Update one of the placeholders with the selected nail
   const updatedNails = selectedNails.map((currentNail, index) => {
@@ -163,9 +138,7 @@ const handleNailSelect = (nail) => {
   });  
   setSelectedNails(updatedNails);
 };
-useEffect(() => {
-  console.log('originalCollect has changed:');
-}, [originalCollect]);
+
 
   const handleNailDeletion = (index) => {
     const updatedNails = [...selectedNails];

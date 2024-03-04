@@ -14,7 +14,6 @@ export const HeadImages = ({ images }) => {
     const _renderItem = ({ item, index }, parallaxProps) => {
       return (
         <View
-        
           style={{
             backgroundColor: "transparent",
             borderRadius: BORDERS.boxRadius,
@@ -38,7 +37,7 @@ export const HeadImages = ({ images }) => {
           alignSelf: "center", postion: "absolute", bottom: 0, width: screenWidth, 
           flex: 1, backgroundColor: "transparent",
         }}
-      >
+        >
           <Carousel
             layout={"default"}
             ref={isCarousel}
@@ -73,7 +72,6 @@ export const HeadImages = ({ images }) => {
             }}
             inactiveDotOpacity={1}
             containerStyle ={{   marginTop:0, paddingTop:0}}
-  
         />
       </SafeAreaView>
     );

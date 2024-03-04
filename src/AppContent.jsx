@@ -54,7 +54,6 @@ import { COLORS, ICON_SIZES } from "./styles/theme";
 
 import { TAB_BAR_ICONS } from "./styles/icons";
 import { LoginPopup } from "./components/LoginPopup";
-import { useLocalLoginStatus } from "./providers/LocalLoginStatusContextProvider";
 
 
 const Tab = createBottomTabNavigator();
