@@ -2,7 +2,8 @@ import React from 'react';
 import { StyleSheet, View, Image, Linking, TouchableOpacity, TouchableWithoutFeedback, Keyboard} from 'react-native';
 import { StatusBar, Text, Dimensions} from "react-native";
 import {
-    onPressSignIn,
+    onPressGoogleSignIn,
+    onAppleButtonPress
   } from './../utils/UserUtils';
 
 import { GradientButtonAction, GradientButtonSelection } from '../styles/buttons';
@@ -11,12 +12,24 @@ import { OTHER_ICONS } from '../styles/icons';
 import { useLocalLoginStatusContext } from '../providers/LocalLoginStatusContextProvider';
 import { useAuthenticationContext } from '../providers/AuthenticationProvider';
 import { EmailLoginView } from '../components/EmailLoginView';
+import { useEffect } from 'react';
+
+import { appleAuth, AppleButton } from '@invertase/react-native-apple-authentication';
+
 
 const { width: screenWidth } = Dimensions.get("window");
 const { height: ScreenHeight } = Dimensions.get("window");
 
 
 export const LogInPage = () => {  
+    useEffect(() => {
+      // onCredentialRevoked returns a function that will remove the event listener. useEffect will call this function when the component unmounts
+      return appleAuth.onCredentialRevoked(async () => {
+        console.warn('If this function executes, User Credentials have been Revoked');
+      });
+    }, []); // passing in an empty array as the second argument ensures this is only ran once when component mounts initially.
+
+    
 
   const { setPopupVisibility, setLoginPageVisibility, setLocalLogin } = useLocalLoginStatusContext()
 
@@ -25,6 +38,13 @@ export const LogInPage = () => {
   const dismissKeyboard = () => {
     Keyboard.dismiss();
   };
+
+  const login_success = (userInfo) => {
+    setUserInfo(userInfo);
+    setLocalLogin(true)
+    setLoginPageVisibility(false)
+    setPopupVisibility(false)
+  }
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
 
@@ -37,34 +57,36 @@ export const LogInPage = () => {
       <EmailLoginView setLocalLogin={setLocalLogin} setUserInfo={setUserInfo}/>
       <View style={styles.loginWithGoogleContainer}>
         <View style={styles.dividerLine} />
-        <Text style={styles.divider}>Login with Google</Text>
+        <Text style={styles.divider}>Or login with</Text>
         <View style={styles.dividerLine} />
       </View>
-      <GradientButtonSelection
-        onPress={() => {
-          onPressSignIn()
-            .then(({response, userInfo}) => {
-              console.log('onPressSignIn', resp)
-              setUserInfo(userInfo);
-              setLocalLogin(true)
-              setLoginPageVisibility(false)
-              setPopupVisibility(false)
-              console.log('login by google success:', userInfo)
-            })
-            .catch(e => {});
-        }}
-      >
-        <View style={{flexDirection:"row", justifyContent:"start", width: 220}}>
-          <OTHER_ICONS.google width={20} height={20} style={{paddingHorizontal:15}}/>
-          <ButtonP>Sign In with Google</ButtonP>
+      <View style={{flexDirection:"row", width: 200, marginTop: 15, marginBottom:15, justifyContent: "space-between"}}>
+        <TouchableOpacity style={styles.thirdPartyLogin}
+            onPress={() => {
+              onPressGoogleSignIn()
+                .then(({response, userInfo}) => {
+                  login_success(userInfo)
+                })
+                .catch(e => console.log("login with google faild:", e));
+            }}
+            >
+            <OTHER_ICONS.google width={25} height={25} style={{paddingHorizontal:15}}/>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.thirdPartyLogin}
+            onPress={() => onAppleButtonPress()
+              .then(({response, userInfo}) => {
+                login_success(userInfo)
+              }).catch(e => console.log("login with apple faild:", e))}
+            >
+            <OTHER_ICONS.apple width={25} height={25} style={{paddingHorizontal:15}}/>
+          </TouchableOpacity>
         </View>
-      </GradientButtonSelection>
-      <P style={styles.termsText}>
+        <P style={styles.termsText}>
           By clicking Sign In With Google, you are agreeing to
         </P>
       <View style={styles.textContainer}>
         <P>
-        EMO AI's 
+          EMO AI's 
         </P>
         <TouchableOpacity onPress={() => Linking.openURL('https://www.e-m-o.ai/terms')}>
           <GradientP style={styles.termsLink} >
@@ -126,4 +148,12 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 10
   },
+  thirdPartyLogin: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: 50,
+    height: 50,
+    backgroundColor: "white",
+    borderRadius: 25,
+  }
 });

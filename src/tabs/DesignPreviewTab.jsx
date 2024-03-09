@@ -87,7 +87,6 @@ export const DesignPreviewTab = ({ navigation, route }) => {
         setDesignSetId(design_set.shopify_product_id)
         setEnableAddToCart(true)
         setDisplayRetry(false)
-        console.log('save_design_set:', data)
       } else {
         setDisplayRetry(true)
       }

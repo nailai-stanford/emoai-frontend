@@ -4,7 +4,6 @@ import { TABs } from "../static/Constants";
 
 import { ImageBackground, PixelRatio } from 'react-native';
 import { Dimensions } from 'react-native';
-import { style } from 'deprecated-react-native-prop-types/DeprecatedViewPropTypes';
 // import Svg, { Path } from 'react-native-svg';
 
 import { ButtonAction, ButtonSelection, GradientButtonAction, GradientButtonSelection } from "../styles/buttons";
