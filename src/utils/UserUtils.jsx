@@ -4,6 +4,8 @@ import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {APIs, POST} from './API';
 import {SecureStoreKeys, handleError, handleResponse} from './Common';
 import {Config} from './Config';
+import { appleAuth } from '@invertase/react-native-apple-authentication';
+
 
 export const getUserInfoFromStore = async () => {
   let userInfo = await AsyncStorage.getItem(SecureStoreKeys.UserInfo);
@@ -30,7 +32,7 @@ export const setUserInfoInStore = async (UserInfo) => {
     }
 };
 
-export const onPressSignIn = () => {
+export const onPressGoogleSignIn = () => {
   GoogleSignin.configure({
     androidClientId: Config.ANDROID_CLIENT_ID,
     iosClientId: Config.IOS_CLIENT_ID,
@@ -52,7 +54,7 @@ export const onPressSignIn = () => {
               lastName: user.familyName ? user.familyName : "",
               photo: user.photo
             };
-            resp = await POST(APIs.USER_LOGIN, payload);
+            resp = await POST(APIs.GOOGLE_LOGIN, payload);
             if (resp.status === 200) {
               userInfo = {
                 jwt: resp.data.user.jwt,
@@ -73,3 +75,36 @@ export const onPressSignIn = () => {
     }
   });
 };
+
+
+export async function onAppleButtonPress() {
+  console.log("onAppleButtonPress")
+  // performs login request
+  const appleAuthRequestResponse = await appleAuth.performRequest({
+    requestedOperation: appleAuth.Operation.LOGIN,
+    // Note: it appears putting FULL_NAME first is important, see issue #293
+    requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+  });
+
+
+  // get current authentication state for user
+  // /!\ This method must be tested on a real device. On the iOS simulator it always throws an error.
+  const credentialState = await appleAuth.getCredentialStateForUser(appleAuthRequestResponse.user);  
+  // use credentialState response to ensure the user is authenticated
+
+  if (credentialState === appleAuth.State.AUTHORIZED) {
+    // user is authenticated
+    payload = {
+      jwt_token: appleAuthRequestResponse.identityToken,
+    };
+    resp = await POST(APIs.APPLE_LOGIN, payload);
+    if (resp.status === 200) {
+      userInfo = {
+        jwt: resp.data.user.jwt,
+        user: resp.data.user
+      }
+      setUserInfoInStore(userInfo);
+      return{ resp, userInfo };
+    }
+  }
+}

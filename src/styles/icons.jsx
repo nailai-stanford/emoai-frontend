@@ -27,7 +27,9 @@ import Minus from "../../assets/icons/minus.svg";
 import CartCountBg from '../../assets/icons/cart_count_bg.svg'
 
 // other icons
-import Google from "../../assets/icons/google_logo.svg";
+import Google from "../../assets/icons/google_login.svg";
+import Apple from "../../assets/icons/apple_login.svg";
+
 
 export const TAB_BAR_ICONS = {
     home: Home,
@@ -62,5 +64,6 @@ export const ACTION_ICONS = {
 
 export const OTHER_ICONS = {
     google: Google,
+    apple: Apple,
     cartCountBg: CartCountBg
 }

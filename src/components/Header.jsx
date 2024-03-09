@@ -114,7 +114,11 @@ const ButtonGroup = (props ) => {
       if (resp.status === 200) {
         const cart = JSON.parse(JSON.stringify(resp.data))
         setCart(cart)
-        setProductCount(cart.products.reduce((total, product) => total + product.quantity, 0))
+        if (cart && cart.products && cart.products.length > 0) {
+          setProductCount(cart.products.reduce((total, product) => total + product.quantity, 0))
+        } else {
+          setProductCount(0)
+        }
       }
     }
     if(showCart && userInfo) {

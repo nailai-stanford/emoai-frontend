@@ -5,7 +5,8 @@ import axios from "axios";
 export const BASE_URL = String(Config.BASE_URL);
 
 export const APIs = {
-  USER_LOGIN: `${BASE_URL}/api/users/login/google`,
+  GOOGLE_LOGIN: `${BASE_URL}/api/users/login/google`,
+  APPLE_LOGIN: `${BASE_URL}/api/users/login/apple`,
   EMAIL_CODE: `${BASE_URL}/api/users/login/email/code`,
   EMAIL_LOGIN: `${BASE_URL}/api/users/login/email`,
   DELETE_ACCOUNT: `${BASE_URL}/api/users/delete`,
