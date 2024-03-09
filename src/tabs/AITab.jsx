@@ -20,10 +20,17 @@ export const AITab = ({ navigation }) => {
   const [subtitle, setSubtitle] = useState(localLogin ? "Embrace the power of AI magic to nail your style" : "Setting up an account is required to run EMO AI.")
   const [buttonText, setButtonText] = useState(localLogin ? "Start Now" : "Sign Up")
 
+  // const [title, setTitle] = useState("Start Generating Images Using EMO.AI" )
+  // const [subtitle, setSubtitle] = useState("Embrace the power of AI magic to nail your style")
+  // const [buttonText, setButtonText] = useState("Start Now")
+
   useEffect(() => {
     setTitle(localLogin ? "Start Generating Images Using EMO.AI" : "Account Required")
     setSubtitle(localLogin ? "Embrace the power of AI magic to nail your style" : "Setting up an account is required to run EMO AI.")
     setButtonText(localLogin ? "Start Now" : "Sign Up")
+    // setTitle("Start Generating Images Using EMO.AI" : "Account Required")
+    // setSubtitle("Embrace the power of AI magic to nail your style" : "Setting up an account is required to run EMO AI.")
+    // setButtonText(localLogin ? "Start Now" : "Sign Up")
   }, [localLogin])
 
   useEffect(() => {
@@ -38,6 +45,7 @@ export const AITab = ({ navigation }) => {
   const check_last_task_status = async (init_check) => {
     if (!localLogin) {
       setLoginPageVisibility(true)
+      // navigation.navigate(TABs.AICHAT)
       return
     }
     

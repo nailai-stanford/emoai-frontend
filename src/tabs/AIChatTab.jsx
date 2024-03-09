@@ -102,28 +102,41 @@ export const AIChatTab = ({ navigation }) => {
   const [fetchHistory, setFetchHistory] = useState(false)
 
 
-  const fetchChatHistory = async () => {
+  const fetchOnlingChatHistory = async() => {
     resp = await GET(`${BASE_URL}/api/chat/chat_history`, userInfo, signout)
-      if (resp.status === 200) {
-        console.log(resp)
-        resp = resp.data
-        if (resp.completed) {
-          let last_message = resp.messages[resp.messages.length - 1]
-          let last_options = last_message.options
-          setOptions(last_options)
-          appendChatHistory(resp.messages)
-          setPendingReply(false);
-          setFetchHistory(false);
-        }
-      } else {
-        console.error('Failed to fetch chat history:', error);
+    if (resp.status === 200) {
+      resp = resp.data
+      if (resp.completed) {
+        let last_message = resp.messages[resp.messages.length - 1]
+        let last_options = last_message.options
+        setOptions(last_options)
+        appendChatHistory(resp.messages)
+        setPendingReply(false);
+        setFetchHistory(false);
       }
+    } else {
+      console.error('Failed to fetch chat history:', error);
+    }
+  }
+
+  const fetchLocalChatHistory = async() => {
+    console.log("fetch local history")
+  }
+
+  const fetchChatHistory = async () => {
+    
+    if(userInfo) {
+      fetchOnlingChatHistory()
+    } else {
+      fetchLocalChatHistory()
+    }
+    
   };
 
   useEffect(() => {
-    if (userInfo) {
+    // if (userInfo) {
       fetchChatHistory()
-    }
+    // }
   },[fetchHistory, userInfo]); 
 
   const appendChatHistory = (messages) => {
