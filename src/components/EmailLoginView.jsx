@@ -197,9 +197,11 @@ const styles = StyleSheet.create({
     
     loginButtonText: {
         textAlign: 'center',
+        alignItems: "center",
+        alignContent: "center",
         color: 'white',
-        fontSize: 18,
+        fontSize: 17,
         paddingLeft: 20,
-        paddingRight: 20
+        paddingRight: 20,
     }
 });

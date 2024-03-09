@@ -49,60 +49,66 @@ export const LogInPage = () => {
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
 
     <View style={styles.container}>
-      <Image source={require('../../assets/others/logoLarge.png')} 
-             style={styles.logoImage}/>
-      <TermTitle style={styles.slogan}>
-      EMO AI: Wear Your Emotions, Crafted by AI.
-      </TermTitle>
-      <EmailLoginView setLocalLogin={setLocalLogin} setUserInfo={setUserInfo}/>
-      <View style={styles.loginWithGoogleContainer}>
-        <View style={styles.dividerLine} />
-        <Text style={styles.divider}>Or login with</Text>
-        <View style={styles.dividerLine} />
+      <View style={{
+        alignItems: "center",
+
+      }}>
+        <Image source={require('../../assets/others/logoLarge.png')} 
+              style={styles.logoImage}/>
+        <TermTitle style={styles.slogan}>
+        EMO AI: Wear Your Emotions, Crafted by AI.
+        </TermTitle>
+        <EmailLoginView setLocalLogin={setLocalLogin} setUserInfo={setUserInfo}/>
       </View>
-      <View style={{flexDirection:"row", width: 200, marginTop: 15, marginBottom:15, justifyContent: "space-between"}}>
-        <TouchableOpacity style={styles.thirdPartyLogin}
-            onPress={() => {
-              onPressGoogleSignIn()
+      <View style={styles.thirdPartyLoginContainer}>
+        <View style={styles.loginWithGoogleContainer}>
+          <View style={styles.dividerLine} />
+          <Text style={styles.divider}>Or login with</Text>
+          <View style={styles.dividerLine} />
+        </View>
+        <View style={{flexDirection:"row", width: 200, marginTop: 15, marginBottom:15, justifyContent: "space-between"}}>
+          <TouchableOpacity style={styles.thirdPartyLogin}
+              onPress={() => {
+                onPressGoogleSignIn()
+                  .then(({response, userInfo}) => {
+                    login_success(userInfo)
+                  })
+                  .catch(e => console.log("login with google faild:", e));
+              }}
+              >
+              <OTHER_ICONS.google width={25} height={25} style={{paddingHorizontal:15}}/>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.thirdPartyLogin}
+              onPress={() => onAppleButtonPress()
                 .then(({response, userInfo}) => {
                   login_success(userInfo)
-                })
-                .catch(e => console.log("login with google faild:", e));
-            }}
-            >
-            <OTHER_ICONS.google width={25} height={25} style={{paddingHorizontal:15}}/>
+                }).catch(e => console.log("login with apple faild:", e))}
+              >
+              <OTHER_ICONS.apple width={25} height={25} style={{paddingHorizontal:15}}/>
+            </TouchableOpacity>
+          </View>
+          <P style={styles.termsText}>
+            Your registration and use of this app signifies your acceptance 
+          </P>
+        <View style={styles.textContainer}>
+          <P>
+            of EMO AI's 
+          </P>
+          <TouchableOpacity onPress={() => Linking.openURL('https://www.e-m-o.ai/terms')}>
+            <GradientP style={styles.termsLink} >
+              {" Terms and conditions "}
+            </GradientP>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.thirdPartyLogin}
-            onPress={() => onAppleButtonPress()
-              .then(({response, userInfo}) => {
-                login_success(userInfo)
-              }).catch(e => console.log("login with apple faild:", e))}
-            >
-            <OTHER_ICONS.apple width={25} height={25} style={{paddingHorizontal:15}}/>
+          <P>
+          And
+          </P>
+          <TouchableOpacity onPress={() => Linking.openURL('https://www.e-m-o.ai/privacy')}>
+            <GradientP style={styles.termsLink} >
+              {" Privacy policy."}
+            </GradientP>
           </TouchableOpacity>
         </View>
-        <P style={styles.termsText}>
-          By clicking Sign In With Google, you are agreeing to
-        </P>
-      <View style={styles.textContainer}>
-        <P>
-          EMO AI's 
-        </P>
-        <TouchableOpacity onPress={() => Linking.openURL('https://www.e-m-o.ai/terms')}>
-          <GradientP style={styles.termsLink} >
-            {" Terms and conditions "}
-          </GradientP>
-        </TouchableOpacity>
-        <P>
-        And
-        </P>
-        <TouchableOpacity onPress={() => Linking.openURL('https://www.e-m-o.ai/privacy')}>
-          <GradientP style={styles.termsLink} >
-            {" Privacy policy."}
-          </GradientP>
-        </TouchableOpacity>
       </View>
-      <StatusBar style="auto" />
     </View>
     </TouchableWithoutFeedback>
   );
@@ -112,8 +118,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    marginTop: ScreenHeight * 0.14
-    // justifyContent: 'center'
+    marginTop: ScreenHeight * 0.1,
+    justifyContent: "space-between"
   },
   logoImage: {
     width: screenWidth * 0.6,
@@ -122,6 +128,12 @@ const styles = StyleSheet.create({
   },
   slogan: {
     marginBottom: 25,
+  },
+
+  thirdPartyLoginContainer: {
+    width: screenWidth,
+    alignItems: 'center',
+    marginBottom: 70
   },
   textContainer: {
     flexDirection: 'row',

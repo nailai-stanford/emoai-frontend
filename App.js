@@ -10,7 +10,7 @@ import { LocalLoginStatusContextProvider } from './src/providers/LocalLoginStatu
 
 export default function App() {
   return (
-    <StripeProvider publishableKey="pk_test_51Ogh2DGn4Xylrbu3bN8sXhkSyf3QRe6ZZkn5TdPd7T0OSwz7ub8Tg3oPXgkPpRSJEiBlZ1sqzNPhEfFivA2DIdIs00Sapta1nZ">
+    <StripeProvider publishableKey="pk_live_51Ogh2DGn4Xylrbu3e20kvPFBxXZI0AwK7YbSj8oKPn1M14SgB8iaKktxVsK4nAYn2tve3AKgQadak5thZ7jlZsu600HCPHMiuh">
       <AuthenticationProvider>
         <ToastProvider>
           <CartContextProvider>
